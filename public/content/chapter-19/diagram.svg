@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <marker id="a19" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f766e"/>
+    </marker>
+    <marker id="aRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <rect width="960" height="540" fill="#f8fafc" rx="14"/>
+  <text x="480" y="34" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Pola Ketahanan Koneksi: SNTP Time Sync, Ring Buffer Offline &amp; Idempotent Replay</text>
+  <text x="480" y="56" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#475569">Menjaga keutuhan data telemetri saat Wi-Fi/Broker terputus serta mencegah Thundering Herd saat pemulihan</text>
+
+  <!-- Step 1: Sensor + Time Sync -->
+  <rect x="34" y="88" width="210" height="162" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="139" y="114" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#1e3a8a">1. Akuisisi &amp; Waktu</text>
+  <rect x="50" y="128" width="178" height="46" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="139" y="148" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#0f172a">Sampling + seq_id Monotonik</text>
+  <text x="139" y="164" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">Kunci unik: (dev_id, seq_id)</text>
+  <rect x="50" y="184" width="178" height="52" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="139" y="204" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#0f172a">SNTP (UTC Epoch)</text>
+  <text x="139" y="220" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">Jika belum sync -> uptime_ms +</text>
+  <text x="139" y="232" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">time_synced: false (jangan palsukan!)</text>
+
+  <!-- Step 2: Circular Ring Buffer -->
+  <rect x="292" y="88" width="268" height="236" rx="10" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text x="426" y="114" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#134e4a">2. Ring Buffer (Store-and-Forward)</text>
+  <text x="426" y="133" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#0f766e">Kapasitas Tetap (mis. N = 64 slot RAM / LittleFS)</text>
+  <rect x="312" y="150" width="36" height="44" rx="4" fill="#99f6e4" stroke="#0f766e"/>
+  <text x="330" y="176" text-anchor="middle" font-family="monospace" font-size="11" fill="#0f172a">#11</text>
+  <rect x="352" y="150" width="36" height="44" rx="4" fill="#99f6e4" stroke="#0f766e"/>
+  <text x="370" y="176" text-anchor="middle" font-family="monospace" font-size="11" fill="#0f172a">#12</text>
+  <rect x="392" y="150" width="36" height="44" rx="4" fill="#99f6e4" stroke="#0f766e"/>
+  <text x="410" y="176" text-anchor="middle" font-family="monospace" font-size="11" fill="#0f172a">#13</text>
+  <rect x="432" y="150" width="36" height="44" rx="4" fill="#e2e8f0" stroke="#64748b"/>
+  <text x="450" y="176" text-anchor="middle" font-family="monospace" font-size="11" fill="#475569">...</text>
+  <rect x="472" y="150" width="36" height="44" rx="4" fill="#e2e8f0" stroke="#64748b"/>
+  <text x="490" y="176" text-anchor="middle" font-family="monospace" font-size="11" fill="#475569">tail</text>
+  <rect x="512" y="150" width="36" height="44" rx="4" fill="#fef3c7" stroke="#d97706"/>
+  <text x="530" y="176" text-anchor="middle" font-family="monospace" font-size="11" fill="#92400e">full</text>
+
+  <text x="312" y="218" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#1e293b">• Head (oldest) &amp; Tail (newest) berputar modulo N</text>
+  <text x="312" y="238" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#1e293b">• Jika penuh: Drop-Oldest + tambah dropped_count</text>
+  <text x="312" y="258" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#1e293b">• Hanya hapus Head setelah publish() berhasil (ACK)</text>
+  <text x="312" y="278" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#0f766e">• Replay bertahap: max K=5 item/loop (anti WDT reset)</text>
+
+  <!-- Step 3: Full Jitter Backoff & Replay -->
+  <rect x="612" y="88" width="314" height="236" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="769" y="114" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#9a3412">3. Reconnect &amp; Idempotent Ingest</text>
+  <rect x="630" y="130" width="278" height="72" rx="8" fill="#ffffff" stroke="#fdba74"/>
+  <text x="644" y="152" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#9a3412">Exponential Backoff + Full Jitter</text>
+  <text x="644" y="170" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">delay = random(0, min(T_max, T_0 * 2^attempt))</text>
+  <text x="644" y="188" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#475569">Mencegah ribuan node reconnect serentak ke broker</text>
+
+  <rect x="630" y="214" width="278" height="92" rx="8" fill="#ffffff" stroke="#fdba74"/>
+  <text x="644" y="236" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Deduplikasi di Broker / Ingest Service</text>
+  <text x="644" y="255" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">Jika QoS 1 / HTTP retry mengirim ulang seq_id:</text>
+  <text x="644" y="274" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#166534">• Simpan jika (dev_id, seq_id) belum pernah dilihat</text>
+  <text x="644" y="292" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#dc2626">• Abaikan duplikat, tetap kirim ACK agar queue lega</text>
+
+  <!-- Arrows -->
+  <line x1="244" y1="170" x2="290" y2="170" stroke="#0f766e" stroke-width="2.2" marker-end="url(#a19)"/>
+  <line x1="560" y1="170" x2="610" y2="170" stroke="#0f766e" stroke-width="2.2" marker-end="url(#a19)"/>
+
+  <!-- Bottom Timeline -->
+  <rect x="34" y="346" width="892" height="162" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6"/>
+  <text x="54" y="374" font-family="Segoe UI, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0f172a">Ilustrasi Alur Gangguan &amp; Pemulihan</text>
+  <rect x="54" y="394" width="190" height="44" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="149" y="414" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#14532d">ONLINE (T0 – T2)</text>
+  <text x="149" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#166534">SNTP OK, Queue=0, Live TX</text>
+
+  <rect x="274" y="394" width="286" height="44" rx="6" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="417" y="414" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#991b1b">OUTAGE (T3 – T8): Link Putus</text>
+  <text x="417" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#7f1d1d">Data masuk Ring Buffer + Jittered Backoff</text>
+
+  <rect x="590" y="394" width="316" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="748" y="414" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">RECOVERY (T9+): Re-sync &amp; Batch Drain</text>
+  <text x="748" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#1d4ed8">Replay urut seq_id, broker dedup aman</text>
+
+  <line x1="244" y1="416" x2="272" y2="416" stroke="#dc2626" stroke-width="2" marker-end="url(#aRed)"/>
+  <line x1="560" y1="416" x2="588" y2="416" stroke="#0f766e" stroke-width="2" marker-end="url(#a19)"/>
+
+  <text x="54" y="468" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#475569">• Jangan pernah menggunakan String heap berlebihan saat offline lama; gunakan struct array berukuran tetap agar bebas memory fragmentation.</text>
+  <text x="54" y="488" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#475569">• Untuk pemadaman daya listrik (power loss), RAM hilang kecuali disimpan ke flash (NVS / LittleFS / FRAM / microSD).</text>
+</svg>
+

@@ -1,0 +1,78 @@
+[
+  {
+    "title": "UART, I2C & SPI",
+    "body": "Tiga bus komunikasi serial kabel jarak dekat pada *Embedded Systems* — memahami mekanisme sinyal, pin ESP32, kalkulasi *timing*, dan *troubleshooting*.",
+    "notes": "Chapter 16 menjembatani sensor digital pintar (BME280, GPS, SD Card, modul LoRa) dengan ESP32."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 16",
+    "body": "1. **Membedakan** komunikasi *asinkron* (**UART**) vs *sinkron* (**I2C, SPI**).\n2. **Menghitung** efisiensi *frame* UART, *rise time* pull-up I2C, & durasi transfer SPI.\n3. **Memetakan** pin `UART2`, `I2C`, dan `VSPI` pada `ESP32-DevKitC V4`.\n4. **Mendiagnosis** konflik alamat, *pull-up*, *baud mismatch*, & mode `CPOL/CPHA`.",
+    "notes": "Setiap antarmuka punya niche aplikasi yang jelas."
+  },
+  {
+    "title": "Matriks Perbandingan UART vs I2C vs SPI",
+    "body": "| Aspek | UART | I2C | SPI |\n| --- | --- | --- | --- |\n| Clock | Asinkron (tanpa clock) | Sinkron (`SCL`) | Sinkron (`SCLK`) |\n| Kabel | `TX, RX` + `GND` | `SDA, SCL` + `GND` | `MOSI, MISO, SCLK, CS` |\n| Multi-device | 1-ke-1 | Alamat **7-bit** | Pin **`CS` terpisah** |\n| Kecepatan | $9{,}6\\dots 921\\text{ kbps}$ | $100 / 400\\text{ kHz}$ | $1\\dots 40\\text{ MHz}+$ |",
+    "notes": "Jangan memilih SPI jika pin GPIO hampir habis dan hanya membaca sensor suhu 1 Hz."
+  },
+  {
+    "title": "Diagram: UART, I2C Open-Drain & SPI 4-Kawat",
+    "body": "![Perbandingan UART, I2C open-drain dengan pull-up, dan SPI 4-kawat](content/chapter-16/diagram.svg)",
+    "notes": "Tunjukkan perbedaan fundamental: crossover TX-RX (kiri), pull-up open-drain 4.7 kOhm (tengah), dan pin CS per slave (kanan)."
+  },
+  {
+    "title": "UART: Frame `8N1` & Crossover Wiring",
+    "body": "- **Wiring wajib silang**: `TX` $\\rightarrow$ `RX`, `RX` $\\rightarrow$ `TX`, dan **`Common GND`**.\n- **Frame `8N1`**: `1 Start` + `8 Data` + `1 Stop` = **10 bit/byte** (efisiensi **$80\\%$**).\n- Kedua perangkat wajib sepakat *baud rate* (toleransi selisih $< 2\\%$).",
+    "fragment": "Pada ESP32-WROVER (ber-PSRAM), hindari pin default UART2 GPIO 16 & 17; remapping via Serial2.begin()!",
+    "notes": "ESP32 punya kelebihan UART pin matrix yang fleksibel."
+  },
+  {
+    "title": "I2C: Mengapa Wajib Resistor Pull-Up?",
+    "body": "Driver I2C bersifat **open-drain**: pin hanya bisa menarik jalur ke `LOW` (`0 V`).\n\n- Jalur kembali ke `HIGH` ($3{,}3\\text{ V}$) hanya lewat **resistor pull-up ($R_p$)**!\n- *Rise time* (NXP UM10204):\n\n$$t_r \\approx 0{,}8473 \\cdot R_p \\cdot C_{\\text{bus}}$$",
+    "notes": "Resistor terlalu besar membuat gelombang kotak melengkung lambat sehingga gagal di 400 kHz Fast Mode."
+  },
+  {
+    "title": "I2C: Pengalamatan 7-Bit & Konflik Alamat",
+    "body": "- Alamat 7-bit (`0x08..0x77`) dikirim di awal transaksi + bit `R/W` + `ACK/NACK`.\n- **Masalah umum**: Memasang 2 sensor BME280 dengan alamat default sama (`0x76`).\n- **Solusi**: Ubah pin `SDO/ADDR` ke `3V3` pada sensor ke-2 (alamat jadi `0x77`) atau pakai *I2C multiplexer* (TCA9548A).",
+    "notes": "Selalu jalankan I2C Scanner terlebih dahulu saat memasang modul sensor baru."
+  },
+  {
+    "title": "SPI: Kecepatan Tinggi & 4 Mode Clock",
+    "body": "- **Full-Duplex Push-Pull**: Data keluar (`MOSI`) dan masuk (`MISO`) serentak.\n- **Chip Select (`CS`)**: Active-LOW; **1 pin GPIO tersendiri untuk tiap slave**.\n- **4 Mode (`CPOL`, `CPHA`)**:\n  - `MODE0` (`0,0`) & `MODE3` (`1,1`): sampling pada *Rising edge*\n  - `MODE1` (`0,1`) & `MODE2` (`1,0`): sampling pada *Falling edge*",
+    "notes": "Menggunakan SPISettings di SPI.beginTransaction() memastikan kecepatan & mode tidak saling mengganggu antar-slave."
+  },
+  {
+    "title": "Hasil Kalkulasi & Uji Bus (`bus_protocol_sim.py`)",
+    "body": "```text\nUART 115200 (8N1) : efisiensi=80.0%, maks=11,520 B/s\nI2C C_bus=100 pF  : Rp=4.7k -> t_r=398.2 ns (100kHz OK, 400kHz GAGAL)\n                    Rp=2.2k -> t_r=186.4 ns (400kHz OK)\nSPI 64 B @ 4 MHz  : 128.0 us (vs ~5.56 ms pada UART 115200)\n```",
+    "notes": "Output aktual eksekusi Python dari outputs.md."
+  },
+  {
+    "title": "Peta Pin Standar `ESP32-DevKitC V4`",
+    "body": "| Bus | Pin Default | Catatan |\n| --- | --- | --- |\n| `UART0` | `TX=1, RX=3` | Dipakai USB Serial Monitor |\n| `UART2` | `RX2=16, TX2=17` | Bisa di-remap; hindari di WROVER |\n| `I2C` | `SDA=21, SCL=22` | Set via `Wire.begin(21, 22)` |\n| `VSPI` | `MOSI=23, MISO=19, SCLK=18, CS=5` | CS bebas pilih GPIO output aman |",
+    "notes": "Berbeda dengan Arduino Uno, ESP32 mengizinkan remapping pin hampir pada semua periferal digital."
+  },
+  {
+    "title": "Firmware Probe (`i2c_uart_spi_probe.ino`)",
+    "body": "- **I2C Scanner**: Memindai `0x08..0x77` dan melaporkan error bus `err=4` bila jalur macet.\n- **UART2 (`8N1`)**: Membaca byte masuk secara non-blocking.\n- **SPI Mode 0**: `SPI.beginTransaction()` $\\rightarrow$ `CS LOW` $\\rightarrow$ `SPI.transfer()` $\\rightarrow$ `CS HIGH`.\n\n*(Firmware `.ino` berstatus Belum diuji sementara core ESP32 sedang dipasang).*",
+    "notes": "Menunjukkan penggunaan Wire.setTimeOut(50) untuk mencegah hang jika bus I2C tertarik ke LOW."
+  },
+  {
+    "title": "Troubleshooting UART, I2C & SPI",
+    "body": "| Bus | Gejala | Penyebab Utama |\n| --- | --- | --- |\n| UART | Data kosong / sampah | `TX-TX` lupa silang / beda *baud* |\n| I2C | Tidak terdeteksi / hang | Lupa *pull-up* $4{,}7\\text{ k}\\Omega$ / salah alamat |\n| SPI | Selalu `0x00` / `0xFF` | `CS` tidak `LOW` / salah `CPOL-CPHA` |",
+    "notes": "Logic analyzer murah (8-channel USB) adalah alat terbaik untuk memverifikasi sinyal fisik ketiga bus ini."
+  },
+  {
+    "title": "Memilih Bus yang Tepat untuk Sensor IoT",
+    "body": "- **Banyak sensor lambat di 1 papan** (suhu, tekanan, OLED) $\\rightarrow$ **I2C**.\n- **Streaming cepat / memori besar / radio LoRa** (SD card, layar TFT, SX1278) $\\rightarrow$ **SPI**.\n- **Modul pintar mandiri dengan parser teks/AT** (GPS, RS-485 bridge, modem) $\\rightarrow$ **UART**.",
+    "notes": "Keputusan arsitektur pin di awal menghemat banyak waktu debugging."
+  },
+  {
+    "title": "Logic Analyzer & Checklist Debug Sinyal",
+    "body": "Saat sensor bisu, ukur sinyal nyata sebelum menyalahkan kode:\n\n1. Cek tegangan **VCC–GND** (`3.3 V`, jangan sampai `5 V` merusak pin).\n2. Ukur jalur `SDA/SCL` saat *idle* (harus $\\approx 3{,}3\\text{ V}$, bukan `0 V`).\n3. Rekam bingkai dengan *logic analyzer*: cek lebar pulsa bit ($1/\\text{baud}$), bit *ACK* ke-9 di I2C, dan polaritas `SCK`/`CS` di SPI.",
+    "notes": "Banyak kegagalan komunikasi serial selesai dalam 5 menit setelah mengamati sinyal idle dan bit ACK."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nAnda menghubungkan 1 modul OLED `3.3 V` dan 1 sensor BME280 `3.3 V` ke `SDA=21, SCL=22`, tetapi program ESP32 langsung macet membeku di `Wire.endTransmission()`. Sebutkan dua kemungkinan penyebab fisik di jalur I2C tersebut!\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 17: *Bluetooth Low Energy*.",
+    "notes": "Jawaban: Salah satu jalur SDA/SCL short ke GND (atau kabel longgar tanpa pull-up sehingga bus terbaca terus sibuk), atau lupa menyetel Wire.setTimeOut()."
+  }
+]

@@ -1,0 +1,8 @@
+scenario,zone_id,window_start_utc,samples_count,temp_min_c,temp_avg_c,temp_max_c,alarm_local,source
+edge-agg-60s,coldroom-a,2026-11-01T09:00:00Z,12,2.1,2.4,2.8,false,synthetic
+edge-agg-60s,coldroom-a,2026-11-01T09:01:00Z,12,2.4,3.1,4.2,false,synthetic
+edge-agg-60s,coldroom-a,2026-11-01T09:02:00Z,12,4.5,6.8,8.4,true,synthetic
+edge-agg-60s,coldroom-b,2026-11-01T09:00:00Z,12,1.9,2.0,2.2,false,synthetic
+edge-agg-60s,coldroom-b,2026-11-01T09:01:00Z,12,2.0,2.1,2.3,false,synthetic
+edge-agg-60s,coldroom-b,2026-11-01T09:02:00Z,12,2.1,2.2,2.4,false,synthetic
+

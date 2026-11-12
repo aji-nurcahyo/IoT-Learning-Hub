@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560">
+  <defs>
+    <marker id="a20" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f766e"/>
+    </marker>
+    <marker id="aBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+  <rect width="980" height="560" fill="#f8fafc" rx="14"/>
+  <text x="490" y="34" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Arsitektur Capstone Level 2: ESP32 Connected Environmental Monitoring System</text>
+  <text x="490" y="56" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#475569">Integrasi NVS Config, Sensor/Aktuator Fail-Safe Lokal, SNTP, Offline Ring Buffer, HTTP Config &amp; MQTT Broker Lokal</text>
+
+  <!-- Column 1: Field Hardware -->
+  <rect x="28" y="84" width="210" height="352" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="133" y="110" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#1e3a8a">Perangkat Lapangan</text>
+  <rect x="44" y="128" width="178" height="72" rx="8" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="133" y="150" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">Sensor Analog (GPIO34)</text>
+  <text x="133" y="168" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">ADC1 (bebas konflik Wi-Fi)</text>
+  <text x="133" y="185" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#475569">Konversi suhu C + filter</text>
+
+  <rect x="44" y="216" width="178" height="82" rx="8" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="133" y="238" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">Aktuator Kipas (GPIO26)</text>
+  <text x="133" y="256" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">Histeresis T_high +/- dT</text>
+  <text x="133" y="274" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" fill="#0f766e">Tetap aktif saat OFFLINE!</text>
+
+  <rect x="44" y="314" width="178" height="104" rx="8" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="133" y="336" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">Status &amp; Tombol Lokal</text>
+  <text x="133" y="355" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">• LED Status (GPIO2)</text>
+  <text x="133" y="373" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">• Button Reprovision (GPIO27)</text>
+  <text x="133" y="391" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#475569">Debounce non-blocking FSM</text>
+
+  <!-- Column 2: ESP32 Firmware Core -->
+  <rect x="278" y="84" width="388" height="352" rx="12" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text x="472" y="110" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14.5" font-weight="700" fill="#134e4a">Firmware ESP32 (Connected Edge Node)</text>
+
+  <rect x="296" y="128" width="168" height="84" rx="8" fill="#ffffff" stroke="#14b8a6"/>
+  <text x="380" y="149" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a">NVS Preferences</text>
+  <text x="380" y="167" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#334155">SSID, Broker IP, tempHigh</text>
+  <text x="380" y="184" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#334155">Bertahan lintas reboot</text>
+  <text x="380" y="200" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#0f766e">Namespace: "capstone"</text>
+
+  <rect x="480" y="128" width="168" height="84" rx="8" fill="#ffffff" stroke="#14b8a6"/>
+  <text x="564" y="149" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a">SNTP + Ring Buffer</text>
+  <text x="564" y="167" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#334155">UTC Epoch / time_synced</text>
+  <text x="564" y="184" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#334155">32 slot statis (Drop-Oldest)</text>
+  <text x="564" y="200" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#0f766e">Batch drain max 4/tick</text>
+
+  <rect x="296" y="226" width="352" height="86" rx="8" fill="#ffffff" stroke="#14b8a6"/>
+  <text x="472" y="248" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">Wi-Fi STA FSM &amp; Jittered Exponential Backoff</text>
+  <text x="472" y="268" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">INIT -&gt; WIFI_CONNECT -&gt; HTTP_CONFIG -&gt; MQTT_ACTIVE -&gt; RECONNECT_WAIT</text>
+  <text x="472" y="287" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#0f766e">Full Jitter (esp_random()) mencegah badai reconnect armada node</text>
+
+  <rect x="296" y="326" width="168" height="92" rx="8" fill="#fef3c7" stroke="#d97706"/>
+  <text x="380" y="348" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#92400e">HTTP Config Client</text>
+  <text x="380" y="366" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#78350f">GET /api/v1/config/node-01</text>
+  <text x="380" y="384" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#78350f">Timeout 2500 ms + Fallback</text>
+  <text x="380" y="401" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#78350f">ke nilai NVS jika server down</text>
+
+  <rect x="480" y="326" width="168" height="92" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="564" y="348" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#14532d">MQTT Client (QoS + LWT)</text>
+  <text x="564" y="366" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#166534">PUB: .../telemetry (JSON)</text>
+  <text x="564" y="384" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#166534">RET+LWT: .../status</text>
+  <text x="564" y="401" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#166534">SUB: .../cmd (remote override)</text>
+
+  <!-- Column 3: Local LAN Services (Simulator-first + Mosquitto) -->
+  <rect x="706" y="84" width="246" height="352" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="829" y="110" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#9a3412">Server &amp; Broker Lokal (LAN)</text>
+  <rect x="724" y="128" width="210" height="86" rx="8" fill="#ffffff" stroke="#fdba74"/>
+  <text x="829" y="150" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a">HTTP Provisioning / Config</text>
+  <text x="829" y="168" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">Port 8080 (Python HTTP / REST)</text>
+  <text x="829" y="186" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">Menyediakan sample_ms &amp;</text>
+  <text x="829" y="201" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">ambang temp_high_c terkini</text>
+
+  <rect x="724" y="230" width="210" height="96" rx="8" fill="#ffffff" stroke="#fdba74"/>
+  <text x="829" y="252" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Local MQTT Broker</text>
+  <text x="829" y="270" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">Mosquitto :1883 / Loopback Test</text>
+  <text x="829" y="288" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">• Simpan Retained status</text>
+  <text x="829" y="304" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#475569">• Picu LWT "offline" jika putus</text>
+
+  <rect x="724" y="342" width="210" height="76" rx="8" fill="#ffffff" stroke="#fdba74"/>
+  <text x="829" y="364" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Subscriber &amp; Idempotent Log</text>
+  <text x="829" y="382" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#334155">Deduplikasi (dev_id, seq_id)</text>
+  <text x="829" y="399" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#0f766e">Tanpa ketergantungan cloud berbayar!</text>
+
+  <!-- Connections -->
+  <line x1="238" y1="164" x2="276" y2="164" stroke="#1d4ed8" stroke-width="2" marker-end="url(#aBlue)"/>
+  <line x1="276" y1="256" x2="238" y2="256" stroke="#0f766e" stroke-width="2" marker-end="url(#a20)"/>
+  <line x1="666" y1="170" x2="722" y2="170" stroke="#0f766e" stroke-width="2" marker-end="url(#a20)"/>
+  <line x1="666" y1="278" x2="722" y2="278" stroke="#0f766e" stroke-width="2" marker-end="url(#a20)"/>
+  <line x1="722" y1="296" x2="666" y2="368" stroke="#1d4ed8" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#aBlue)"/>
+
+  <!-- Bottom Acceptance Strip -->
+  <rect x="28" y="454" width="924" height="84" rx="10" fill="#0f172a"/>
+  <text x="490" y="480" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#f8fafc">6 Skenario Uji Penerimaan Wajib (Acceptance Test Suite)</text>
+  <text x="490" y="502" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#cbd5e1">TC-01 Cold Boot + HTTP Config | TC-02 MQTT LWT + Retained "online" | TC-03 Live JSON Telemetry | TC-04 Link Putus + Buffer + Histeresis Lokal</text>
+  <text x="490" y="521" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#94a3b8">TC-05 Reconnect + Batch Replay + Deduplikasi Idempoten | TC-06 Remote Command Threshold Override + LWT "offline" Saat Koneksi Mati Mendadak</text>
+</svg>
+

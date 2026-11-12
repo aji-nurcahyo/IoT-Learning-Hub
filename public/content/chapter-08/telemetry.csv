@@ -1,0 +1,12 @@
+point_id,ref_temp_c,raw_sensor_c,trial_group,source
+1,0.0,1.42,cal_curve,synthetic
+2,15.0,15.85,cal_curve,synthetic
+3,25.0,25.55,cal_curve,synthetic
+4,40.0,39.98,cal_curve,synthetic
+5,60.0,59.22,cal_curve,synthetic
+6,25.0,25.49,repeat_25c,synthetic
+7,25.0,25.61,repeat_25c,synthetic
+8,25.0,25.54,repeat_25c,synthetic
+9,25.0,25.58,repeat_25c,synthetic
+10,25.0,25.52,repeat_25c,synthetic
+

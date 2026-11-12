@@ -1,0 +1,79 @@
+[
+  {
+    "title": "Analog Signals, ADC, PWM & Sampling",
+    "body": "Menjembatani sinyal **analog kontinu** dan pemrosesan **digital diskrit** pada mikrokontroler: kuantisasi ADC, kendali daya PWM, dan kriteria sampling Nyquist.",
+    "notes": "Chapter ini menjadi landasan langsung bagi pengukuran sensor dan kalibrasi di Chapter 08."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 07",
+    "body": "1. **Menghitung** resolusi kuantisasi ADC ($1\\text{ LSB}$) dan ketidakpastian ideal.\n2. **Menjelaskan** atenuasi ADC ESP32, `analogReadMilliVolts()`, dan konflik `ADC2` + Wi-Fi.\n3. **Menghitung** *duty cycle*, $V_{\\text{avg}}$ PWM, dan konfigurasi `LEDC`.\n4. **Menganalisis** kriteria Nyquist, *aliasing*, dan filter *moving average*.",
+    "notes": "Pastikan mahasiswa memahami mengapa ADC2 tidak boleh dipakai untuk sensor saat Wi-Fi aktif."
+  },
+  {
+    "title": "Sampling & Kuantisasi ADC",
+    "body": "Konversi analog $\\rightarrow$ digital terdiri dari:\n1. **Sampling**: Diskritisasi waktu setiap $T_s = 1/f_s$.\n2. **Kuantisasi**: Pembulatan amplitudo ke $2^N$ level.\n\n$$\\Delta V_{\\text{LSB}} = \\frac{V_{FS}}{2^N - 1}$$\n\nUntuk 12-bit ($0\\dots 4095$) @ $3{,}30\\text{ V}$: $1\\text{ LSB} \\approx 0{,}806\\text{ mV}$, ketidakpastian ideal $\\pm 0{,}403\\text{ mV}$.",
+    "notes": "Semakin besar bit N, semakin halus langkah tegangan, namun noise listrik tetap dapat mengaburkan bit-bit terbawah."
+  },
+  {
+    "title": "Diagram: ADC, Nyquist Aliasing & PWM",
+    "body": "![Diagram sampling ADC, kuantisasi, Nyquist aliasing, dan PWM](content/chapter-07/diagram.svg)",
+    "notes": "Jelaskan ketiga panel: kurva vs tangga kuantisasi, pelipatan frekuensi aliasing, dan modulasi lebar pulsa PWM."
+  },
+  {
+    "title": "Keterbatasan Penting ADC pada ESP32 Klasik",
+    "body": "- **Atenuasi `ADC_11db`**: Dibutuhkan agar rentang ukur mendekati $\\sim 3{,}1\\text{ V}$ (referensi dasar hanya $\\sim 1{,}1\\text{ V}$).\n- **Non-linearitas**: Tidak akurat dekat $0\\text{ V}$ ($<150\\text{ mV}$) dan dekat $3{,}3\\text{ V}$ ($>3{,}1\\text{ V}$).\n- **Gunakan `analogReadMilliVolts()`**: Memakai kalibrasi *eFuse* pabrik.\n- **WAJIB pakai `ADC1` (`GPIO 32–39`)**: Unit `ADC2` bentrok dengan Wi-Fi!",
+    "fragment": "Jangan pernah meletakkan sensor analog penting di pin ADC2 jika proyek akan terhubung Wi-Fi di Level 2!",
+    "notes": "Ini salah satu jebakan paling sering dialami mahasiswa saat menggabungkan sensor analog dengan Wi-Fi/MQTT."
+  },
+  {
+    "title": "Pulse Width Modulation (PWM)",
+    "body": "PWM memvariasikan rasio waktu `HIGH` terhadap periode (*duty cycle* $D$):\n\n$$D = \\frac{t_{\\text{ON}}}{T} \\times 100\\%, \\qquad V_{\\text{avg}} = \\frac{t_{\\text{ON}}}{T} \\cdot V_{\\text{HIGH}}$$\n\n- Contoh: $D = 25\\%$ pada $3{,}3\\text{ V} \\implies V_{\\text{avg}} \\approx 0{,}825\\text{ V}$.\n- Contoh: $D = 75\\%$ pada $3{,}3\\text{ V} \\implies V_{\\text{avg}} \\approx 2{,}475\\text{ V}$.",
+    "notes": "PWM tidak menghasilkan tegangan DC murni, melainkan pulsa cepat yang dirata-ratakan oleh mata (LED) atau inersia mekanik (motor)."
+  },
+  {
+    "title": "LEDC PWM pada Arduino-ESP32 v3.x",
+    "body": "```cpp\nledcAttach(PWM_LED_PIN, 5000, 10); // 5 kHz, 10-bit (0..1023)\nledcWrite(PWM_LED_PIN, duty);     // tulis duty 0..1023\n```\n\n**Trade-off Frekuensi vs Resolusi:**\n$$f_{\\text{PWM, max}} \\approx \\frac{80\\text{ MHz}}{2^{N_{\\text{res}}}}$$\nResolusi lebih tinggi menurunkan frekuensi maksimum yang bisa dicapai.",
+    "notes": "Ingatkan perbedaan API Arduino-ESP32 v3.x (ledcAttach) vs v2.x (ledcSetup + ledcAttachPin)."
+  },
+  {
+    "title": "Kriteria Sampling Nyquist & Aliasing",
+    "body": "Syarat rekonstruksi bebas distorsi:\n$$f_s > 2 f_{\\max}$$\n\nJika $f_s < 2 f_{\\max}$, sinyal tinggi **menyamar** sebagai frekuensi rendah (*aliasing*):\n$$f_{\\text{alias}} = |f_{\\text{sig}} - k \\cdot f_s|$$",
+    "fragment": "Contoh: sinyal 60 Hz disampling pada 80 Hz terbaca sebagai gelombang 20 Hz!",
+    "notes": "Dalam praktik rekayasa, selalu ambil f_s minimal 5x sampai 10x frekuensi tertinggi yang diminati."
+  },
+  {
+    "title": "Bukti Numerik (`adc_nyquist_sim.py`)",
+    "body": "```text\n1. ADC 12-bit (V_FS=3.30 V): 4096 level, 1 LSB = 0.8059 mV\n2. Uji Moving Average (N=4) pada telemetry.csv (true=1650.0 mV):\n   Std dev mentah          : 21.32 mV\n   Std dev setelah filter  : 2.30 mV\n3. Uji Nyquist: f_sig=60 Hz, f_s=80 Hz -> f_alias = 20.0 Hz\n   Deviasi 60Hz vs -sin(20Hz): 1.41e-14\n```",
+    "notes": "Hasil nyata eksekusi Python dari outputs.md."
+  },
+  {
+    "title": "Filter Noise: Moving Average Non-Blocking",
+    "body": "```cpp\nbufSum -= mvBuffer[bufIdx];\nmvBuffer[bufIdx] = mv;\nbufSum += mv;\nbufIdx = (bufIdx + 1) % AVG_WINDOW;\nuint32_t avgMv = bufSum / sampleCount;\n```\n*Circular buffer* menghitung rata-rata $O(1)$ tanpa menunda `loop()`!",
+    "notes": "Tunjukkan efisiensi kode di ex01_adc_pwm_dimmer.ino: hanya satu pengurangan dan satu penjumlahan per sampel."
+  },
+  {
+    "title": "Praktik: Potensiometer ADC1 $\\rightarrow$ PWM LED",
+    "body": "- **Input**: Potensiometer $10\\text{ k}\\Omega$ ke `GPIO 34` (`ADC1_CH6`)\n- **Output**: `GPIO 25` (PWM $5\\text{ kHz}$, 10-bit) $\\rightarrow$ $220\\,\\Omega$ $\\rightarrow$ LED\n- Sketsa: `src/ex01_adc_pwm_dimmer.ino`\n- Simulator Wokwi: `src/wokwi_diagram.json`\n\n*(Firmware `.ino` & Wokwi berstatus Belum diuji di server ini).*",
+    "notes": "Jelaskan pentingnya clamping clampedMv = (avgMv > 3300) ? 3300 : avgMv sebelum dikalikan ke rentang PWM."
+  },
+  {
+    "title": "Mengapa Moving Average Tidak Cocok untuk Semua Sinyal?",
+    "body": "Moving average bertindak sebagai **low-pass filter**:\n- Bagus untuk sinyal lambat (suhu, cahaya, potensiometer).\n- **Menghilangkan/meredam** lonjakan cepat atau sinyal AC frekuensi tinggi.\n- Selalu sesuaikan ukuran jendela $N$ dengan laju perubahan proses fisik!",
+    "notes": "Terlalu besar N membuat respons sensor terasa lambat (lag)."
+  },
+  {
+    "title": "Troubleshooting ADC & PWM",
+    "body": "| Masalah | Penyebab | Perbaikan |\n| --- | --- | --- |\n| ADC error saat Wi-Fi aktif | Memakai pin `ADC2` | Pindah ke `ADC1` (`GPIO 32–39`) |\n| Pembacaan melompat-lompat | *Noise* & tidak difilter | Tambah *moving average* & kapasitor $0{,}1\\,\\mu\\text{F}$ |\n| LED berkedip di kamera | Frekuensi PWM terlalu rendah | Set `PWM_FREQ_HZ >= 1000` |",
+    "notes": "Kapasitor decoupling 0.1 uF di pin ADC ke GND juga sangat membantu di rangkaian fisik."
+  },
+  {
+    "title": "Worked Example: PWM LEDC 10-bit",
+    "body": "Jika `analogReadMilliVolts(34)` menghasilkan `1650 mV`:\n\n- Rasio tegangan: $1650 / 3300 = 0{,}50$\n- Duty 10-bit: $\\lfloor 0{,}50 \\times 1023 \\rfloor = 511$\n- Tegangan efektif LED: $0{,}50 \\times 3{,}3\\text{ V} = 1{,}65\\text{ V}$ pada $5\\text{ kHz}$",
+    "notes": "Membantu mahasiswa memverifikasi angka di Serial Monitor ex01_adc_pwm_dimmer.ino."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nAnda mengukur getaran kipas motor yang berputar pada $45\\text{ Hz}$ (harmonik hingga $90\\text{ Hz}$) tetapi hanya mencatat ADC setiap $10\\text{ ms}$ ($f_s = 100\\text{ Hz}$). Apakah sinyal $90\\text{ Hz}$ aman dari *aliasing*? Jika tidak, muncul di frekuensi berapa?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 08: *Sensors, Calibration & Measurement Uncertainty*.",
+    "notes": "Jawaban: Tidak aman! Karena 2*90 = 180 Hz > 100 Hz, komponen 90 Hz akan mengalami aliasing pada |90 - 100| = 10 Hz."
+  }
+]

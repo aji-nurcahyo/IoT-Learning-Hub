@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "author": "IoT Learning Hub - Chapter 12",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-pushbutton", "id": "btn_wipe", "top": 120, "left": -120, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 130, "left": 180, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led_wifi", "top": 110, "left": 250, "attrs": { "color": "blue" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:27", "btn_wipe:1.r", "red", [ "h0" ] ],
+    [ "btn_wipe:2.r", "esp:GND.1", "black", [ "v0" ] ],
+    [ "esp:25", "r1:1", "blue", [ "h0" ] ],
+    [ "r1:2", "led_wifi:A", "blue", [ "h0" ] ],
+    [ "led_wifi:C", "esp:GND.2", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
+

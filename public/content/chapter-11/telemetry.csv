@@ -1,0 +1,12 @@
+probe_id,target,protocol,rtt_ms,lost,payload_bytes,source
+1,192.168.10.1,ICMP,2.4,false,64,synthetic
+2,192.168.10.1,ICMP,2.8,false,64,synthetic
+3,192.168.10.1,ICMP,3.1,false,64,synthetic
+4,192.168.10.1,ICMP,18.6,false,64,synthetic
+5,192.168.10.1,ICMP,2.6,false,64,synthetic
+6,192.168.10.50,TCP_1883,6.2,false,120,synthetic
+7,192.168.10.50,TCP_1883,0.0,true,120,synthetic
+8,192.168.10.50,TCP_1883,7.1,false,120,synthetic
+9,192.168.10.50,TCP_1883,6.8,false,120,synthetic
+10,192.168.10.50,TCP_1883,9.5,false,120,synthetic
+

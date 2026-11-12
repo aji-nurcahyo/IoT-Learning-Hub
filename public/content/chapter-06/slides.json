@@ -1,0 +1,80 @@
+[
+  {
+    "title": "GPIO, Digital Input/Output & Debouncing",
+    "body": "Membaca input tombol mekanis dan mengendalikan *output* digital secara akurat, non-blocking, dan bebas pantulan (*debounce*).",
+    "notes": "Chapter 06 adalah praktik pertama yang menggabungkan input tombol, output LED, dan FSM dari Chapter 05."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 06",
+    "body": "1. **Mengonfigurasi** `OUTPUT`, `INPUT`, `INPUT_PULLUP`, dan `INPUT_PULLDOWN` sesuai pin ESP32.\n2. **Menjelaskan** fenomena *switch bounce* & membandingkan *software* vs *hardware debounce*.\n3. **Mengimplementasikan** *edge detection* + FSM LED non-blocking.\n4. **Membandingkan** *polling* vs *interrupt* (`IRAM_ATTR`, `volatile`).",
+    "notes": "Semua konsep diimplementasikan dalam ex01_button_debounce_fsm.ino dan ex02_interrupt_flag.ino."
+  },
+  {
+    "title": "Konfigurasi Digital I/O & Active-Low",
+    "body": "- **`INPUT_PULLUP`** mengaktifkan resistor internal ke $3{,}3\\text{ V}$:\n  - Tombol dilepas $\\rightarrow$ `HIGH` (`1`)\n  - Tombol ditekan ke `GND` $\\rightarrow$ `LOW` (`0` — *Active-Low*)\n\n**Peringatan ESP32-WROOM-32:** `GPIO 34, 35, 36, 39` **tidak memiliki** internal pull-up/pull-down!",
+    "notes": "Selalu cek datasheet pin sebelum memakai INPUT_PULLUP; GPIO 27 aman dipakai."
+  },
+  {
+    "title": "Masalah Fisik: Switch Bounce",
+    "body": "Kontak logam pada saklar memantul selama $5\\text{--}30\\text{ ms}$ saat ditekan maupun dilepas.\n\n- Tanpa *debounce*, `loop()` yang cepat menganggap **1 tekanan jari** sebagai **5–10 klik**!\n- **Level detection** (`if (btn == LOW)`) juga salah karena mengeksekusi aksi terus-menerus selama tombol ditahan.",
+    "fragment": "Kita butuh dua hal: Debounce (saring pantulan) + Edge Detection (deteksi tepi transisi saja).",
+    "notes": "Tanyakan kepada mahasiswa pengalaman menekan tombol lift atau keyboard rusak yang menghasilkan huruf ganda."
+  },
+  {
+    "title": "Waveform Bounce, Debounce & Wiring ESP32",
+    "body": "![Gelombang switch bounce, debounce 50 ms, dan wiring INPUT_PULLUP](content/chapter-06/diagram.svg)",
+    "notes": "Jelaskan panel kiri (gelombang merah memantul vs gelombang hijau stabil) dan panel kanan (wiring GPIO 27 dan GPIO 25)."
+  },
+  {
+    "title": "Software Debouncing vs Hardware RC",
+    "body": "| Metode | Cara Kerja | Catatan |\n| --- | --- | --- |\n| **Software (`millis()`)** | Reset timer tiap berubah; terima jika stabil $\\ge 50\\text{ ms}$ | Tanpa komponen tambahan; cocok untuk tombol |\n| **Hardware RC** | Resistor + Kapasitor + Schmitt trigger | Membersihkan sinyal sebelum masuk pin / ISR |",
+    "notes": "Jangan men-debounce dengan delay(50) karena memblokir tugas lain dan gagal saat pelepasan."
+  },
+  {
+    "title": "Pola Kode Debounce + Falling Edge",
+    "body": "```cpp\nif (raw != lastRaw) { lastBounceMs = now; lastRaw = raw; }\nif ((uint32_t)(now - lastBounceMs) >= 50 && raw != stableState) {\n  stableState = raw;\n  if (stableState == LOW) { /* 1x event tekan valid! */ }\n}\n```",
+    "notes": "Tunjukkan bagaimana lastBounceMs selalu di-reset setiap kali sinyal mentah berosilasi selama fase pantulan."
+  },
+  {
+    "title": "Hasil Simulasi Bounce (`debounce_sim.py`)",
+    "body": "Menguji dataset sintetis 23 sampel (`telemetry.csv`, 2 tekanan fisik ber-*bounce*):\n\n```text\n1) Naive falling-edge (tanpa debounce) : 6 kali terpicu (SALAH)\n2) Software debounce (T_db=50 ms)      : 2 kali terpicu (BENAR)\n   [PRESS #1] t=90 ms  -> LED Mode = ON\n   [PRESS #2] t=310 ms -> LED Mode = BLINK\n```",
+    "notes": "Bukti eksekusi Python nyata dari outputs.md."
+  },
+  {
+    "title": "Button-Controlled LED FSM (`ex01`)",
+    "body": "Setiap 1x *falling edge* valid menggeser mode pada `GPIO 25`:\n\n`OFF` $\\rightarrow$ `ON` $\\rightarrow$ `BLINK (250 ms)` $\\rightarrow$ `OFF`\n\nFungsi `applyLedMode(now)` berjalan terus secara non-blocking di `loop()` tanpa mengganggu pembacaan tombol.",
+    "notes": "Firmware lengkap tersedia pada src/ex01_button_debounce_fsm.ino dan siap dicoba di Wokwi (src/wokwi_diagram.json)."
+  },
+  {
+    "title": "Polling vs External Interrupt (ISR)",
+    "body": "| Aspek | Non-Blocking Polling | External Interrupt (`attachInterrupt`) |\n| --- | --- | --- |\n| Cara kerja | Cek `digitalRead()` di `loop()` | CPU melompat ke ISR saat tepi sinyal |\n| Cocok untuk | Tombol manusia (ms) | Pulsa cepat, encoder, bangun dari sleep |\n| Kompleksitas | Sederhana | Perlu aturan ketat ISR (`volatile`, `IRAM_ATTR`) |",
+    "notes": "Untuk tombol manusia biasa, polling non-blocking sering lebih bersih dan mudah di-debounce daripada ISR."
+  },
+  {
+    "title": "Aturan Emas Menulis ISR di ESP32",
+    "body": "```cpp\nvolatile bool irqTriggered = false;\nvoid IRAM_ATTR onButtonFalling() {\n  irqTriggered = true; // hanya set flag!\n}\n```\n- Wajib pakai **`IRAM_ATTR`** dan variabel **`volatile`**.\n- **DILARANG** `Serial.print()`, `delay()`, atau alokasi memori di dalam ISR!",
+    "fragment": "Cetak log dan filter debounce tetap dikerjakan di dalam loop()!",
+    "notes": "Melanggar aturan ISR pada ESP32 sering memicu Guru Meditation Error / Watchdog Reset."
+  },
+  {
+    "title": "Simulasi Wokwi: Menguji Bounce Secara Virtual",
+    "body": "Pada `src/wokwi_diagram.json`:\n- `board-esp32-devkit-c-v4`\n- `wokwi-pushbutton` dengan `\"bounce\": \"1\"` pada `GPIO 27`\n- `wokwi-led` + resistor $220\\,\\Omega$ pada `GPIO 25`\n\n*(Catatan: Firmware `.ino` dan Wokwi berstatus Belum diuji di server ini).*",
+    "notes": "Wokwi mengaktifkan switch bounce secara default sehingga sangat efektif untuk menguji kode debounce mahasiswa."
+  },
+  {
+    "title": "Troubleshooting GPIO Digital",
+    "body": "- **Mode melompat acak**: Lupa *debounce* atau salah memakai *level detection*.\n- **Pin `INPUT_PULLUP` selalu *floating***: Memakai `GPIO 34–39` tanpa resistor eksternal.\n- **ESP32 crash saat tombol ditekan**: Memakai `Serial.print` di dalam ISR atau lupa `IRAM_ATTR`.",
+    "notes": "Gunakan daftar ini untuk memeriksa kode saat praktikum."
+  },
+  {
+    "title": "Aplikasi Lapangan: Reed Switch & Alarm Pintu",
+    "body": "- **Rain gauge (tipping bucket) & flow meter**: Mengalami pantulan kontak magnetik yang perlu difilter agar jumlah curah hujan akurat.\n- **Saklar pintu kabinet BTS**: Mencegah banjir notifikasi alarm akibat getaran angin pada pintu kabinet.",
+    "notes": "Menghubungkan materi dasar GPIO ke aplikasi telekomunikasi dan monitoring lingkungan."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nMengapa memperbesar `DEBOUNCE_MS` menjadi `500 ms` buruk bagi pengalaman pengguna, sedangkan menurunkannya ke `5 ms` berisiko gagal menyaring *bounce*?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik** (Dual-Action Short/Long Press).\n- Lanjut ke Chapter 07: *Analog Signals, ADC, PWM & Sampling*.",
+    "notes": "Rentang praktis tombol mekanis adalah 20–50 ms: cukup lama melewati pantulan kontak, cukup cepat agar klik beruntun manusia tidak terbuang."
+  }
+]
+

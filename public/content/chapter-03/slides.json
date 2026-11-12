@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Electronics, Power & Hardware Safety",
+    "body": "Dasar kelistrikan **low-voltage DC** untuk merancang rangkaian sensor/aktuator yang **benar secara matematis** dan **aman bagi hardware**.\n\n- Ruang lingkup: $3{,}3\\text{ V}$ / $5\\text{ V DC}$ (tanpa AC mains)",
+    "notes": "Tekankan sejak awal bahwa kesalahan wiring fisik dapat merusak pin MCU secara permanen dalam sekejap."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 03",
+    "body": "1. **Menghitung** $V, I, R, P$ dengan Hukum Ohm & Kirchhoff.\n2. **Menentukan** resistor pembatas arus LED, *pull-up/down*, dan *voltage divider*.\n3. **Menyusun** *power budget* dan estimasi umur baterai.\n4. **Menerapkan** keselamatan *breadboard*, *DC supply*, dan *multimeter*.",
+    "notes": "Seluruh tujuan bersifat kuantitatif dan berorientasi praktik aman."
+  },
+  {
+    "title": "Empat Besaran Dasar Listrik DC",
+    "body": "| Besaran | Simbol & Unit | Makna Praktis |\n| --- | --- | --- |\n| Voltage | $V$ (Volt) | Beda potensial terhadap `GND` |\n| Current | $I$ (Ampere / mA) | Laju muatan; menentukan panas & baterai |\n| Resistance | $R$ (Ohm / $\\text{k}\\Omega$) | Hambatan arus & pembagi tegangan |\n| Power | $P$ (Watt / mW) | Energi per detik ($P = V \\cdot I$) |",
+    "notes": "Biasakan mahasiswa selalu mencantumkan satuan (V, mA, ohm, mW) pada setiap hasil perhitungan."
+  },
+  {
+    "title": "Hukum Ohm & Daya Listrik",
+    "body": "Hubungan dasar pada beban resistif:\n\n$$V = I \\cdot R, \\qquad P = V \\cdot I = I^2 R = \\frac{V^2}{R}$$\n\n- Jangan hanya menghitung nilai $\\Omega$; selalu periksa disipasi daya $P_R$ terhadap rating resistor (umumnya $0{,}25\\text{ W} = 250\\text{ mW}$).",
+    "notes": "Contoh: resistor 100 ohm yang dilewati 50 mA mendisipasikan 250 mW—sudah tepat di batas maksimum resistor 1/4 watt!"
+  },
+  {
+    "title": "Hukum Kirchhoff (KCL & KVL)",
+    "body": "**KCL (Simpul Arus)**: $\\sum I_{\\text{masuk}} = \\sum I_{\\text{keluar}}$\n- 3 LED @ $6\\text{ mA}$ pada satu pin = total $18\\text{ mA}$!\n\n**KVL (Lintasan Tegangan)**: $\\sum V = 0$\n- Pada loop LED: $V_{CC} = V_R + V_F \\implies V_R = V_{CC} - V_F$.",
+    "notes": "KCL menjelaskan mengapa menggabungkan beberapa beban paralel pada satu pin GPIO dapat melampaui batas arus pin."
+  },
+  {
+    "title": "DC Power Supply & Common Ground",
+    "body": "- Mayoritas board ESP32 menerima **5 V USB** lalu meregulasi ke **3,3 V** untuk chip.\n- **GPIO tidak toleran 5 V**: sinyal 5 V langsung dapat merusak input 3,3 V.\n- **Common `GND` wajib**: semua modul dan catu daya terhubung harus berbagi satu referensi `GND` yang sama.",
+    "fragment": "Tanpa common GND, tegangan sinyal tidak memiliki titik acuan 0 V!",
+    "notes": "Ini salah satu kesalahan troubleshooting paling sering saat menggabungkan MCU dengan catu daya eksternal."
+  },
+  {
+    "title": "Skema LED, Pull-Up & Keselamatan Multimeter",
+    "body": "![Skema LED, Pull-Up, dan Multimeter](content/chapter-03/diagram.svg)",
+    "notes": "Bahas ketiga panel secara singkat: pembatas arus LED, anti-floating pull-up, dan aturan paralel vs seri pada multimeter."
+  },
+  {
+    "title": "Menghitung Resistor Pembatas Arus LED",
+    "body": "Rumus batas minimum:\n\n$$R_{\\text{min}} = \\frac{V_{CC} - V_F}{I_{\\text{target}}}$$\n\nContoh ($V_{CC}=3{,}3\\text{ V}, V_F=2{,}0\\text{ V}, I_{\\text{target}}\\le 6\\text{ mA}$):\n- $R_{\\text{min}} = (3{,}3 - 2{,}0) / 0{,}006 = 216{,}7\\,\\Omega \\rightarrow$ pilih **$220\\,\\Omega$**\n- $I_{\\text{aktual}} = 5{,}91\\text{ mA}$, $P_R = 7{,}68\\text{ mW}$ (sangat aman).",
+    "notes": "Selalu bulatkan ke atas ke nilai resistor standar terdekat agar arus aktual tetap di bawah target."
+  },
+  {
+    "title": "Mengapa Pin Input Tidak Boleh Floating?",
+    "body": "Pin input berimpedansi tinggi tanpa referensi akan menangkap *noise* listrik $\\rightarrow$ nilai melompat acak.\n\n- **Pull-Up ($10\\text{ k}\\Omega$ ke $+3{,}3\\text{ V}$)**: Idle `HIGH`, ditekan `LOW`.\n- **Pull-Down ($10\\text{ k}\\Omega$ ke `GND`)**: Idle `LOW`, ditekan `HIGH`.",
+    "notes": "Nilai 10 kOhm umum dipakai karena cukup kuat menahan noise namun hanya menarik 0,33 mA saat tombol ditekan."
+  },
+  {
+    "title": "Voltage Divider untuk Sinyal 5 V ke 3,3 V",
+    "body": "$$V_{\\text{out}} = V_{\\text{in}} \\cdot \\frac{R_2}{R_1 + R_2}$$\n\nHasil uji skrip `electronics_calc.py`:\n- $R_1=10\\text{ k}\\Omega, R_2=15\\text{ k}\\Omega \\implies V_{\\text{out}} = 3{,}00\\text{ V}$ (**Aman**)\n- $R_1=4{,}7\\text{ k}\\Omega, R_2=10\\text{ k}\\Omega \\implies V_{\\text{out}} = 3{,}40\\text{ V}$ (**Overvoltage!**)",
+    "fragment": "Voltage divider hanya untuk sinyal impedansi tinggi, BUKAN untuk menyuplai daya modul!",
+    "notes": "Tekankan bahaya memakai voltage divider untuk menyuplai daya sensor/motor karena tegangan akan drop begitu arus ditarik."
+  },
+  {
+    "title": "Power Budget & Umur Baterai",
+    "body": "Arus rata-rata berdasarkan *duty cycle*:\n\n$$I_{\\text{avg}} = \\frac{(I_{\\text{aktif}} \\cdot t_{\\text{aktif}}) + (I_{\\text{sleep}} \\cdot t_{\\text{sleep}})}{T_{\\text{siklus}}}$$\n\nContoh (`2000 mAh`, 80% usable, aktif `80 mA` selama `3 s` tiap `300 s`, sleep `0.15 mA`):\n- $I_{\\text{avg}} = 0{,}949\\text{ mA} \\implies$ umur $\\approx 1686{,}9\\text{ jam}$ (**70,3 hari**).",
+    "notes": "Tunjukkan betapa besar pengaruh durasi aktif dan arus sleep terhadap umur baterai."
+  },
+  {
+    "title": "Breadboard: Pahami Koneksi Internalnya",
+    "body": "- **Power rails (`+` / `-`)**: Terhubung memanjang horizontal (cek apakah putus di tengah).\n- **Terminal strips (`a-e`, `f-j`)**: Terhubung 5 lubang per baris vertikal, dipisah parit tengah.\n- Jangan menancapkan dua kaki komponen yang sama pada satu baris yang sama (akan *short*!).",
+    "notes": "Pada breadboard 830 titik, garis merah/biru kadang terputus di tengah—selalu cek dengan multimeter!"
+  },
+  {
+    "title": "Prosedur Aman Menggunakan Multimeter",
+    "body": "| Pengukuran | Koneksi ke Rangkaian | Kondisi Daya |\n| --- | --- | --- |\n| **Tegangan (V)** | **Paralel** ke beban / `GND` | Hidup (ON) |\n| **Arus (mA / A)** | **Seri** (putus jalur) | Hidup (ON) |\n| **Resistansi ($\\Omega$)** | **Paralel** komponen terisolasi | **Mati (OFF)** |",
+    "fragment": "Ammeter dipasang paralel ke supply = hubung singkat langsung!",
+    "notes": "Tegaskan aturan memindahkan kembali probe merah dari terminal mA/A ke V/Ohm segera setelah selesai mengukur arus."
+  },
+  {
+    "title": "Tiga Bahaya Utama Low-Voltage DC",
+    "body": "1. **Overcurrent**: Arus melebihi rating pin GPIO ($>12\\text{--}20\\text{ mA}$) atau regulator.\n2. **Reverse Polarity**: `+VCC` dan `GND` tertukar $\\rightarrow$ regulator & IC sensor rusak.\n3. **Short Circuit**: Jalur daya bertemu `GND` langsung $\\rightarrow$ panas ekstrem, USB port laptop mati/proteksi.\n\n*Praktik awal dilarang keras menyentuh tegangan AC PLN!*",
+    "notes": "Biasakan kebiasaan 'power off sebelum ubah kabel, cek dua kali sebelum power on'."
+  },
+  {
+    "title": "Troubleshooting Cepat Rangkaian Breadboard",
+    "body": "- **Board panas / mati mendadak**: Cabut daya segera! Cek *short* antara `3V3`/`5V` dan `GND`.\n- **Button terbaca acak**: Pin input *floating*, lupa *pull-up/down*.\n- **LED redup atau tidak menyala**: Polaritas terbalik atau nilai resistor terlalu besar ($10\\text{ k}\\Omega$ bukan $220\\,\\Omega$!).",
+    "notes": "Membedakan kode warna/label 220 ohm vs 10 kOhm adalah keterampilan praktis yang wajib dilatih."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tindak Lanjut",
+    "body": "**Diskusi:**\nSeorang mahasiswa ingin menyalakan kipas DC $5\\text{ V}$ $200\\text{ mA}$ langsung dari pin GPIO ESP32 ($3{,}3\\text{ V}$). Sebutkan **tiga** alasan mengapa tindakan ini salah dan berbahaya bagi board!\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 04: *Microcontrollers, ESP32 & Development Boards*.",
+    "notes": "Tiga alasan: tegangan tidak cukup (3,3 V vs 5 V), arus 200 mA jauh melebihi batas pin GPIO, serta beban induktif kipas menghasilkan lonjakan tegangan balik (flyback)."
+  }
+]
+

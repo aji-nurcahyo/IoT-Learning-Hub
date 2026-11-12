@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f766e"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+  <rect width="960" height="540" fill="#f8fafc" rx="14"/>
+  <text x="480" y="34" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Arsitektur BLE: Peran GAP &amp; Hierarki GATT Profile</text>
+  <text x="480" y="56" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#475569">Peripheral (GATT Server ESP32) menyiarkan Advertising Packet, lalu terhubung ke Central (GATT Client)</text>
+
+  <!-- Left: GAP Central -->
+  <rect x="36" y="84" width="230" height="190" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="151" y="112" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#1e3a8a">Central (GATT Client)</text>
+  <text x="151" y="132" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#1d4ed8">Smartphone / Raspberry Pi Gateway</text>
+  <rect x="54" y="148" width="194" height="36" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="151" y="170" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#1e293b">1. Scanning Kanal 37, 38, 39</text>
+  <rect x="54" y="194" width="194" height="36" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="151" y="216" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#1e293b">2. CONNECT_IND + MTU Req</text>
+  <text x="151" y="256" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1e40af">Menginisiasi koneksi &amp; CCCD Write</text>
+
+  <!-- Right: GAP Peripheral / GATT Server -->
+  <rect x="410" y="84" width="514" height="350" rx="12" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text x="667" y="112" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#134e4a">Peripheral: ESP32 (GATT Server)</text>
+  <text x="667" y="131" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#0f766e">Advertising 2,4 GHz (40 kanal × 2 MHz; 3 Adv + 37 Data)</text>
+
+  <!-- GATT Service Box -->
+  <rect x="434" y="148" width="466" height="266" rx="10" fill="#ffffff" stroke="#14b8a6" stroke-width="1.8"/>
+  <text x="452" y="172" font-family="Segoe UI, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0f766e">Service: Environmental Sensing (UUID 0x181A)</text>
+
+  <!-- Characteristic 1 -->
+  <rect x="452" y="186" width="430" height="122" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <text x="468" y="208" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#0f172a">Characteristic 1: Temperature (UUID 0x2A6E)</text>
+  <rect x="468" y="220" width="128" height="34" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="532" y="241" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1e3a8a">Props: READ | NOTIFY</text>
+  <rect x="606" y="220" width="126" height="34" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="669" y="241" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#14532d">Value: int16 (0,01 C)</text>
+  <rect x="742" y="220" width="126" height="34" rx="6" fill="#fef3c7" stroke="#d97706"/>
+  <text x="805" y="241" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#92400e">CCCD (0x2902)</text>
+  <text x="468" y="276" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">Central menulis 0x0001 ke CCCD untuk mengaktifkan Notify (atau 0x0002 untuk Indicate).</text>
+  <text x="468" y="294" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#475569">Contoh nilai 2785 = 27,85 C (little-endian: 0xE1 0x0A).</text>
+
+  <!-- Characteristic 2 -->
+  <rect x="452" y="320" width="430" height="78" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <text x="468" y="343" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#0f172a">Characteristic 2: Sampling Interval (Custom 128-bit UUID)</text>
+  <text x="468" y="365" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">Props: READ | WRITE — Central menulis interval baru (misal 2000 ms) ke ESP32.</text>
+  <text x="468" y="383" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#475569">Tanpa descriptor CCCD karena tidak mendorong data asinkron ke Central.</text>
+
+  <!-- Arrows between Central & Peripheral -->
+  <line x1="410" y1="128" x2="268" y2="128" stroke="#0f766e" stroke-width="2.2" marker-end="url(#arr)"/>
+  <text x="339" y="118" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#0f766e">ADV_IND (31 B)</text>
+
+  <line x1="268" y1="168" x2="410" y2="168" stroke="#1d4ed8" stroke-width="2.2" marker-end="url(#arrBlue)"/>
+  <text x="339" y="159" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1d4ed8">CONNECT / MTU=247</text>
+
+  <line x1="268" y1="210" x2="410" y2="210" stroke="#1d4ed8" stroke-width="2.2" marker-end="url(#arrBlue)"/>
+  <text x="339" y="201" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1d4ed8">Write CCCD = 0x0001</text>
+
+  <line x1="410" y1="252" x2="268" y2="252" stroke="#0f766e" stroke-width="2.2" marker-end="url(#arr)"/>
+  <text x="339" y="243" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#0f766e">GATT Notify (Value)</text>
+
+  <!-- Bottom Comparison Strip -->
+  <rect x="36" y="302" width="346" height="132" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="1.6"/>
+  <text x="52" y="328" font-family="Segoe UI, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#9a3412">Parameter Kinerja &amp; Daya BLE</text>
+  <text x="52" y="352" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#431407">• Advertising Interval: 20 ms – 10,24 s (hemat daya vs latensi temu)</text>
+  <text x="52" y="372" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#431407">• Connection Interval: 7,5 ms – 4 s (unit kelipatan 1,25 ms)</text>
+  <text x="52" y="392" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#431407">• ATT MTU: Default 23 B (20 B payload) -&gt; Negosiasi hingga 247 B+</text>
+  <text x="52" y="412" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#431407">• Notify vs Indicate: Notify tanpa ATT ACK; Indicate butuh ACK</text>
+
+  <rect x="36" y="454" width="888" height="62" rx="10" fill="#0f172a"/>
+  <text x="480" y="481" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#e2e8f0">Catatan Praktik ESP32: BLE &amp; Wi-Fi berbagi radio 2,4 GHz melalui mekanisme hardware coexistence (time-slicing).</text>
+  <text x="480" y="501" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#94a3b8">Setelah Central putus koneksi, Peripheral wajib memanggil BLEDevice::startAdvertising() agar perangkat kembali terlihat.</text>
+</svg>
+

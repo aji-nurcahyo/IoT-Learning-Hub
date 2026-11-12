@@ -1,0 +1,80 @@
+[
+  {
+    "title": "HTTP, REST APIs & JSON",
+    "body": "Pertukaran data *Request–Response* berbasis standar web untuk **konfigurasi perangkat**, **pengiriman telemetry berkala**, dan **integrasi layanan REST**.",
+    "notes": "Chapter 13 membahas HTTP/REST sebelum membandingkannya dengan model publish/subscribe MQTT di Chapter 14."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 13",
+    "body": "1. **Merancang** kontrak *REST endpoint* dan payload **JSON** berunit eksplisit.\n2. **Membedakan** *HTTP Status Codes* (`2xx`, `4xx`, `5xx`, `<0`) untuk logika *retry*.\n3. **Mengimplementasikan** `HTTPClient` ESP32 dengan *timeout* & `http.end()`.\n4. **Menjelaskan** dasar **TLS/HTTPS** & risiko `setInsecure()`.",
+    "notes": "Fokus utama adalah ketahanan klien terhadap error server dan efisiensi memori MCU."
+  },
+  {
+    "title": "Anatomi HTTP Request & Response",
+    "body": "```http\nPOST /api/v1/telemetry HTTP/1.1\nHost: 192.168.10.50:8000\nContent-Type: application/json\n\n{\"device_id\":\"esp32-node-01\",\"seq\":1,\"temp_c\":28.40}\n```\nSetiap permintaan membawa **Method + Path**, **Headers**, dan **Body**.",
+    "notes": "Header Content-Type: application/json wajib agar server backend mengenali format body."
+  },
+  {
+    "title": "Metode REST pada Sistem IoT",
+    "body": "| Metode | Peran | Contoh Endpoint |\n| --- | --- | --- |\n| `GET` | Ambil konfigurasi/status | `/api/v1/devices/node-01/config` |\n| `POST` | Kirim *telemetry* baru | `/api/v1/telemetry` |\n| `PUT` | Perbarui state perangkat | `/api/v1/devices/node-01/shadow` |\n| `DELETE` | Hapus registrasi perangkat | `/api/v1/devices/node-01` |",
+    "notes": "Jelaskan konsep idempotensi pada GET/PUT/DELETE vs POST."
+  },
+  {
+    "title": "Diagram: REST JSON, Status Code & TLS",
+    "body": "![Anatomi HTTP Request Response REST JSON, kebijakan retry, dan TLS](content/chapter-13/diagram.svg)",
+    "notes": "Bahas ketiga panel: kontrak POST/GET, pohon keputusan status code, dan aturan TLS & memori MCU."
+  },
+  {
+    "title": "Kebijakan Retry Berdasarkan Status Code",
+    "body": "- **`200 / 201` (`2xx`)**: Sukses $\\rightarrow$ hapus dari antrean.\n- **`400 / 401 / 404` (`4xx`)**: Kesalahan payload/auth/URL $\\rightarrow$ **JANGAN retry!**\n- **`500 / 503` (`5xx`) & Kode `< 0` (Timeout)**: Gangguan sementara $\\rightarrow$ **Retry terbatas** dengan jeda.",
+    "fragment": "Mengulang permintaan 400 Bad Request tiap detik hanya memboroskan baterai dan bandwidth!",
+    "notes": "Salah satu kesalahan paling sering di lapangan adalah memperlakukan semua kode != 200 sebagai sinyal retry."
+  },
+  {
+    "title": "Serialisasi JSON Hemat Memori di ESP32",
+    "body": "```cpp\nchar payload[160];\nsnprintf(payload, sizeof(payload),\n  \"{\\\"device_id\\\":\\\"esp32-node-01\\\",\\\"seq\\\":%lu,\\\"temp_c\\\":%.2f}\",\n  (unsigned long)seqNum, tempC);\n```\n- Stabil di *stack*, bebas fragmentasi *heap* `String`.\n- Untuk JSON bersarang kompleks, gunakan `ArduinoJson` dengan kapasitas terukur.",
+    "notes": "Keseimbangan keterbacaan vs ukuran buffer sangat penting di RAM MCU."
+  },
+  {
+    "title": "Implementasi `HTTPClient` yang Aman",
+    "body": "```cpp\nHTTPClient http;\nhttp.setTimeout(3000); // wajib! cegah blokir lama\nhttp.begin(endpoint);\nhttp.addHeader(\"Content-Type\", \"application/json\");\nint code = http.POST((uint8_t*)payload, strlen(payload));\nhttp.end(); // wajib! bebaskan socket & buffer\n```",
+    "notes": "Menekankan dua panggilan wajib: setTimeout() sebelum request dan end() setelah selesai."
+  },
+  {
+    "title": "Hasil Uji Loopback Nyata (`http_rest_sim.py`)",
+    "body": "Server + klien Python dijalankan nyata pada `127.0.0.1`:\n\n```text\n1. POST saat server 503 sementara:\n   attempt 1: HTTP 503 -> retry -> HASIL: HTTP 201 {'accepted': True, 'seq': 1}\n2. POST tanpa 'temp_c':\n   attempt 1: HTTP 400 -> stop -> HASIL: HTTP 400 {'error': 'missing_required_fields'}\n3. GET config -> HTTP 200 {'sample_ms': 5000, 't_high_c': 30.0}\n```",
+    "notes": "Output aktual eksekusi loopback HTTP di Python (outputs.md)."
+  },
+  {
+    "title": "Trade-Off HTTP vs Protokol Pub/Sub (MQTT)",
+    "body": "| Aspek | HTTP/1.1 REST | MQTT (Ch 14) |\n| --- | --- | --- |\n| Pola | *Request–Response* | *Publish–Subscribe* |\n| Overhead per pesan | Ratusan byte *text header* | Header mulai dari **2 byte** |\n| Perintah *downlink* ke node | Sulit (harus *polling* berulang) | Instan lewat *push* Broker |\n| Cocok untuk | *Config fetch*, OTA, webhook | *Telemetry* rutin & kontrol dua arah |",
+    "notes": "Jembatan pedagogis menuju Chapter 14: mengapa IoT telemetry umumnya beralih ke MQTT."
+  },
+  {
+    "title": "Dasar Keamanan: HTTP vs HTTPS (TLS)",
+    "body": "HTTP polos mengirim *API Key* dan *payload* sebagai **teks terbuka**!\n\n**TLS/HTTPS** menyediakan:\n1. **Confidentiality** (enkripsi data)\n2. **Integrity** (anti-ubah di tengah jalan)\n3. **Authentication** (verifikasi server via **Root CA**)",
+    "fragment": "Jangan gunakan `setInsecure()` pada sistem produksi karena menonaktifkan verifikasi sertifikat server!",
+    "notes": "Ingatkan bahwa verifikasi sertifikat TLS membutuhkan waktu perangkat yang benar (NTP)."
+  },
+  {
+    "title": "Firmware `http_rest_client.ino`",
+    "body": "- Memakai pustaka bawaan `WiFi.h`, `HTTPClient.h`, `Preferences.h`.\n- `HTTP_TIMEOUT_MS = 3000`, `MAX_RETRY_5XX = 2`.\n- `shouldRetryHttp(code)` menyaring `4xx` agar tidak diulang.\n\n*(Firmware `.ino` berstatus Belum diuji di environment ini sementara toolchain ESP32 sedang dipasang).*",
+    "notes": "Merujuk langsung ke kode di src/http_rest_client/http_rest_client.ino."
+  },
+  {
+    "title": "Troubleshooting Error Klien HTTP",
+    "body": "| Error | Penyebab Umum | Solusi |\n| --- | --- | --- |\n| Kode `-1` (*Refused*) | Memakai `127.0.0.1` di ESP32 / firewall | Pakai IP LAN server & buka port |\n| `HTTP 400` berulang | JSON invalid / lupa `Content-Type` | Cek sintaks JSON & header |\n| Memori habis bertahap | Lupa `http.end()` | Panggil `http.end()` di semua jalur |\n| Handshake TLS gagal | Waktu RTC belum sinkron NTP | Sinkronkan waktu + cek Root CA |",
+    "notes": "Error negatif di HTTPClient ESP32 berasal dari lapisan transport/socket, bukan status HTTP dari server."
+  },
+  {
+    "title": "Aplikasi Nyata REST API di IoT",
+    "body": "- **Device Bootstrap**: Node baru menghubungi `GET /bootstrap` via HTTPS saat boot untuk mengambil alamat MQTT Broker dan sertifikat.\n- **Firmware OTA Update**: Mengunduh berkas `.bin` terbaru lewat `HTTPS GET`.\n- **Edge Gateway Ingestion**: Gateway mengirim *batch* ratusan pembacaan sensor sekaligus melalui satu `POST` JSON terkompresi.",
+    "notes": "Menunjukkan bahwa di sistem IoT nyata, HTTP dan MQTT saling melengkapi."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nSebuah API server mengembalikan `401 Unauthorized` karena API Key node sudah kedaluwarsa. Jika *Firmware* mencoba mengirim ulang setiap 2 detik selamanya, apa dampak terburuknya bagi perangkat dan server?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 14: *MQTT Fundamentals & Publish/Subscribe*.",
+    "notes": "Jawaban: Memboroskan baterai/kuota data perangkat dan memicu pemblokiran IP (rate-limit/ban) oleh firewall/WAF server."
+  }
+]
+

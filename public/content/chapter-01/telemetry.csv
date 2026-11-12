@@ -1,0 +1,8 @@
+device_id,seq,timestamp_utc,temp_c,humidity_pct,source
+gh-node-01,1,2026-11-01T08:00:00Z,27.4,68.2,synthetic
+gh-node-01,2,2026-11-01T08:05:00Z,28.9,65.5,synthetic
+gh-node-01,3,2026-11-01T08:10:00Z,30.6,61.0,synthetic
+gh-node-01,4,2026-11-01T08:15:00Z,31.2,59.4,synthetic
+gh-node-01,5,2026-11-01T08:20:00Z,125.0,58.0,synthetic
+gh-node-01,6,2026-11-01T08:25:00Z,29.1,63.8,synthetic
+

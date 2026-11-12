@@ -1,0 +1,11 @@
+seq_id,utc_epoch,time_synced,temp_c,temp_high_c,relay_on,buffer_depth,dropped_oldest,phase
+1,1762822800,true,27.80,30.00,false,0,0,live_online
+2,1762822805,true,28.40,30.00,false,0,0,live_online
+3,1762822810,true,29.60,30.00,false,1,0,offline_buffered
+4,1762822815,true,30.80,30.00,true,2,0,offline_buffered_hysteresis_on
+5,1762822820,true,31.20,30.00,true,3,0,offline_buffered
+6,1762822825,true,30.40,30.00,true,4,0,offline_buffered
+7,1762822830,true,29.30,30.00,true,2,0,replayed_after_reconnect
+8,1762822835,true,28.10,30.00,false,0,0,live_online_hysteresis_off
+9,1762822840,true,29.20,29.00,true,0,0,live_after_cmd_threshold_update
+

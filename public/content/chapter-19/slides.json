@@ -1,0 +1,78 @@
+[
+  {
+    "title": "Chapter 19 — Reliability, Time Sync & Offline Buffering",
+    "body": "Merancang node IoT yang tidak kehilangan data berharga ketika Wi-Fi putus dan tidak menumbangkan broker saat jaringan pulih.\n\n- **Empat Pilar**: SNTP Time Sync, Circular Ring Buffer, Full-Jitter Backoff, dan Idempotent Replay.",
+    "notes": "Tekankan pergeseran pola pikir dari 'happy path di meja lab' ke desain tangguh lapangan."
+  },
+  {
+    "title": "Masalah Timestamp Server vs Timestamp Edge",
+    "body": "- Jika jaringan putus dari `10:05` hingga `10:42`, data selama 37 menit tertunda.\n- Memberi *timestamp* di server saat pesan diterima membuat 37 menit data terlihat terjadi serentak pukul `10:42`!\n- **Aturan Emas**: Cap waktu di **perangkat (edge)** saat sampel dibaca, lalu simpan dalam **UTC Unix Epoch**.",
+    "notes": "Timestamp edge wajib ada agar grafik anomali dan korelasi cuaca/irigasi tetap valid secara kronologis."
+  },
+  {
+    "title": "SNTP Time Sync & Kejujuran Waktu Sebelum Sync",
+    "body": "```cpp\nconfigTime(0, 0, \"pool.ntp.org\", \"time.google.com\");\nbool synced = (now >= 1704067200); // Valid setelah 2024-01-01\n```\n\n- Selalu simpan **UTC (offset 0)** pada telemetri; konversi ke `WIB (UTC+7)` di *dashboard*.\n- Jika belum sinkron (`synced == false`), kirim `millis()` disertai flag eksplisit `\"time_synced\": false` — **jangan menebak atau memalsukan tanggal**!",
+    "notes": "Setelah cold boot sebelum Wi-Fi nyambung, RTC internal ESP32 berada di tahun 1970 (epoch ~0)."
+  },
+  {
+    "title": "Arsitektur Offline Buffering & Idempotent Replay",
+    "body": "![Diagram SNTP Time Sync, Ring Buffer Offline, dan Idempotent Replay](content/chapter-19/diagram.svg)\n\nPerhatikan bahwa penunjuk `head` ring buffer **hanya maju** setelah pengiriman dikonfirmasi berhasil.",
+    "notes": "Beri perhatian khusus pada alur keluar-masuk head dan tail pada ring buffer."
+  },
+  {
+    "title": "Mengapa Circular Ring Buffer Statis Lebih Aman dari String/Vector?",
+    "body": "- Alokasi dinamis berulang (`String`, `std::vector`) selama gangguan panjang dapat memecah *heap* ESP32 (*fragmentation*) hingga terjadi *crash/panic*.\n- **Fixed Ring Buffer (`struct TelemetryRecord buf[N]`)** memiliki jejak RAM konstan sejak *boot*.\n- Mengakses elemen tertua & terbaru cukup memakai aritmetika modulo `O(1)` (`(idx + 1) % N`).",
+    "notes": "Dengan ukuran struct ~24 byte, kapasitas 64 slot hanya memakan ~1,5 KB SRAM."
+  },
+  {
+    "title": "Kebijakan Luapan Buffer: Drop-Oldest vs Drop-Newest",
+    "body": "- Apa yang terjadi saat gangguan lebih lama dari kapasitas buffer $N$?\n  1. **Drop-Oldest** (*paling umum di pemantauan real-time*): Menimpa sampel paling lawas agar operator tetap mendapat kondisi terkini saat pulih.\n  2. **Drop-Newest**: Membekukan rekaman awal kejadian, menolak data baru (*jarang dipakai kecuali log forensik awal insiden*).\n- Wajib sertakan penghitung diagnostik `dropped_oldest` pada laporan status perangkat!",
+    "notes": "Penghitung dropped_oldest memberi tahu tim operasi bahwa kapasitas buffer kurang besar atau link terlalu lama putus."
+  },
+  {
+    "title": "RAM vs Flash (LittleFS / NVS) untuk Ketahanan Daya",
+    "body": "| Media Buffer | Kecepatan | Tahan Wi-Fi Putus | Tahan Mati Listrik | Risiko Utama |\n| --- | :---: | :---: | :---: | --- |\n| **SRAM Ring** | Mikrodetik | Ya | Tidak | Hilang saat *brownout/reboot* |\n| **LittleFS / Flash** | Milidetik | Ya | Ya | Keausan tulis (*flash wear*) |\n| **FRAM / microSD** | Cepat / Besar | Ya | Ya | Biaya & pin SPI tambahan |",
+    "notes": "Jangan menulis ke flash setiap detik tanpa batching; kumpulkan dulu di RAM lalu flush per N sampel atau saat krisis."
+  },
+  {
+    "title": "Masalah Thundering Herd Saat Pemulihan Jaringan",
+    "body": "- Jika **500 node** putus serentak akibat router padam, lalu semuanya memakai *backoff* tetap ($2\\text{ s}, 4\\text{ s}, 8\\text{ s}, 16\\text{ s}$):\n  - Uji [`offline_buffer_sync.py`](content/chapter-19/outputs.md): seluruh 50 node menabrak broker pada detik yang sama (`unique_delays = 1`, semua di **`16.0 s`**)!\n- Solusi **Full Jitter**:\n\n$$T_{\\text{wait}} = \\text{Uniform}\\left(0,\\; \\min(T_{\\max},\\; T_0 \\cdot 2^k)\\right)$$",
+    "notes": "Pada uji 50 node dengan full jitter di percobaan ke-3, terbentuk 50 waktu tunggu berbeda dari 0,40 s s.d. 15,99 s."
+  },
+  {
+    "title": "Batch Draining Non-Blocking & Watchdog Timer (WDT)",
+    "body": "- Jangan mengosongkan `100` data antrean dalam satu loop `while` ketat tanpa batas!\n- Pengurasan mendadak tanpa batas dapat memblokir *idle task* FreeRTOS / pemicu **Task WDT Reset** dan membanjiri soket Wi-Fi.\n- Terapkan **`MAX_DRAIN_PER_TICK`** (misal `4` item per iterasi `loop()`) agar antrean mengalir mulus sambil tetap melayani `client.loop()` MQTT.",
+    "notes": "Pola ini juga menjaga pembacaan sensor dan tombol darurat lokal tetap responsif selama replay berlangsung."
+  },
+  {
+    "title": "Idempotent Replay: Mengatasi Duplikat Saat ACK Hilang",
+    "body": "1. ESP32 mengirim `seq=5` dari `head` ring buffer.\n2. Broker menerima dan menyimpan `seq=5`, tetapi paket **`PUBACK`/`200 OK` hilang** di udara.\n3. ESP32 menganggap pengiriman gagal, tidak menggeser `head`, lalu mengirim ulang `seq=5`.\n4. Server mengecek indeks `(device_id, seq_id)`: melihat `seq=5` sudah ada $\\rightarrow$ kembalikan **`DUPLICATE_ACK`** tanpa menyisipkan baris kembar!",
+    "notes": "Ini melengkapi materi QoS 1 (at-least-once) dari Chapter 15 ke level aplikasi ujung-ke-ujung."
+  },
+  {
+    "title": "Hasil Simulasi `offline_buffer_sync.py`",
+    "body": "- **50 Node Attempt #3**: Tanpa jitter = `1` titik tabrakan (`16.0 s`); Full-jitter = **`50` titik tersebar** (`0.40 s .. 15.99 s`).\n- **Outage 6 Sampel pada Ring 4 Slot**: `buffered = 4`, **`dropped_oldest = 2`** (`seq 3, 4` tergeser oleh `seq 5..8`).\n- **Replay + Retry `seq 5`**: `try1 = STORED_ACK`, `retry_after_lost_ack = DUPLICATE_ACK` $\\rightarrow$ **`server_stored = 7`**, **`duplicates_ignored = 1`**.",
+    "notes": "Arahkan mahasiswa mengecek jejak CSV dan log pada tab Bukti & Output."
+  },
+  {
+    "title": "Implementasi ESP32: Struct Ring & RNG Hardware",
+    "body": "```cpp\nstruct TelemetryRecord {\n  uint32_t seqId; uint64_t timestamp; bool timeSynced; float tempC;\n};\nunsigned long computeJitteredBackoffMs(uint8_t attempt) {\n  uint32_t maxDelayMs = min(60000UL, 1000UL << min<uint8_t>(attempt, 5));\n  return esp_random() % (maxDelayMs + 1);\n}\n```",
+    "notes": "esp_random() menghasilkan entropy perangkat keras ESP32 tanpa perlu seed analogRead yang sering seragam antar-node."
+  },
+  {
+    "title": "Integritas Data pada `telemetry.csv`",
+    "body": "```text\nseq_id=2 | depth=0 | live\nseq_id=3..7 | depth=1..5 | buffered_offline\nseq_id=8 | depth=4 | replayed_after_reconnect\nseq_id=9 | depth=0 | live\n```\n\nPerhatikan urutan kronologis `utc_epoch` tetap utuh 10 detik per sampel meski pengiriman fisik sempat tertahan!",
+    "notes": "Lihat file telemetry.csv lengkap pada Chapter 19."
+  },
+  {
+    "title": "Common Mistakes Saat Merancang Node Tangguh",
+    "body": "- Menganggap `time(nullptr)` selalu valid tanpa mengecek `epoch >= 1704067200`.\n- Menggunakan `randomSeed(42)` statis untuk backoff sehingga seluruh armada menghasilkan urutan *jitter* identik!\n- Memajukan `head` ring buffer sebelum `client.publish()` / `HTTP POST` benar-benar mengembalikan sukses.\n- Melupakan pengurasan bertahap (`MAX_DRAIN_PER_TICK`) sehingga node reset WDT saat pulih.",
+    "notes": "randomSeed konstan adalah bug klasik yang membuat jitter gagal mencegah thundering herd."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nSebuah gudang dingin mencatat suhu tiap `30 detik` ke *SRAM Ring Buffer* berkapasitas `120` slot. Suatu malam router Wi-Fi mati selama `90 menit` tanpa putus listrik.\n1. Berapa sampel terbaru yang tersisa di buffer?\n2. Berapa nilai `dropped_oldest` yang tercatat saat jaringan pulih?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke **Chapter 20: Connected Device Capstone**!",
+    "notes": "Jawaban: 90 menit = 180 sampel. Kapasitas 120 slot -> tersisa 120 sampel terbaru, dropped_oldest = 180 - 120 = 60."
+  }
+]
+

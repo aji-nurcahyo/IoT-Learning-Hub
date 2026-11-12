@@ -1,0 +1,14 @@
+sample_idx,adc_raw_noisy,true_mv,source
+1,2032,1650.0,synthetic
+2,2088,1650.0,synthetic
+3,2015,1650.0,synthetic
+4,2064,1650.0,synthetic
+5,2042,1650.0,synthetic
+6,2095,1650.0,synthetic
+7,2018,1650.0,synthetic
+8,2058,1650.0,synthetic
+9,2029,1650.0,synthetic
+10,2076,1650.0,synthetic
+11,2039,1650.0,synthetic
+12,2061,1650.0,synthetic
+

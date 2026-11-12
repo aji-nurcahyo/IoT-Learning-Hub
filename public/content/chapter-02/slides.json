@@ -1,0 +1,85 @@
+[
+  {
+    "title": "IoT Architecture, Use Cases & System Requirements",
+    "body": "Merancang sistem IoT mulai dari **kebutuhan terukur** hingga **arsitektur berlapis** dan batas *Edge vs Cloud*.\n\n- Studi kasus utama: **Sistem Monitoring Suhu Terdistribusi**",
+    "notes": "Tekankan bahwa memilih hardware atau protokol sebelum mendefinisikan system requirements sering berujung pada desain ulang yang mahal."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 02",
+    "body": "1. **Membandingkan** *three-layer* dan *five-layer IoT architecture*.\n2. **Menyusun** *functional* dan *non-functional requirements* secara numerik.\n3. **Menentukan** *system boundaries* dan *trade-off* Edge vs Cloud.\n4. **Merancang** *use-case* & *block diagram* untuk monitoring suhu terdistribusi.",
+    "notes": "Pastikan mahasiswa tahu bahwa di akhir chapter mereka akan menyusun dokumen arsitektur dari sebuah skenario kebutuhan."
+  },
+  {
+    "title": "Mengapa 3-Layer Sering Tidak Cukup?",
+    "body": "**Three-Layer Model**: Perception $\\rightarrow$ Network $\\rightarrow$ Application\n\nKekurangan dalam rekayasa nyata:\n- Tidak memisahkan *Gateway / Edge buffering* dari jaringan murni.\n- Mengaburkan batas antara *Message Broker / Storage* dan UI aplikasi.\n- Sulit memetakan tim mana bertanggung jawab atas kegagalan data.",
+    "notes": "Model 3-layer bagus untuk pengantar, tetapi model 5-layer jauh lebih praktis untuk engineering blueprint."
+  },
+  {
+    "title": "Five-Layer IoT Architecture",
+    "body": "| Lapisan | Peran Utama |\n| --- | --- |\n| 5. Application | Dashboard, alarm SLA, pelaporan |\n| 4. Platform / Processing | Broker, validasi skema, Time-Series DB |\n| 3. Edge / Middleware | Gateway, agregasi, *offline buffer* |\n| 2. Network / Transport | BLE, LoRa, Wi-Fi, Ethernet, 4G |\n| 1. Device / Perception | Sensor, MCU, aktuator *fail-safe* |",
+    "notes": "Jelaskan aliran tanggung jawab dari bawah ke atas, dan jelaskan bahwa lapisan 3 adalah titik krusial ketahanan sistem."
+  },
+  {
+    "title": "Diagram Arsitektur 5-Lapis & Batas Edge-Cloud",
+    "body": "![Diagram arsitektur lima lapis IoT dan batas Edge vs Cloud](content/chapter-02/diagram.svg)",
+    "notes": "Arahkan perhatian mahasiswa ke kotak oranye (Edge Layer) sebagai batas yang memisahkan kendali lokal deterministik dari analitik Cloud."
+  },
+  {
+    "title": "Functional vs Non-Functional Requirements",
+    "body": "**Functional (Apa yang dikerjakan sistem)**\n- Membaca suhu tiap $5\\text{ s}$, mengirim ringkasan tiap $60\\text{ s}$, membunyikan alarm $> 8\\,^\\circ\\text{C}$.\n\n**Non-Functional (Batas kualitas terukur)**\n- *Latency*, *Power*, *Bandwidth*, *Range*, *Availability*, *Cost*.",
+    "fragment": "Kalimat 'sistem harus cepat dan hemat daya' bukanlah requirement karena tidak bisa diuji!",
+    "notes": "Latih mahasiswa mengubah kata sifat kabur ('cepat', 'tahan lama') menjadi metrik terukur ('< 50 ms', 'baterai bertahan >= 180 hari')."
+  },
+  {
+    "title": "Enam Dimensi Non-Functional Requirements",
+    "body": "| Dimensi | Pertanyaan Desain Kunci |\n| --- | --- |\n| Latency | Maksimum jeda fisik $\\rightarrow$ aksi? |\n| Power | Sumber DC tetap atau baterai? Target umur? |\n| Bandwidth | Berapa kbps / MiB per hari inklusif *overhead*? |\n| Range | Jarak & hambatan dinding/vegetasi? |\n| Availability | Apa yang terjadi saat internet putus 6 jam? |\n| Cost | Batas BOM per node & biaya langganan/bulan? |",
+    "notes": "Keenam dimensi ini saling tarik-menarik: mempercepat sampling menaikkan bandwidth dan menguras daya."
+  },
+  {
+    "title": "System Boundaries & Interface Contracts",
+    "body": "**System Boundary** memisahkan:\n- Komponen dalam kendali tim desain (Node, Firmware, Gateway, Broker).\n- Sistem eksternal di luar kendali (ISP/seluler, pasokan listrik PLN, operator manusia).\n\nSetiap batas membutuhkan **kontrak antarmuka** (format payload, timeout, retry).",
+    "notes": "Jika ISP putus di luar batas kendali kita, sistem di dalam batas kendali harus tetap aman."
+  },
+  {
+    "title": "Trade-Off: Edge vs Cloud Processing",
+    "body": "| Kriteria | Edge / Lokal | Cloud |\n| --- | --- | --- |\n| Latensi | Deterministik (ms) | Bergantung WAN (100 ms–s) |\n| Ketahanan offline | Tetap jalan | Terputus |\n| Bandwidth uplink | Rendah (agregasi) | Tinggi (data mentah) |\n| Arsip & korelasi | Terbatas memori | Skala besar multi-site |",
+    "notes": "Tekankan bukan memilih Edge ATAU Cloud secara mutlak, melainkan membagi fungsi di antara keduanya."
+  },
+  {
+    "title": "Use-Case Diagram: Monitoring Suhu",
+    "body": "```text\n+-------------------------------------------------+\n|      Sistem Monitoring Suhu Terdistribusi       |\n|  (Pantau Tren) <--------- [Operator Gudang]     |\n|  (Atur Ambang & Alert) <- [Teknisi NOC]         |\n|  (Picu Buzzer Lokal) ---> [Aktuator Lokal]      |\n+-------------------------------------------------+\n```\nMemetakan **siapa** berinteraksi dengan **fungsi apa** sebelum memilih teknologi.",
+    "notes": "Use-case diagram menjaga fokus desain pada kebutuhan pengguna dan keselamatan operasi."
+  },
+  {
+    "title": "Block Diagram Sistem",
+    "body": "```text\n[Sensor Suhu] -> [ESP32 Node] -> [Edge Gateway] -> [Cloud Platform]\n                      |                |\n                (GPIO Alarm)    (Ring Buffer)\n```",
+    "fragment": "Tulis label jenis sinyal atau protokol di setiap panah penghubung!",
+    "notes": "Block diagram adalah langkah perantara sebelum membuat schematic wiring di Chapter 03–04."
+  },
+  {
+    "title": "Model Volume Wire & Offline Buffer",
+    "body": "Memperhitungkan *payload* $B$ dan *protocol overhead* $H$:\n\n$$V_{\\text{wire/hari}} = M \\times \\frac{86400}{\\Delta t_{\\text{uplink}}} \\times (B + H)$$\n\nKapasitas *offline buffer* untuk gangguan $T_{\\text{outage}}$ jam:\n\n$$C_{\\text{buf}} = M \\times \\frac{T_{\\text{outage}} \\times 3600}{\\Delta t_{\\text{uplink}}} \\times B$$",
+    "notes": "Ingatkan untuk tidak melupakan overhead header TCP/IP/MQTT saat menghitung biaya paket data seluler."
+  },
+  {
+    "title": "Studi Kasus: 40 Node Cold-Chain",
+    "body": "Membandingkan **Opsi A (Direct-to-Cloud, $\\Delta t=5\\text{ s}$)** vs **Opsi B (Edge Aggregation, $\\Delta t=60\\text{ s}$)** melalui `requirements_budget.py`:\n\n| Metrik | Opsi A (Raw) | Opsi B (Edge Agg) |\n| --- | --- | --- |\n| Paket/hari | 691.200 | 57.600 |\n| Volume wire/hari | 134,47 MiB | 15,60 MiB (-88,4%) |\n| Buffer 6 jam | 23.625 KiB | 3.093,8 KiB |\n| Latensi darurat | 850 ms (cloud) | 25 ms (lokal) |",
+    "notes": "Angka diambil dari eksekusi model requirements_budget.py (jenis verifikasi: software model)."
+  },
+  {
+    "title": "Mengapa Ring Buffer di Edge Penting?",
+    "body": "Saat WAN terputus, *Edge Gateway* menyimpan paket ke memori lokal.\n\n- **Bahaya buffer tanpa batas**: RAM/Flash penuh $\\rightarrow$ Gateway *hang/reboot*.\n- **Solusi**: Gunakan *ring buffer* (FIFO kapasitas tetap) dengan prioritas retensi *alarm event* di atas *telemetry* rutin.",
+    "notes": "Ini contoh desain reliability yang membedakan prototipe mahasiswa dengan sistem siap lapangan."
+  },
+  {
+    "title": "Kesalahan Umum Penyusunan Arsitektur",
+    "body": "- Menulis spesifikasi tanpa satuan dan batas numerik.\n- Mengirim sampel mentah frekuensi tinggi ke Cloud padahal cukup ringkasan per menit.\n- Meletakkan *interlock* darurat di belakang koneksi internet.\n- Melupakan *overhead* protokol dalam anggaran *bandwidth*.",
+    "notes": "Minta mahasiswa memeriksa checklist ini sebelum mengumpulkan Tugas Chapter 02."
+  },
+  {
+    "title": "Diskusi & Tugas Desain Arsitektur",
+    "body": "**Pertanyaan Diskusi:**\nSebuah lahan pertanian berjarak $1{,}8\\text{ km}$ dari kantor pengelola dan ditenagai baterai surya kecil. Mengapa Wi-Fi langsung dari sensor ke kantor bukan arsitektur yang tepat?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik** (100 poin).\n- Lanjut ke Chapter 03: *Electronics, Power & Hardware Safety*.",
+    "notes": "Gunakan diskusi untuk menjembatani arsitektur sistem ke kebutuhan daya & hardware safety pada Chapter 03."
+  }
+]
+

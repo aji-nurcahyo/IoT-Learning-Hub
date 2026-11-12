@@ -1,0 +1,80 @@
+[
+  {
+    "title": "MQTT QoS, Sessions, Retained Messages & Last Will",
+    "body": "Mengatur **tingkat keandalan pengiriman** (QoS 0/1/2), **status perangkat otomatis** (Retained & LWT), serta manajemen **Sesi & Reconnect** pada MQTT 3.1.1 dan 5.0.",
+    "notes": "Chapter 15 memperdalam aspek reliabilitas protokol setelah Chapter 14 membahas dasar Pub/Sub."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 15",
+    "body": "1. **Membandingkan** *QoS 0, 1, dan 2* beserta *trade-off* paket dan memorinya.\n2. **Merancang** penanganan duplikasi (*idempotency*) pada QoS 1.\n3. **Mengonfigurasi** *Retained Messages*, *Keepalive*, dan *Last Will (LWT)*.\n4. **Membedakan** perilaku *Session* & fitur **MQTT 5.0** vs **3.1.1**.",
+    "notes": "Tekankan bahwa tidak semua aplikasi membutuhkan QoS 2; pemilihan QoS adalah keputusan rekayasa."
+  },
+  {
+    "title": "Tiga Tingkat Quality of Service (QoS)",
+    "body": "| QoS | Jaminan | Paket / Pesan | Risiko / Trade-off |\n| --- | --- | --- | --- |\n| **0** | *At most once* | `1` (`PUBLISH`) | Pesan bisa hilang jika jaringan putus |\n| **1** | *At least once* | `2` (`PUBLISH`, `PUBACK`) | Pasti sampai, tetapi **bisa duplikat** (`DUP=1`) |\n| **2** | *Exactly once* | `4` (`PUBREC`, `PUBREL`, `PUBCOMP`) | Nol duplikat, tetapi latensi & RAM tinggi |",
+    "notes": "Ingatkan: QoS pengiriman ke Subscriber adalah min(QoS_publish, QoS_subscribe) dan berlaku per-hop."
+  },
+  {
+    "title": "Diagram: QoS 0/1/2, Retained & Last Will",
+    "body": "![Perbandingan aliran paket MQTT QoS 0, 1, 2 serta Retained Message dan LWT](content/chapter-15/diagram.svg)",
+    "notes": "Gunakan panel kiri untuk handshake QoS dan panel kanan untuk siklus hidup status online/offline."
+  },
+  {
+    "title": "Mengapa QoS 1 Bisa Menghasilkan Duplikat?",
+    "body": "1. Node mengirim `PUBLISH (PacketId=11)` ke Broker.\n2. Broker menerima pesan & meneruskannya ke Subscriber.\n3. Broker mengirim `PUBACK (11)`, **tetapi paket ACK hilang di Wi-Fi**!\n4. Node tidak terima `PUBACK` $\\rightarrow$ kirim ulang `PUBLISH (PacketId=11, DUP=1)`.\n5. Subscriber menerima pesan ke-11 **dua kali**!",
+    "fragment": "Solusi: Sertakan `seq` unik dan abaikan `seq` yang sudah pernah diproses (idempoten)!",
+    "notes": "Menggabungkan QoS 1 + deduplikasi seq memberikan keandalan tinggi dengan biaya hanya 2 paket."
+  },
+  {
+    "title": "Keterbatasan `PubSubClient` vs `esp-mqtt`",
+    "body": "- **`PubSubClient` (Arduino populer)**: mendukung `LWT`, `retain`, `subscribe` QoS 0 & 1, namun `publish()` **hanya mendukung QoS 0**.\n- **`esp-mqtt` (ESP-IDF / wrapper)**: mendukung penuh **QoS 0, 1, dan 2** (*outbox queue*), TLS, serta **MQTT 5.0**.\n\nSelalu periksa kemampuan *library* sebelum menjanjikan QoS 1/2 di laporan proyek!",
+    "notes": "Banyak mahasiswa menulis 'publish QoS 2' di laporan padahal PubSubClient hanya mem-publish QoS 0."
+  },
+  {
+    "title": "Retained Messages: Status Instan untuk Subscriber Baru",
+    "body": "- Dengan `retain = true`, Broker menyimpan **1 pesan terakhir** per topic.\n- Dashboard yang baru dibuka langsung menerima status terkini (`{\"state\":\"online\"}`) tanpa menunggu siklus kirim berikutnya.\n- **Hapus retained**: publish payload kosong `\"\"` dengan `retain = true`.",
+    "fragment": "DILARANG memasang retain=true pada topic perintah (cmd/pump) — pompa bisa menyala sendiri tiap board reboot!",
+    "notes": "Ini salah satu jebakan paling berbahaya pada aktuator fisik."
+  },
+  {
+    "title": "Keepalive & Last Will and Testament (LWT)",
+    "body": "1. Node mendaftarkan pesan wasiat (**LWT**) saat `CONNECT`: `status = offline (retain=true)`.\n2. Setelah terhubung, node mengirim `status = online (retain=true)`.\n3. Node menjaga koneksi dengan **`PINGREQ` / `PINGRESP`** sesuai *keepalive* (mis. `30 s`).\n4. Jika node mati mendadak $> 1{,}5 \\times \\text{keepalive}$ ($45\\text{ s}$) **tanpa `DISCONNECT`**, Broker mem-publish LWT!",
+    "notes": "Jika node memanggil mqtt.disconnect() dengan sopan, Broker membuang LWT dan tidak mem-publishnya."
+  },
+  {
+    "title": "Hasil Simulasi QoS, Dedup & LWT (`mqtt_qos_lwt_sim.py`)",
+    "body": "```text\nQoS 0: 1 paket | QoS 1: 2 paket | QoS 2: 4 paket\n[DB INSERT ] seq=11 dup=False temp_c=29.3 C\n[DEDUP DROP] seq=11 dup=True sudah pernah diproses!\n1) Node konek -> retained['status'] = {\"state\":\"online\"}\n3) Diam 46s (> 45s) -> Broker picu LWT: {\"state\":\"offline\",\"reason\":\"lwt\"}\n```",
+    "notes": "Output aktual eksekusi Python dari outputs.md."
+  },
+  {
+    "title": "Persistent Session & Pola Reconnect",
+    "body": "- **`cleanSession = true`**: Sesi bersih; saat putus semua langganan hilang $\\rightarrow$ **wajib panggil `subscribe()` ulang** setiap kali reconnect!\n- **`cleanSession = false`**: Broker menyimpan daftar *subscribe* & pesan QoS 1/2 selama node *offline* (butuh `clientId` tetap sama).",
+    "notes": "Lupa re-subscribe saat cleanSession=true membuat perangkat kehilangan kemampuan menerima perintah setelah Wi-Fi sempat putus."
+  },
+  {
+    "title": "MQTT 3.1.1 vs MQTT 5.0",
+    "body": "| Fitur | MQTT 3.1.1 | MQTT 5.0 |\n| --- | --- | --- |\n| Kedaluwarsa Sesi | Tidak ada (selamanya jika `false`) | **`Session Expiry Interval`** (detik) |\n| Alasan Error | Kode minimal di `CONNACK` | **Reason Codes** rinci di tiap ACK |\n| Efisiensi Topic | String topic penuh tiap kirim | **Topic Aliases** (ID angka 2-byte) |\n| Load Balancing | Tidak standar | **Shared Subscriptions** (`$share/...`) |",
+    "notes": "MQTT 5.0 semakin menjadi standar pada platform modern karena Session Expiry mencegah broker penuh oleh klien mati permanen."
+  },
+  {
+    "title": "Implementasi ESP32 (`mqtt_lwt_retained.ino`)",
+    "body": "```cpp\nmqtt.setKeepAlive(30);\nmqtt.connect(CLIENT_ID, nullptr, nullptr,\n             TOPIC_STATUS, 1, true, \"{\\\"state\\\":\\\"offline\\\"}\", true);\nmqtt.publish(TOPIC_STATUS, \"{\\\"state\\\":\\\"online\\\"}\", true);\nmqtt.subscribe(TOPIC_CMD, 1);\n```\n*(Firmware `.ino` berstatus Belum diuji sementara core ESP32 sedang dipasang).*",
+    "notes": "Menunjukkan sintaks argumen connect() pada PubSubClient secara eksplisit."
+  },
+  {
+    "title": "Kesalahan Umum Implementasi MQTT Lanjut",
+    "body": "1. Menaruh `retain=true` pada topic perintah aktuator.\n2. Menyetel `keepalive` terlalu singkat ($2\\text{ s}$) di jaringan nirkabel ber-jitter tinggi.\n3. Mengira `QoS 2` menjamin *end-to-end* hingga penulisan ke *database* selesai.\n4. Lupa memanggil `subscribe()` ulang pada blok reconnect ketika `cleanSession=true`.",
+    "notes": "Gunakan daftar kesalahan ini untuk meninjau rancangan tugas mahasiswa."
+  },
+  {
+    "title": "Aplikasi Nyata: Pengawasan Armada & Alarm",
+    "body": "- **Status Kesehatan BTS (`retained + LWT`)**: Operator NOC langsung melihat node mana yang `online` dan mana yang `offline` akibat listrik padam tanpa menunggu *timeout* manual.\n- **Perintah Kalibrasi / Reset (`QoS 1 + cmd_seq`)**: Memastikan perintah penting diterima dan hanya dieksekusi sekali.",
+    "notes": "Menghubungkan fitur protokol MQTT dengan sistem pemantauan keandalan tinggi."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nSebuah aplikasi kontrol pintu pagar berlangganan `gate/01/cmd` dengan `QoS 1`. Jika pengirim tidak sengaja mengirim perintah `\"TOGGLE\"` dengan `retain=true`, apa yang terjadi setiap kali ESP32 pintu mengalami *brownout reset*?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 16: *UART, I2C & SPI*.",
+    "notes": "Jawaban: Setiap kali ESP32 reboot dan men-subscribe gate/01/cmd, Broker akan langsung mengirimkan ulang pesan retained 'TOGGLE', sehingga pagar terbuka/tertutup sendiri!"
+  }
+]
+

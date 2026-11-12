@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Introduction to the Internet of Things",
+    "body": "Dari perangkat terhubung sederhana menuju ekosistem **Internet of Things** yang terukur, aman, dan andal.\n\n- Fokus: Alur data dua arah (*uplink* & *downlink*)\n- Konteks: Telekomunikasi, *smart agriculture*, dan *environmental monitoring*",
+    "notes": "Buka perkuliahan dengan menekankan bahwa IoT bukan sekadar memasang modul Wi-Fi ke mikrokontroler, melainkan merancang aliran data end-to-end."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 01",
+    "body": "1. **Membedakan** Embedded System, CPS, dan IoT berdasarkan aliran data.\n2. **Memetakan** peran Sensor, MCU, Actuator, Gateway, dan Platform.\n3. **Menelusuri** alur *uplink telemetry* dan *downlink command*.\n4. **Mengevaluasi** tantangan *scalability*, *security*, *interoperability*, dan *reliability*.",
+    "notes": "Pastikan mahasiswa memahami kata kerja operasional yang akan diuji pada latihan dan tugas."
+  },
+  {
+    "title": "Evolusi Internet Menuju Connected Things",
+    "body": "| Fase | Fokus | Pola Data |\n| --- | --- | --- |\n| Internet of Documents | Web statis & berkas | Manusia mengakses server |\n| Internet of People | Komunikasi & media sosial | Konten oleh & untuk manusia |\n| M2M Klasik | Otomasi titik-ke-titik | Tertutup dalam satu vendor |\n| **Internet of Things** | **Ekosistem IP & terbuka** | **Telemetry + analitik + kontrol** |",
+    "notes": "Tekankan perbedaan M2M tertutup (misalnya telemetry industri proprietary) dengan IoT modern berbasis standar terbuka."
+  },
+  {
+    "title": "Apa yang Membuat Sistem Disebut IoT?",
+    "body": "Sebuah objek fisik (*Thing*) menjadi bagian dari ekosistem IoT apabila memiliki:\n\n- **Observasi / Aksi fisik** (*Sensor* dan/atau *Actuator*)\n- **Komputasi lokal** (*Microcontroller / Embedded System*)\n- **Konektivitas jaringan** berbasis standar komunikasi\n- **Integrasi platform** untuk penyimpanan, analitik, atau keputusan",
+    "fragment": "Konektivitas tanpa konteks data dan pemantauan keandalan belum membentuk sistem IoT yang baik.",
+    "notes": "Gunakan pertanyaan pancingan: apakah lampu bluetooth yang hanya dikontrol dari jarak 3 meter tanpa logging termasuk IoT penuh?"
+  },
+  {
+    "title": "Embedded System vs IoT vs CPS",
+    "body": "| Aspek | Embedded Mandiri | IoT | CPS |\n| --- | --- | --- | --- |\n| Fokus | Fungsi spesifik lokal | Distribusi data & layanan | Dinamika *closed-loop* fisik |\n| Jaringan | Opsional | Wajib | Sering ada, bukan satu-satunya tujuan |\n| Ketepatan waktu | Tergantung aplikasi | Latensi bervariasi | Ketat terhadap proses fisik |",
+    "notes": "Berikan contoh irisan: sistem irigasi presisi adalah embedded + CPS (kontrol loop tertutup) + IoT (telemetry ke cloud)."
+  },
+  {
+    "title": "Enam Komponen Ekosistem IoT",
+    "body": "1. **Sensor**: Mengubah besaran fisik menjadi sinyal listrik.\n2. **Embedded Node (MCU)**: Sampling, pemfilteran, dan pemaketan data.\n3. **Actuator**: Mengubah sinyal listrik menjadi aksi fisik.\n4. **Connectivity**: Media transmisi (BLE, Wi-Fi, LoRa, Seluler).\n5. **Gateway**: Jembatan protokol lokal ke jaringan IP & *buffering*.\n6. **Platform & Application**: Broker, *Time-Series DB*, dashboard, dan aturan.",
+    "notes": "Jelaskan bahwa tidak semua skenario butuh gateway terpisah (misal ESP32 via Wi-Fi langsung ke router), namun pemahaman perannya krusial."
+  },
+  {
+    "title": "Alur Data End-to-End (Conceptual Flow)",
+    "body": "![Diagram alur data end-to-end sistem IoT](content/chapter-01/diagram.svg)",
+    "notes": "Tunjukkan dua arah panah: Uplink (Telemetry dari kiri ke kanan) dan Downlink (Command dari aplikasi kembali ke actuator). Tegaskan ini diagram blok, bukan wiring."
+  },
+  {
+    "title": "Uplink Telemetry vs Downlink Command",
+    "body": "**Uplink (Telemetry Path)**\n- Sensor $\\rightarrow$ MCU $\\rightarrow$ Gateway $\\rightarrow$ Platform $\\rightarrow$ Aplikasi\n- Membawa hasil ukur berkala atau peristiwa (*event*)\n\n**Downlink (Control Path)**\n- Aplikasi $\\rightarrow$ Broker/Gateway $\\rightarrow$ MCU $\\rightarrow$ Actuator\n- Membawa perubahan *setpoint*, jadwal, atau perintah ON/OFF",
+    "fragment": "Kegagalan komunikasi downlink tidak boleh membuat actuator berada pada kondisi berbahaya.",
+    "notes": "Diskusikan pentingnya fail-safe state di level lokal bila perintah downlink terlambat atau hilang."
+  },
+  {
+    "title": "Struktur Payload Telemetry yang Baik",
+    "body": "```json\n{\n  \"device_id\": \"gh-node-01\",\n  \"seq\": 3,\n  \"temp_c\": 30.6,\n  \"humidity_pct\": 61.0,\n  \"source\": \"synthetic\"\n}\n```\n\nSertakan identitas unik, nomor urut (`seq`), dan satuan eksplisit (`_c`, `_pct`).",
+    "notes": "Jelaskan mengapa 'temp: 30.6' berbahaya tanpa satuan (Celsius vs Fahrenheit) dan mengapa 'seq' membantu mendeteksi packet loss."
+  },
+  {
+    "title": "Estimasi Beban Data Harian",
+    "body": "Jika node mengirim $B$ byte setiap $\\Delta t$ detik sepanjang 86.400 detik:\n\n$$N_{\\text{hari}} = \\frac{86400}{\\Delta t}, \\qquad V_{\\text{hari}} = N_{\\text{hari}} \\times B$$\n\nLaju bit rata-rata aplikasi:\n\n$$R_{\\text{avg}} = \\frac{B \\times 8}{\\Delta t} \\text{ bps}$$",
+    "notes": "Ingatkan mahasiswa bahwa rumus ini baru menghitung payload aplikasi, belum termasuk header TCP/IP/MAC dan retransmisi."
+  },
+  {
+    "title": "Worked Example: Smart Greenhouse (25 Node)",
+    "body": "Diketahui $25$ node mengirim $B = 110\\text{ byte}$ setiap $\\Delta t = 60\\text{ s}$:\n\n- Paket per node: $86400 / 60 = 1440\\text{ paket/hari}$\n- Total paket jaringan: $25 \\times 1440 = 36.000\\text{ paket/hari}$\n- Volume total payload: $36.000 \\times 110\\text{ B} \\approx 3{,}78\\text{ MiB/hari}$\n- Laju rata-rata total: $\\approx 366{,}7\\text{ bps}$",
+    "fragment": "Apa yang terjadi jika 25 node mengirim pada detik yang persis sama? Terjadi burst dan collision!",
+    "notes": "Ajak mahasiswa memikirkan jitter/random offset agar pengiriman 25 node tidak bertabrakan pada detik ke-0."
+  },
+  {
+    "title": "Simulasi Validasi Gateway (Path A)",
+    "body": "Pada `iot_flow_demo.py`, Gateway memeriksa kelayakan fisik sebelum meneruskan paket:\n\n- `seq=3, temp_c=30.6` $\\rightarrow$ `PLATFORM OK` $\\rightarrow$ `FAN_ON`\n- `seq=5, temp_c=125.0` $\\rightarrow$ **`GATEWAY DROP`** (di luar $-40\\dots 85\\,^\\circ\\text{C}$)\n\nValidasi awal mencegah data rusak memicu aktuasi keliru.",
+    "notes": "Ini output aktual dari skrip Python dengan dataset sintetis telemetry.csv (status: software verified)."
+  },
+  {
+    "title": "Aplikasi Nyata Lintas Bidang",
+    "body": "- **Telekomunikasi**: Pemantauan suhu kabinet BTS & tegangan baterai cadangan.\n- **Smart Agriculture**: Kelembaban tanah & kontrol irigasi rumah kaca.\n- **Environmental Monitoring**: Kualitas udara ($PM_{2.5}$) & tinggi muka air sungai.\n- **Industri**: Deteksi getaran motor untuk *predictive maintenance*.",
+    "notes": "Soroti contoh telekomunikasi (kabinet BTS ITERA / daerah terpencil) sebagai penghubung relevan dengan bidang teknik elektro & telekomunikasi."
+  },
+  {
+    "title": "Empat Tantangan Rekayasa IoT",
+    "body": "1. **Scalability**: Sistem lancar di 2 node, macet di 500 node.\n2. **Security**: Hindari *hardcoded credential* & komunikasi *plaintext* (rujuk NISTIR 8259).\n3. **Interoperability**: Standarisasi format pesan dan satuan.\n4. **Reliability**: Tangani *packet loss*, *power drop*, dan *fail-safe state*.",
+    "notes": "Gunakan pendekatan studi kasus: kesalahan kecil pada keamanan satu node dapat menjadi pintu masuk ke seluruh jaringan."
+  },
+  {
+    "title": "Kesalahan Umum Pemula",
+    "body": "- Menganggap perangkat Wi-Fi tanpa validasi & monitoring sebagai sistem IoT utuh.\n- Mengirim angka mentah tanpa satuan dan penanda urutan (`seq`).\n- Bergantung 100% pada koneksi cloud untuk kontrol keselamatan lokal.\n- Mengabaikan efek skala pada frekuensi pengiriman data ($\\Delta t$ terlalu kecil).",
+    "notes": "Tekankan bahwa Chapter 02 akan memperdalam cara menuangkan batas-batas ini menjadi System Requirements formal."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tindak Lanjut",
+    "body": "**Diskusi Kelas:**\nSebuah sensor tinggi muka air sungai kehilangan koneksi seluler selama 30 menit saat hujan deras. Apa yang seharusnya dilakukan **Embedded Node** dan **Gateway**?\n\n- Latihan & Tugas: Kerjakan di tab **Exercises** dan **Tugas & Rubrik**.\n- Lanjut ke Chapter 02: *IoT Architecture & System Requirements*.",
+    "notes": "Akhiri sesi dengan diskusi terbuka mengenai local buffering dan lokal alarm/fail-safe ketika jaringan backhaul terputus."
+  }
+]
+

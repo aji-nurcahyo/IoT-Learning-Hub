@@ -1,0 +1,84 @@
+[
+  {
+    "title": "Wi-Fi Connectivity & Device Provisioning",
+    "body": "Menghubungkan ESP32 ke jaringan Wi-Fi secara **aman** (tanpa password di kode), **non-blocking**, dan **tahan gangguan** melalui *NVS provisioning* dan *exponential backoff*.",
+    "notes": "Chapter 12 mengakhiri praktik menanam password Wi-Fi secara hardcoded di sketch Arduino."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 12",
+    "body": "1. **Mengonfigurasi** `WIFI_STA` dengan DHCP vs Static IP.\n2. **Merancang** *Device Provisioning* berbasis **NVS (`Preferences`)**.\n3. **Mengimplementasikan** *connection state machine* + *exponential backoff*.\n4. **Mendiagnosis** `RSSI`, kanal 2,4 GHz, konflik `ADC2`, & keamanan Wi-Fi.",
+    "notes": "Ingatkan keterkaitan langsung dengan Chapter 07 (ADC1 vs ADC2) dan Chapter 05 (FSM millis)."
+  },
+  {
+    "title": "Mengapa Hardcoded Credentials & Blocking Loop Berbahaya?",
+    "body": "**Anti-Pattern Pemula:**\n```cpp\nWiFi.begin(\"WifiSaya\", \"PasswordAsli123\"); // bocor ke Git!\nwhile (WiFi.status() != WL_CONNECTED) { delay(500); } // CPU beku!\n```\n- Password bocor saat kode dibagikan.\n- Perangkat tidak bisa dipindah ke jaringan lain tanpa *flash* ulang.\n- Jika router mati, sistem kendali lokal ikut *hang*.",
+    "notes": "Gunakan contoh ini sebagai motivasi utama mempelajari provisioning dan FSM."
+  },
+  {
+    "title": "Mode Wi-Fi ESP32 (2,4 GHz 802.11 b/g/n)",
+    "body": "- **`WIFI_STA` (Station)**: ESP32 sebagai klien router/AP (mode operasional).\n- **`WIFI_AP` (SoftAP)**: ESP32 membuat hotspot sendiri untuk setup awal.\n- **`WIFI_AP_STA`**: Keduanya aktif sekaligus saat *provisioning*.\n\n*Catatan*: ESP32 klasik **tidak mendukung 5 GHz**!",
+    "notes": "Banyak mahasiswa gagal menghubungkan ESP32 ke hotspot ponsel 5 GHz karena tidak mengaktifkan mode kompatibilitas 2,4 GHz."
+  },
+  {
+    "title": "Perbandingan Metode Device Provisioning",
+    "body": "| Metode | Mekanisme | Kelebihan |\n| --- | --- | --- |\n| **Serial CLI** | `PROV:<ssid>,<pass>` via UART $\\rightarrow$ NVS | Ringan, tanpa web server di MCU |\n| **SoftAP Portal** | Hotspot sementara + form web lokal | Ramah pengguna via browser HP |\n| **BLE Provisioning** | Kirim kredensial via BLE GATT | Koneksi internet HP tidak terputus |",
+    "notes": "Pada firmware contoh Chapter 12 kita memakai Serial CLI + Preferences agar kode fokus dan mudah diaudit."
+  },
+  {
+    "title": "Menyimpan Kredensial di NVS (`Preferences.h`)",
+    "body": "```cpp\nprefs.begin(\"wifi_cfg\", false);\nprefs.putString(\"ssid\", ssid);\nprefs.putString(\"pass\", pass);\nprefs.end();\n```\n- Data tersimpan di partisi Flash **NVS** (*persisten* saat reset/mati listrik).\n- Wajib sediakan mekanisme **factory wipe** (`WIPE` / tombol `GPIO 27`).\n- **Redaksi password** pada setiap log Serial!",
+    "notes": "Ingatkan bahwa prefs.begin(ns, true) membuka mode read-only sedangkan false membuka read-write."
+  },
+  {
+    "title": "Diagram: Provisioning & Connection State Machine",
+    "body": "![State machine konektivitas Wi-Fi ESP32, NVS provisioning, dan backoff](content/chapter-12/diagram.svg)",
+    "notes": "Telusuri 4 state: PROVISIONING, CONNECTING (timeout 10s), CONNECTED (reset backoff), dan BACKOFF_WAIT."
+  },
+  {
+    "title": "Exponential Backoff: Mencegah Badai Reconnect",
+    "body": "$$t_{\\text{backoff}}(k) = \\min\\left(t_{\\min} \\cdot 2^{k}, \\; t_{\\max}\\right)$$\n\n- Urutan ($t_{\\min}=1\\text{ s}, t_{\\max}=60\\text{ s}$): `1s -> 2s -> 4s -> 8s -> 16s -> 32s -> 60s`.\n- Jika 100 node menyala serentak saat router belum siap, *backoff* mencegah membanjiri AP dengan paket otentikasi terus-menerus.",
+    "fragment": "Reset backoff kembali ke 1 detik hanya setelah koneksi benar-benar CONNECTED!",
+    "notes": "Konsep ini akan diperluas lagi di Chapter 19 dengan penambahan random jitter."
+  },
+  {
+    "title": "Verifikasi State Machine (`wifi_fsm_sim.py`)",
+    "body": "```text\n[BOOT ] NVS kosong -> state=PROVISIONING\n[PROV ] Disimpan ke NVS: ssid=Lab-IoT-24G, pass=REDACTED\n[RETRY #1] timeout 10000 ms -> BACKOFF_WAIT 1000 ms\n...\n[RETRY #7] timeout 10000 ms -> BACKOFF_WAIT 60000 ms\n[CONN ] state=CONNECTED, RSSI=-58 dBm, backoff_reset=1000 ms\n```",
+    "notes": "Bukti eksekusi Python nyata dari outputs.md."
+  },
+  {
+    "title": "DHCP vs Static IP (`WiFi.config`)",
+    "body": "| Aspek | DHCP (Default) | Static IP |\n| --- | --- | --- |\n| Konfigurasi | Otomatis dari router | Manual (`IP, GW, Mask, DNS`) |\n| Risiko konflik | Sangat rendah (dikelola server) | Tinggi jika tidak dicatat |\n| Kecepatan konek | $+1\\text{--}2\\text{ s}$ untuk negosiasi DHCP | Lebih cepat (baik untuk *deep sleep*) |",
+    "notes": "DHCP Reservation di router sering menjadi kompromi terbaik untuk lab kampus."
+  },
+  {
+    "title": "Diagnostik Wi-Fi: RSSI & Kanal 2,4 GHz",
+    "body": "- **`WiFi.RSSI()`**:\n  - $> -65\\text{ dBm}$: Sinyal kuat & stabil\n  - $-75 \\dots -85\\text{ dBm}$: Lemah, rawan *retransmission*\n  - $< -88\\text{ dBm}$: Kritis / sering putus\n- **Kanal 2,4 GHz**: Hanya **1, 6, dan 11** yang tidak saling tumpang tindih!",
+    "notes": "Selain RSSI, antena PCB ESP32 sensitif terhadap halangan logam dan penutup aluminium."
+  },
+  {
+    "title": "Ingat Konflik Perangkat Keras: Wi-Fi vs ADC2!",
+    "body": "Saat `WiFi.begin()` aktif pada **ESP32 klasik (WROOM-32)**:\n- Unit **`ADC2`** (`GPIO 0, 2, 4, 12–15, 25–27`) **dipakai oleh driver Wi-Fi**.\n- Pembacaan analog pada pin `ADC2` akan gagal / mengembalikan error.\n- **Solusi**: Sensor analog wajib dipasang di **`ADC1` (`GPIO 32–39`)**.",
+    "notes": "Pengingat penting karena pada Level 2 mahasiswa mulai menggabungkan sensor Level 1 dengan Wi-Fi."
+  },
+  {
+    "title": "Keamanan Koneksi Wi-Fi IoT",
+    "body": "1. Gunakan minimal **WPA2-PSK** (atau **WPA3-SAE**); hindari AP terbuka.\n2. Jangan commit password atau screenshot konfigurasi sensitif ke Git.\n3. Sediakan tombol/perintah *wipe* sebelum membuang atau memindahtangankan perangkat.\n4. Untuk produksi sensitif: aktifkan **Flash Encryption** agar isi NVS tidak bisa dibaca lewat kabel serial.",
+    "notes": "Merujuk prinsip NISTIR 8259A mengenai manajemen kredensial dan perlindungan data tersimpan."
+  },
+  {
+    "title": "Implementasi Firmware (`wifi_prov_fsm.ino`)",
+    "body": "- Memakai `WiFi.h` (`WIFI_STA`, `setAutoReconnect(false)`) & `Preferences.h`.\n- Perintah Serial: `PROV:<ssid>,<pass>` dan `WIPE`.\n- Tombol *wipe* pada `GPIO 27` (`INPUT_PULLUP`), LED status pada `GPIO 25`.\n\n*(Firmware `.ino` berstatus Belum diuji di environment ini sementara toolchain ESP32 sedang dipasang).*",
+    "notes": "Jelaskan alasan setAutoReconnect(false) adalah agar FSM kita sendiri yang mengontrol timeout dan backoff secara transparan."
+  },
+  {
+    "title": "Troubleshooting Wi-Fi ESP32",
+    "body": "| Gejala | Kemungkinan Penyebab | Pemeriksaan |\n| --- | --- | --- |\n| SSID tidak terlihat | Router hanya aktif di 5 GHz | Aktifkan pita 2,4 GHz |\n| Terhubung lalu langsung putus | Password salah / RSSI $<-88\\text{ dBm}$ | Cek password, dekatkan AP |\n| IP `0.0.0.0` atau `169.254.x.x` | Router kehabisan pool DHCP | Cek DHCP server / coba Static IP |",
+    "notes": "Gunakan tabel ini bersama alur bottom-up dari Chapter 11."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nSebuah gedung kampus memiliki 80 sensor ESP32 yang terhubung ke satu Access Point. Setelah listrik padam lalu menyala kembali, seluruh node mencoba menyambung ulang tiap 100 ms tanpa jeda. Apa dampaknya terhadap AP dan bagaimana cara memperbaikinya?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 13: *HTTP, REST APIs & JSON*.",
+    "notes": "Jawaban: Terjadi badai auth/association request (thundering herd) yang membuat AP kewalahan; atasi dengan exponential backoff + random jitter."
+  }
+]
+

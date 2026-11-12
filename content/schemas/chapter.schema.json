@@ -1,0 +1,428 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 40
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^chapter-\\d{2}$"
+    },
+    "levelId": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "title": {
+      "type": "string",
+      "minLength": 8
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "coming-soon",
+        "published"
+      ]
+    },
+    "objectives": {
+      "minItems": 2,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 20
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 40
+      }
+    },
+    "tags": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resources": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "enum": [
+          "reading",
+          "slides",
+          "code",
+          "notebook",
+          "telemetry",
+          "outputs",
+          "exercises",
+          "assignment",
+          "diagram",
+          "pdf"
+        ]
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "const": "available"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "planned",
+                  "not-applicable"
+                ]
+              },
+              "path": {
+                "type": "null"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 12
+              }
+            },
+            "required": [
+              "status",
+              "path",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "required": [
+        "reading",
+        "slides",
+        "code",
+        "notebook",
+        "telemetry",
+        "outputs",
+        "exercises",
+        "assignment",
+        "diagram",
+        "pdf"
+      ]
+    },
+    "references": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3
+          },
+          "url": {
+            "type": "string",
+            "format": "starts_with",
+            "pattern": "^https:\\/\\/.*"
+          },
+          "checkedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          }
+        },
+        "required": [
+          "title",
+          "url",
+          "checkedOn"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "untested",
+            "compile-verified",
+            "simulator-verified",
+            "hardware-verified"
+          ]
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 12
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "compile",
+                  "simulator",
+                  "hardware",
+                  "software"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+              },
+              "environment": {
+                "type": "string",
+                "minLength": 5
+              },
+              "command": {
+                "type": "string",
+                "minLength": 3
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "kind",
+              "path",
+              "environment",
+              "command",
+              "date",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "status",
+        "limitations",
+        "records"
+      ],
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "reviewer": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "report": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "reviewer",
+        "date",
+        "report"
+      ],
+      "additionalProperties": false
+    },
+    "rubric": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion": {
+            "type": "string",
+            "minLength": 5
+          },
+          "points": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "required": [
+          "criterion",
+          "points",
+          "description"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "hardware": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "boolean",
+              "const": false
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 12
+            }
+          },
+          "required": [
+            "required",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "boolean",
+              "const": true
+            },
+            "board": {
+              "type": "string",
+              "minLength": 3
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bom": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+            },
+            "pinMapping": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+            },
+            "wiring": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+            },
+            "electrical": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "component": {
+                    "type": "string"
+                  },
+                  "datasheet": {
+                    "type": "string",
+                    "format": "starts_with",
+                    "pattern": "^https:\\/\\/.*"
+                  },
+                  "voltage": {
+                    "type": "string",
+                    "minLength": 3
+                  },
+                  "current": {
+                    "type": "string",
+                    "minLength": 3
+                  },
+                  "protection": {
+                    "type": "string",
+                    "minLength": 5
+                  }
+                },
+                "required": [
+                  "component",
+                  "datasheet",
+                  "voltage",
+                  "current",
+                  "protection"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "toolchain": {
+              "type": "string",
+              "minLength": 5
+            },
+            "instructions": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_/-]+\\.[a-zA-Z0-9]+$"
+            }
+          },
+          "required": [
+            "required",
+            "board",
+            "revision",
+            "bom",
+            "pinMapping",
+            "wiring",
+            "electrical",
+            "toolchain",
+            "instructions"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "slug",
+    "levelId",
+    "title",
+    "description",
+    "status",
+    "objectives",
+    "prerequisites",
+    "tags",
+    "resources",
+    "references",
+    "verification",
+    "review",
+    "rubric",
+    "hardware"
+  ],
+  "additionalProperties": false
+}

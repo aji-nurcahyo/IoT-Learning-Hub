@@ -1,0 +1,84 @@
+[
+  {
+    "title": "Embedded Foundations Capstone (Level 1)",
+    "body": "**Proyek Integratif:** *Smart Environmental Monitoring & Local Control System*\n\nMenggabungkan kompetensi Chapter 01–09 menjadi satu prototipe kendali lokal yang aman, terkalibrasi, dan *non-blocking* — **tanpa kewajiban Wi-Fi atau Cloud**.",
+    "notes": "Tekankan bahwa Level 1 berfokus pada keandalan perangkat lokal; konektivitas Wi-Fi/MQTT masuk di Level 2."
+  },
+  {
+    "title": "Tujuan Proyek Capstone",
+    "body": "1. **Mengintegrasikan** akuisisi `ADC1`, input digital ter-*debounce*, *interlock*, dan aktuator PWM.\n2. **Menerapkan** kalibrasi dua titik, deteksi `NaN`, dan histeresis multi-mode.\n3. **Menyusun** BOM, *pin mapping*, dan skema *low-voltage DC* yang aman.\n4. **Menguji** sistem dengan *acceptance test cases* dan dokumentasi jujur.",
+    "notes": "Capstone menilai kemampuan integrasi dan rekayasa sistem secara menyeluruh."
+  },
+  {
+    "title": "Persyaratan Sistem (System Requirements)",
+    "body": "| ID | Kebutuhan | Target Terukur |\n| --- | --- | --- |\n| `REQ-F1` | Akuisisi & Kalibrasi | Sampling `100 ms`, *moving avg* `N=8`, kalibrasi 2-titik |\n| `REQ-F2` | Tombol Mode | Debounce `50 ms`: `AUTO_NORMAL`, `AUTO_STRICT`, `MANUAL_ON` |\n| `REQ-F3` | Kontrol Histeresis | PWM `5 kHz` 8-bit bebas *chattering* |\n| `REQ-F4` | Interlock & Fault | Saklar terbuka / `NaN` $\\rightarrow$ `FAULT_SAFE` (`fan=OFF`, `alarm=ON`) |\n| `REQ-F5` | Serial Telemetry | JSON terstruktur tiap `1000 ms` pada `115200 baud` |",
+    "notes": "Setiap persyaratan dapat diuji langsung melalui test cases."
+  },
+  {
+    "title": "Arsitektur & Pemetaan Pin Capstone",
+    "body": "![Arsitektur dan pemetaan pin Capstone Smart Environmental Monitoring](content/chapter-10/diagram.svg)",
+    "notes": "Tunjukkan alur 3 input (kiri) ke ESP32 non-blocking loop (tengah) dan 3 output (kanan)."
+  },
+  {
+    "title": "Bill of Materials & Keamanan Low-Voltage DC",
+    "body": "- **MCU**: `ESP32-DevKitC V4 (WROOM-32)` ($3{,}3\\text{ V}$ logic)\n- **Sensor**: Termistor NTC $10\\text{ k}\\Omega$ + $R_{\\text{fixed}} = 10\\text{ k}\\Omega$ ke `GPIO 34` (`ADC1`)\n- **Input Digital**: Tombol mode (`GPIO 27`) & *Interlock* (`GPIO 14`), `INPUT_PULLUP`\n- **Output**: Driver PWM kipas (`GPIO 25`), Status LED (`GPIO 26`), Buzzer (`GPIO 18`)\n\n*Hardware fisik bersifat opsional; seluruh praktik wajib memakai low-voltage DC!*",
+    "notes": "Untuk beban kipas DC fisik, wajib gunakan logic-level MOSFET + pull-down 10 kOhm + flyback diode + suplai eksternal + common GND."
+  },
+  {
+    "title": "Alasan Pemilihan Setiap Pin (`env_config.h`)",
+    "body": "| Pin | Fungsi | Alasan Teknis |\n| --- | --- | --- |\n| `GPIO 34` | NTC `ADC1_CH6` | *Input-only*, aman saat Wi-Fi aktif nanti |\n| `GPIO 27` | Tombol Mode | Mendukung `INPUT_PULLUP` internal |\n| `GPIO 14` | Interlock | Mendukung `INPUT_PULLUP`, bukan Flash pin |\n| `GPIO 25` | PWM Kipas/LED | Aman output, mendukung hardware `LEDC` |\n| `GPIO 26` | Status LED | Aman output indikator mode |\n| `GPIO 18` | Alarm Buzzer | Aman output aktif saat `FAULT_SAFE` |",
+    "notes": "Tidak ada pin SPI Flash (6-11) atau strapping pin kritis yang terganggu."
+  },
+  {
+    "title": "Modularitas Firmware (`env_config.h` + `.ino`)",
+    "body": "Memisahkan konfigurasi dari logika kontrol:\n\n- **`env_config.h`**: Konstanta pin, parameter Beta & kalibrasi, preset histeresis (`28..30 C` vs `25..27 C`), dan `enum class ControlMode`.\n- **`capstone_env_monitor.ino`**: `handleModeButton()`, `convertMvToCalibratedC()`, `evaluateControl()`, `updateStatusLed()`, dan telemetry `snprintf()`.",
+    "notes": "Struktur ini memudahkan perubahan ambang suhu atau pin tanpa mengacak-acak logika kontrol."
+  },
+  {
+    "title": "Alur Non-Blocking di `loop()`",
+    "body": "1. **Setiap iterasi**: Cek tombol mode (`50 ms` debounce) & baca `PIN_INTERLOCK`.\n2. **Setiap `100 ms`**: Baca `analogReadMilliVolts(34)`, update *moving average*, hitung suhu terkalibrasi, dan jalankan `evaluateControl()`.\n3. **Kontinu**: Perbarui kedip `PIN_STATUS_LED` sesuai mode aktif.\n4. **Setiap `1000 ms`**: Kirim 1 baris JSON ke `Serial` via buffer statis.",
+    "notes": "Nol pemanggilan delay() di dalam loop()."
+  },
+  {
+    "title": "Prioritas Keselamatan (`evaluateControl`)",
+    "body": "Urutan evaluasi dari prioritas tertinggi ke terendah:\n\n1. **`interlockOpen == true`** $\\rightarrow$ `FAULT_SAFE` (`fan=OFF`, `alarm=ON`)\n2. **`isnan(latestTempC)`** $\\rightarrow$ `FAULT_SAFE` (`SENSOR_FAULT_NAN`)\n3. **`MANUAL_ON`** $\\rightarrow$ `fan=ON` paksa\n4. **`AUTO_NORMAL` / `AUTO_STRICT`** $\\rightarrow$ Kontrol histeresis sesuai preset",
+    "fragment": "Interlock fisik dan sensor fault selalu mengalahkan mode manual maupun otomatis!",
+    "notes": "Prinsip hierarki keselamatan ini penting pada setiap sistem kendali industri."
+  },
+  {
+    "title": "Format Serial Telemetry JSON (1 Hz)",
+    "body": "```json\n{\"seq\":2,\"uptime_ms\":2000,\"temp_c\":30.58,\"mode\":\"AUTO_NORMAL\",\"fan\":\"ON\",\"alarm\":false,\"fault\":\"NONE\"}\n```\nSaat sensor gagal (`raw_mv=3280`):\n```json\n{\"seq\":11,\"uptime_ms\":11000,\"temp_c\":null,\"mode\":\"FAULT_SAFE\",\"fan\":\"OFF\",\"alarm\":true,\"fault\":\"SENSOR_FAULT_NAN\"}\n```",
+    "notes": "Format JSON satu baris per detik (NDJSON) siap dikonsumsi oleh Gateway Python di Level 2–3."
+  },
+  {
+    "title": "Alternatif Simulasi: Wokwi (Path A)",
+    "body": "File `src/wokwi_diagram.json` memodelkan:\n- `board-esp32-devkit-c-v4`\n- `wokwi-ntc-temperature-sensor` (`GPIO 34`)\n- `wokwi-pushbutton` (`bounce=1`, `GPIO 27`)\n- `wokwi-slide-switch` (`GPIO 14`), 2 LED (`25, 26`), dan Buzzer (`18`).\n\n*(Firmware `.ino` & Wokwi berstatus Belum diuji di server ini).*",
+    "notes": "Mahasiswa dapat menguji seluruh interaksi tombol, interlock, dan slider suhu NTC tanpa hardware."
+  },
+  {
+    "title": "Acceptance Test Cases (TC-01 s.d. TC-07)",
+    "body": "| Test Case | Kondisi Uji | Perilaku yang Diharapkan |\n| --- | --- | --- |\n| `TC-01..04` | Siklus suhu `24.5 -> 30.6 -> 28.8 -> 27.1 C` | Kipas `OFF -> ON -> tetap ON (deadband) -> OFF` |\n| `TC-05` | Tekan mode $\\rightarrow$ `AUTO_STRICT` | Ambang turun ke $25\\dots 27\\,^\\circ\\text{C}$ |\n| `TC-06` | `MANUAL_ON` lalu buka *interlock* | Seketika masuk `FAULT_SAFE` (`fan=OFF`, `alarm=ON`) |\n| `TC-07` | Tegangan NTC $3280\\text{ mV}$ (`NaN`) | Masuk `FAULT_SAFE`, pulih saat tegangan normal |",
+    "notes": "Test cases ini menjadi acuan kelulusan proyek capstone."
+  },
+  {
+    "title": "Hasil Acceptance Test (`capstone_logic_test.py`)",
+    "body": "```text\n[PASS #01] temp_c=24.48 mode=AUTO_NORMAL fan=OFF\n[PASS #02] temp_c=30.58 mode=AUTO_NORMAL fan=ON\n[PASS #03] temp_c=28.80 mode=AUTO_NORMAL fan=ON  (deadband)\n[PASS #09] mode=FAULT_SAFE fan=OFF alarm=true fault=INTERLOCK_OPEN\n[PASS #11] temp_c=null mode=FAULT_SAFE fan=OFF fault=SENSOR_FAULT_NAN\nHasil Acceptance Test (Software Logic): 13/13 skenario LULUS\n```",
+    "notes": "Output aktual dari eksekusi capstone_logic_test.py di Python (outputs.md)."
+  },
+  {
+    "title": "Checklist Verifikasi & Laporan Teknis",
+    "body": "Laporan akhir capstone wajib memuat:\n1. Ringkasan *System Requirements* & Arsitektur\n2. BOM & *Wiring Table* *low-voltage DC*\n3. Parameter kalibrasi & histeresis\n4. Tabel hasil *Test Cases* (*Expected vs Actual*) + log asli\n5. Keterbatasan & status verifikasi jujur",
+    "notes": "Gunakan template struktur ini agar penilaian oleh dosen atau peer reviewer objektif."
+  },
+  {
+    "title": "Distribusi Rubrik Capstone (100 Poin)",
+    "body": "| Kriteria | Bobot |\n| --- | --- |\n| Arsitektur, BOM & keselamatan wiring DC | **20** |\n| Akuisisi terkalibrasi & kontrol histeresis | **25** |\n| Firmware non-blocking, FSM & fail-safe | **25** |\n| Pengujian test-case, dokumentasi & kejujuran | **30** |",
+    "notes": "Bobot terbesar (30%) berada pada pengujian sistematis dan kejujuran bukti!"
+  },
+  {
+    "title": "Penutup Level 1 & Menuju Level 2",
+    "body": "Selamat telah menyelesaikan **Level 1 — IoT & Embedded Foundations**!\n\n- **Langkah berikutnya (Level 2)**: Menghubungkan perangkat lokal yang sudah andal ini ke jaringan IP, Wi-Fi provisioning, protokol MQTT, dan pengiriman *telemetry* tahan putus (*offline buffering*).",
+    "notes": "Ingatkan mahasiswa bahwa fondasi elektronika, timing non-blocking, dan fail-safe dari Level 1 akan terus dipakai di seluruh Level 2–4."
+  }
+]
+

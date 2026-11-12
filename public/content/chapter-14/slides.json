@@ -1,0 +1,80 @@
+[
+  {
+    "title": "MQTT Fundamentals & Publish/Subscribe",
+    "body": "Protokol pesan standar IoT yang **ringan** (*header* mulai 2 byte), **asinkron**, dan memisahkan pengirim (*Publisher*) dari penerima (*Subscriber*) melalui **Broker**.",
+    "notes": "Chapter 14 menjadi inti komunikasi telemetry di Level 2."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 14",
+    "body": "1. **Memetakan** peran *Publisher*, *Broker*, dan *Subscriber*.\n2. **Merancang** hierarki *Topic* dan pencocokan *wildcard* (`+`, `#`).\n3. **Menyusun** *payload* JSON & konfigurasi Mosquitto lokal aman.\n4. **Mengimplementasikan** klien MQTT non-blocking ESP32 (`PubSubClient`).",
+    "notes": "Setiap tujuan diuji baik secara teoritis maupun lewat loopback broker Python."
+  },
+  {
+    "title": "Tiga Decoupling pada Publish/Subscribe",
+    "body": "- **Space Decoupling**: Publisher tidak perlu tahu IP Subscriber.\n- **Time Decoupling**: Pesan tetap dapat dikelola walau klien tidak online bersamaan.\n- **Synchronization Decoupling**: Pengiriman dan penerimaan tidak saling memblokir.",
+    "fragment": "Banyak aplikasi (Dashboard, Database, Alerting) dapat berlangganan data sensor yang sama tanpa mengubah kode ESP32!",
+    "notes": "Inilah keuntungan skalabilitas terbesar MQTT dibanding HTTP point-to-point."
+  },
+  {
+    "title": "Arsitektur MQTT, Hierarki Topic & Wildcard",
+    "body": "![Arsitektur MQTT Publish Subscribe, hierarki topic, dan aturan wildcard](content/chapter-14/diagram.svg)",
+    "notes": "Tunjukkan bagaimana 1 pesan dari ESP32-01 diteruskan oleh Broker ke Dashboard maupun Archiver DB."
+  },
+  {
+    "title": "Merancang Topic Hierarchy yang Baik",
+    "body": "Pola umum: `<site>/<zone>/<device_id>/<stream>`\n- Contoh: `lab/gh01/node-01/telemetry`\n- Contoh downlink: `lab/gh01/node-01/cmd/led`\n\n**Aturan Penting:**\n- *Case-sensitive* (`Temp` $\\neq$ `temp`).\n- Jangan awali dengan `/` (`/lab/...` membuat level kosong!).",
+    "notes": "Hierarki yang konsisten memudahkan penulisan aturan ACL keamanan di sisi Broker."
+  },
+  {
+    "title": "Aturan Wildcard: `+` vs `#`",
+    "body": "| Pola Subscribe | Cocok Dengan | Tidak Cocok Dengan |\n| --- | --- | --- |\n| `lab/+/temp_c` | `lab/gh01/temp_c` | `lab/gh01/z1/temp_c` |\n| `lab/#` | `lab/gh01`, `lab/gh01/a/b` | `office/gh01` |\n| `lab/#/temp` | **INVALID!** | (`#` harus paling akhir!) |\n\n*Ingat*: Publisher **tidak boleh** mempublikasikan pesan ke topic ber-wildcard!",
+    "notes": "Pastikan mahasiswa paham perbedaan tepat-1-level (+) vs 0-atau-lebih-level (#)."
+  },
+  {
+    "title": "Struktur Paket Biner MQTT (Sangat Ringan)",
+    "body": "- Fixed Header minimum: **2 byte** (Packet Type + Remaining Length).\n- Bandingkan dengan HTTP/1.1 yang butuh ratusan byte header teks pada setiap transaksi.\n- Sangat cocok untuk link terbatas dan frekuensi kirim rapat.",
+    "notes": "Fixed header 2 byte inilah yang kita uji secara langsung di mqtt_broker_sim.py."
+  },
+  {
+    "title": "Uji Protokol Biner & Loopback (`mqtt_broker_sim.py`)",
+    "body": "```text\n=== UJI WILDCARD & MINI-BROKER MQTT 3.1.1 LOOPBACK (CHAPTER 14) ===\n[PASS] Aturan wildcard '+' dan '#' terverifikasi.\n[PASS] MQTT Loopback RX topic='lab/gh01/node-01/telemetry'\n       payload={\"device_id\": \"esp32-gh01-node01\", \"seq\": 1, \"temp_c\": 28.75, \"source\": \"synthetic\"}\n```",
+    "notes": "Hasil nyata eksekusi soket TCP MQTT 3.1.1 di Python (outputs.md)."
+  },
+  {
+    "title": "Desain Payload & Batas Buffer `PubSubClient`",
+    "body": "```json\n{\"device_id\":\"esp32-gh01-node01\",\"seq\":1,\"temp_c\":28.75,\"source\":\"synthetic\"}\n```\n- Buffer bawaan `PubSubClient` hanya **`256 byte`** (termasuk topic + header!).\n- Jika payload lebih panjang, panggil `mqtt.setBufferSize(512)` di `setup()`.",
+    "fragment": "Jika mqtt.publish() tiba-tiba mengembalikan false padahal terkoneksi, periksa ukuran buffer!",
+    "notes": "Ini jebakan klasik saat mahasiswa menambah field baru ke JSON payload."
+  },
+  {
+    "title": "Eclipse Mosquitto: Loopback vs Jaringan LAN",
+    "body": "- **Uji satu laptop**: `listener 1883 127.0.0.1`.\n- **Uji bersama ESP32 fisik**: ESP32 tidak bisa mengakses `127.0.0.1` PC! Wajib bind ke LAN, buka firewall port `1883`, dan gunakan autentikasi (`mosquitto_passwd`, `allow_anonymous false`).\n- Jangan mengekspos broker anonymous ke internet publik!",
+    "notes": "Menghubungkan panduan Getting Started dengan implementasi di jaringan lokal."
+  },
+  {
+    "title": "Implementasi ESP32 (`mqtt_pubsub_client.ino`)",
+    "body": "```cpp\nvoid loop() {\n  // ...\n  mqtt.loop(); // wajib rutin untuk keepalive & callback RX\n  if ((uint32_t)(now - lastPublishMs) >= 5000) {\n    mqtt.publish(TOPIC_TELEMETRY, jsonBuf);\n  }\n}\n```\n- Memakai `PubSubClient` + `Preferences` NVS.\n- Callback `onMqttMessage()` menerima perintah `ON`/`OFF` ke `GPIO 25`.",
+    "notes": "Firmware .ino berstatus Belum diuji sementara toolchain ESP32 sedang dipasang."
+  },
+  {
+    "title": "Aturan Emas `clientId` Unik",
+    "body": "Setiap klien MQTT yang terhubung ke satu Broker **wajib** memiliki `clientId` yang unik!\n\n- Jika 2 ESP32 memakai `clientId` sama (misal `\"esp32-client\"`), Broker akan **menendang koneksi perangkat sebelumnya** secara bergantian (*connect–kick–reconnect loop*).\n- Gunakan ID unik berbasis alamat MAC atau ID perangkat.",
+    "notes": "Gejala klasik di log Mosquitto: 'Client esp32-client already connected, closing old connection'."
+  },
+  {
+    "title": "Troubleshooting MQTT ESP32",
+    "body": "| Gejala / Kode `mqtt.state()` | Penyebab | Solusi |\n| --- | --- | --- |\n| `-2` (*Connect Failed*) | Broker mati / firewall / salah IP `127.0.0.1` | Cek Mosquitto, IP LAN & port `1883` |\n| Putus-sambung terus | `clientId` kembar antar-perangkat | Pastikan `clientId` unik per node |\n| `publish()` return `false` | Payload + topic $> 256\\text{ B}$ | Tambah `mqtt.setBufferSize(512)` |",
+    "notes": "Biasakan mencetak nilai integer mqtt.state() saat gagal connect."
+  },
+  {
+    "title": "Aplikasi Nyata Publish/Subscribe",
+    "body": "- **Smart Greenhouse Multi-Blok**: Puluhan sensor mem-publish ke `farm/blokA/soil`, sistem irigasi berlangganan `farm/+/soil`, dan logger arsip berlangganan `farm/#`.\n- **Telekomunikasi NOC**: Node BTS mem-publish metrik baterai & suhu kabinet ke broker regional secara *real-time*.",
+    "notes": "Topic hierarchy yang rapi membuat penambahan node ke-100 tidak membutuhkan perubahan di sisi dashboard."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nAnda men-deploy 10 ESP32 dengan kode identik berisi `mqtt.connect(\"iot-node\")`. Di log Broker, hanya 1 perangkat yang tampak aktif bergantian setiap 3 detik. Mengapa hal ini terjadi?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 15: *MQTT QoS, Sessions, Retained Messages & Last Will*.",
+    "notes": "Jawaban: Seluruh 10 perangkat berbagi clientId 'iot-node', sehingga tiap perangkat baru memutus koneksi perangkat sebelumnya sesuai spesifikasi MQTT."
+  }
+]
+

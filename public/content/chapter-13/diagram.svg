@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" role="img" aria-label="Anatomi HTTP Request dan Response REST JSON, keputusan retry berdasarkan status code, serta dasar TLS">
+  <rect x="2" y="2" width="916" height="386" rx="14" fill="#f8faf7" stroke="#c8d4cc" stroke-width="2"/>
+  <text x="24" y="34" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#176e59">HTTP, REST API, SERIALISASI JSON &amp; PENANGANAN ERROR CLIENT</text>
+  <text x="24" y="54" font-family="system-ui, sans-serif" font-size="12" fill="#4f6059">Memisahkan kesalahan client (4xx — jangan di-retry) dari gangguan sementara server/jaringan (5xx/timeout)</text>
+
+  <!-- Panel 1: Request & Response -->
+  <rect x="24" y="74" width="380" height="292" rx="10" fill="#ffffff" stroke="#176e59" stroke-width="1.6"/>
+  <text x="40" y="98" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1d2b27">1. Kontrak REST POST &amp; GET (JSON)</text>
+
+  <rect x="40" y="114" width="348" height="114" rx="7" fill="#eef4ef" stroke="#176e59" stroke-width="1.3"/>
+  <text x="52" y="134" font-family="monospace" font-size="11" font-weight="700" fill="#176e59">HTTP Request (ESP32 -&gt; API Server)</text>
+  <text x="52" y="152" font-family="monospace" font-size="10.5" fill="#1d2b27">POST /api/v1/telemetry HTTP/1.1</text>
+  <text x="52" y="168" font-family="monospace" font-size="10.5" fill="#3a4c45">Content-Type: application/json</text>
+  <text x="52" y="184" font-family="monospace" font-size="10.5" fill="#3a4c45">X-Device-Id: node-01</text>
+  <text x="52" y="204" font-family="monospace" font-size="10.5" fill="#176e59">{"seq":4,"temp_c":28.4,"source":"synthetic"}</text>
+
+  <rect x="40" y="238" width="348" height="112" rx="7" fill="#e7efe5" stroke="#176e59" stroke-width="1.3"/>
+  <text x="52" y="258" font-family="monospace" font-size="11" font-weight="700" fill="#176e59">HTTP Response (API Server -&gt; ESP32)</text>
+  <text x="52" y="276" font-family="monospace" font-size="10.5" fill="#1d2b27">HTTP/1.1 201 Created</text>
+  <text x="52" y="292" font-family="monospace" font-size="10.5" fill="#3a4c45">Content-Type: application/json</text>
+  <text x="52" y="312" font-family="monospace" font-size="10.5" fill="#176e59">{"accepted":true,"seq":4}</text>
+  <text x="52" y="334" font-family="system-ui, sans-serif" font-size="10.5" fill="#4f6059">Wajib set timeout (3–5 s) &amp; panggil http.end()!</text>
+
+  <!-- Panel 2: Status Codes & Retry -->
+  <rect x="420" y="74" width="248" height="292" rx="10" fill="#fff7ed" stroke="#b45309" stroke-width="1.6"/>
+  <text x="436" y="98" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#92400e">2. Status Code &amp; Retry Policy</text>
+
+  <rect x="436" y="114" width="216" height="60" rx="6" fill="#ecfdf5" stroke="#176e59" stroke-width="1.2"/>
+  <text x="448" y="134" font-family="monospace" font-size="11" font-weight="700" fill="#176e59">200 OK / 201 Created</text>
+  <text x="448" y="152" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">Sukses! Hapus item dari</text>
+  <text x="448" y="166" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">antrean kirim.</text>
+
+  <rect x="436" y="184" width="216" height="74" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.2"/>
+  <text x="448" y="204" font-family="monospace" font-size="11" font-weight="700" fill="#991b1b">400 / 401 / 404 (4xx)</text>
+  <text x="448" y="222" font-family="system-ui, sans-serif" font-size="11" fill="#7f1d1d">Kesalahan payload / auth!</text>
+  <text x="448" y="238" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#991b1b">JANGAN retry membabi-buta!</text>
+
+  <rect x="436" y="268" width="216" height="82" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <text x="448" y="288" font-family="monospace" font-size="11" font-weight="700" fill="#92400e">500 / 503 / &lt; 0 Timeout</text>
+  <text x="448" y="306" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">Gangguan sementara.</text>
+  <text x="448" y="322" font-family="system-ui, sans-serif" font-size="11" fill="#92400e">Retry terbatas (maks 2–3x)</text>
+  <text x="448" y="338" font-family="system-ui, sans-serif" font-size="11" fill="#92400e">dengan jeda backoff.</text>
+
+  <!-- Panel 3: TLS & Memory -->
+  <rect x="684" y="74" width="212" height="292" rx="10" fill="#eef4ef" stroke="#176e59" stroke-width="1.6"/>
+  <text x="700" y="98" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1d2b27">3. TLS &amp; Memori MCU</text>
+
+  <text x="700" y="124" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#176e59">HTTPS / TLS Fundamentals</text>
+  <text x="700" y="142" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">• Enkripsi + Integritas +</text>
+  <text x="700" y="158" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">  Otentikasi Server (CA).</text>
+  <text x="700" y="176" font-family="system-ui, sans-serif" font-size="11" fill="#991b1b">• Hindari setInsecure() di</text>
+  <text x="700" y="192" font-family="system-ui, sans-serif" font-size="11" fill="#991b1b">  produksi (rentan MITM)!</text>
+  <text x="700" y="210" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">• Butuh waktu RTC/NTP valid</text>
+  <text x="700" y="226" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">  untuk cek masa berlaku sertifikat.</text>
+
+  <line x1="700" y1="244" x2="880" y2="244" stroke="#c8d4cc" stroke-width="1.2"/>
+  <text x="700" y="266" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#176e59">Efisiensi HTTP di ESP32</text>
+  <text x="700" y="284" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">• HTTP/1.1 header lebih berat</text>
+  <text x="700" y="300" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">  dari MQTT untuk kirim tiap 1 s.</text>
+  <text x="700" y="318" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">• Gunakan snprintf() statis</text>
+  <text x="700" y="334" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">  atau StaticJsonDocument.</text>
+</svg>
+

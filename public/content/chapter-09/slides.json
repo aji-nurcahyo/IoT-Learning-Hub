@@ -1,0 +1,79 @@
+[
+  {
+    "title": "Actuators, Drivers & Control Fundamentals",
+    "body": "Mengendalikan dunia fisik secara aman melalui **rangkaian driver**, proteksi **flyback diode**, **kontrol histeresis**, dan prinsip **fail-safe** (*low-voltage DC*).",
+    "notes": "Tekankan berulang bahwa seluruh praktik hanya memakai low-voltage DC (3.3-12 V), bukan AC mains."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 09",
+    "body": "1. **Memilih** rangkaian *driver* dan *flyback diode* untuk aktuator *low-voltage DC*.\n2. **Menjelaskan** kontrol PWM untuk motor DC & servo ($50\\text{ Hz}$).\n3. **Membandingkan** *open-loop*, *single-threshold*, dan kontrol **histeresis**.\n4. **Merancang** *safety interlock* dan kondisi *fail-safe*.",
+    "notes": "Chapter 09 menyiapkan komponen kontrol terakhir sebelum Capstone di Chapter 10."
+  },
+  {
+    "title": "Mengapa Actuator Tidak Bisa Langsung ke GPIO?",
+    "body": "| Actuator | Arus Khas | Sifat | Risiko ke GPIO ESP32 |\n| --- | --- | --- | --- |\n| LED indikator | $5\\text{--}15\\text{ mA}$ | Semikonduktor | Aman dengan resistor $220\\,\\Omega$ |\n| Relay 5 V DC | $60\\text{--}90\\text{ mA}$ | **Induktif** | Overcurrent + *kickback* |\n| Servo SG90 | $100\\text{--}700\\text{ mA}$ | Motor DC | Brownout regulator 3,3 V |\n| Motor/Kipas DC | $150\\text{ mA}\\dots 2\\text{ A}$ | **Induktif** | Pin GPIO langsung rusak! |",
+    "notes": "Pin GPIO ESP32 hanya aman untuk sinyal logika dan arus kecil <= 12 mA."
+  },
+  {
+    "title": "Rangkaian Low-Side Driver & Flyback Diode",
+    "body": "![Skema driver MOSFET low-side dengan flyback diode dan kurva histeresis](content/chapter-09/diagram.svg)",
+    "notes": "Jelaskan peran 3 komponen kunci pada panel kiri: resistor gate 220 ohm, pull-down 10 kOhm (fail-safe saat boot), dan flyback diode antiparalel."
+  },
+  {
+    "title": "Fisika Flyback Diode ($L \\frac{dI}{dt}$)",
+    "body": "Saat MOSFET mematikan beban induktif (relay/motor) secara mendadak, medan magnet yang runtuh memaksa arus terus mengalir sehingga menimbulkan lonjakan tegangan:\n\n$$V_L = -L \\frac{dI}{dt}$$\n\n- **Flyback diode** (1N5819 / 1N4007) memberi jalur aman membuang energi kumparan tanpa merusak transistor maupun MCU.",
+    "fragment": "Periksa polaritas flyback diode: garis katoda menghadap ke +VCC!",
+    "notes": "Salah memasang arah dioda (maju terhadap +VCC) akan menciptakan short circuit langsung saat MOSFET menyala."
+  },
+  {
+    "title": "Aktuasi Berbasis PWM: Motor DC vs Servo",
+    "body": "- **Motor DC via MOSFET**: Mengatur kecepatan dengan memvariasikan *duty cycle* ($0\\dots 100\\%$) pada frekuensi $5\\text{--}20\\text{ kHz}$.\n- **Hobby Servo**: Menggunakan frekuensi tetap **$50\\text{ Hz}$** (periode $20\\text{ ms}$); lebar pulsa `HIGH` menentukan sudut:\n  - $1{,}0\\text{ ms} \\rightarrow 0^\\circ$, $1{,}5\\text{ ms} \\rightarrow 90^\\circ$, $2{,}0\\text{ ms} \\rightarrow 180^\\circ$.",
+    "notes": "Ingatkan bahwa daya motor servo (kabel merah) harus berasal dari rel 5 V eksternal dengan common GND ke ESP32, bukan dari pin 3V3."
+  },
+  {
+    "title": "Open-Loop vs Closed-Loop Control",
+    "body": "- **Open-Loop**: Menjalankan aktuator tanpa umpan balik sensor (misal nyala 10 menit tiap jam).\n  - Sederhana, tetapi buta terhadap gangguan lingkungan.\n- **Closed-Loop**: Mengukur variabel fisik dengan sensor $\\rightarrow$ membandingkan dengan *setpoint* $\\rightarrow$ mengatur aktuator otomatis.",
+    "notes": "Pada Level 1 kita fokus pada closed-loop diskrit/histeresis; kontrol kontinu PID dibahas di topik kontrol lanjut."
+  },
+  {
+    "title": "Masalah Kontrol Single-Threshold: Chattering!",
+    "body": "```cpp\nif (temp >= 30.0f) fan = ON; else fan = OFF;\n```\nJika suhu berfluktuasi di $30{,}0 \\pm 0{,}3\\,^\\circ\\text{C}$ karena *noise*:\n- Aktuator hidup-mati berkali-kali dalam hitungan detik (**chattering**).\n- Relay cepat aus dan suplai daya terganggu lonjakan arus *inrush*.",
+    "notes": "Hubungkan kembali dengan random noise sensor dari Chapter 08!"
+  },
+  {
+    "title": "Solusi: Kontrol Histeresis (Deadband)",
+    "body": "Gunakan dua ambang: $T_{\\text{high}} = 30{,}0\\,^\\circ\\text{C}$ (nyala) dan $T_{\\text{low}} = 28{,}0\\,^\\circ\\text{C}$ (mati).\n\n- Di antara $28{,}0\\,^\\circ\\text{C}$ dan $30{,}0\\,^\\circ\\text{C}$ (*deadband* $2{,}0\\,^\\circ\\text{C}$), sistem **mempertahankan status terakhir**.\n- Perubahan hanya terjadi jika tren suhu benar-benar melampaui pita mati.",
+    "notes": "Semakin besar noise sensor, semakin lebar deadband yang diperlukan."
+  },
+  {
+    "title": "Hasil Simulasi (`hysteresis_control_sim.py`)",
+    "body": "Uji pada 16 langkah suhu ber-*noise* (`telemetry.csv`, termasuk `step=16` sensor putus `NaN`):\n\n```text\nJumlah transisi (Single-Threshold 30.0 C) : 8 kali (CHATTERING!)\nJumlah transisi (Histeresis 28.0..30.0 C) : 2 kali (STABIL)\nstep=16 | temp=NaN | STATUS=FAIL_SAFE_OFF (Alarm ON)\n```",
+    "notes": "Bukti eksekusi nyata di Python (outputs.md)."
+  },
+  {
+    "title": "Safety Interlock & Prinsip Fail-Safe",
+    "body": "1. **Boot Safe State**: Inisialisasi PWM ke `0` di `setup()` + resistor *pull-down* $10\\text{ k}\\Omega$ di gate MOSFET.\n2. **Safety Interlock**: Cek saklar pintu/penutup (`INTERLOCK_PIN`) di urutan paling atas loop kontrol.\n3. **Sensor Fault (`NaN`)**: Jika sensor putus/korslet, paksa aktuator ke kondisi aman dan aktifkan alarm.",
+    "fragment": "Jangan pernah mengabaikan nilai NaN atau nilai ekstrem dari sensor!",
+    "notes": "Safety interlock harus mampu menghentikan aktuator seketika tanpa menunggu siklus lama."
+  },
+  {
+    "title": "Praktik: `ex01_hysteresis_driver.ino`",
+    "body": "- `GPIO 34` (`ADC1`): Input simulasi suhu + deteksi fault `<100 mV` atau `>3200 mV`.\n- `GPIO 27` (`INPUT_PULLUP`): *Safety interlock switch*.\n- `GPIO 25` (`LEDC 5 kHz`): Driver PWM kipas/LED beban.\n- `GPIO 26`: Buzzer alarm *fail-safe*.\n\n*(Firmware `.ino` & Wokwi `wokwi_diagram.json` berstatus Belum diuji di server ini).*",
+    "notes": "Ajak mahasiswa memetakan setiap baris kode ke prinsip driver dan fail-safe yang telah dibahas."
+  },
+  {
+    "title": "Troubleshooting Driver & Kontrol",
+    "body": "| Gejala | Penyebab Umum | Solusi |\n| --- | --- | --- |\n| Kipas menyala sesaat saat boot | Gate MOSFET mengambang (*floating*) | Tambah *pull-down* $10\\text{ k}\\Omega$ ke `GND` |\n| ESP32 reset saat relay mati | Tidak ada *flyback diode* | Pasang 1N5819/1N4007 antiparalel koil |\n| Aktuator hidup-mati cepat | Tidak ada histeresis | Tambah *deadband* $T_{\\text{high}} - T_{\\text{low}}$ |",
+    "notes": "Selalu pisahkan kabel arus tinggi motor dari jalur kabel analog sensor agar noise tidak masuk ADC."
+  },
+  {
+    "title": "Aplikasi Nyata: Kabinet BTS & Irigasi DC",
+    "body": "- **Pendinginan Kabinet BTS**: Kipas DC $12\\text{ V}/48\\text{ V}$ via MOSFET driver + histeresis $2\\dots 3\\,^\\circ\\text{C}$ + *door interlock*.\n- **Katup Solenoid Smart Agriculture**: Wajib *flyback diode* + *fail-safe max-open timer* bila sensor gagal.",
+    "notes": "Menunjukkan mengapa kombinasi driver aman, histeresis, dan fail-safe sangat krusial di lapangan."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nPada sistem pemanas inkubator telur, jika sensor suhu tiba-tiba terbaca `NaN` (kabel putus), apa kondisi **fail-safe** yang benar untuk elemen pemanas dan untuk buzzer alarm?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke **Chapter 10: Embedded Foundations Capstone**!",
+    "notes": "Jawaban: Elemen pemanas wajib dimatikan (OFF) agar telur tidak kepanasan/terbakar, sedangkan buzzer alarm wajib dinyalakan (ON) untuk memanggil operator."
+  }
+]

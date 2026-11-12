@@ -1,0 +1,78 @@
+[
+  {
+    "title": "Sensors, Calibration & Measurement Uncertainty",
+    "body": "Mengubah pembacaan mentah sensor menjadi **pengukuran rekayasa yang terkalibrasi** lengkap dengan pernyataan **ketidakpastian**.",
+    "notes": "Tekankan bahwa angka di Serial Monitor tanpa kalibrasi dan ketidakpastian bukan pengukuran teknis yang lengkap."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 08",
+    "body": "1. **Mengklasifikasikan** sensor (aktif/pasif, analog/digital).\n2. **Membedakan** *accuracy*, *precision*, *resolution*, *sensitivity*, dan *error*.\n3. **Menghitung** kalibrasi dua titik (*slope & offset*).\n4. **Mengevaluasi** ketidakpastian gabungan (*Type A + Type B*) dan *datasheet* sensor.",
+    "notes": "Semua konsep dihubungkan ke praktik akuisisi NTC dan analisis data referensi sintetis."
+  },
+  {
+    "title": "Klasifikasi Sensor",
+    "body": "| Dimensi | Kategori | Contoh |\n| --- | --- | --- |\n| Energi | Pasif vs Aktif | Termokopel vs Termistor NTC + divider |\n| Antarmuka | Analog vs Digital | NTC/LDR (`ADC1`) vs BME280/SHT31 (`I2C`) |\n| Fisik | Termal, Optik, Mekanik, Kimia | Suhu, cahaya, getaran, gas $CO_2$ |",
+    "notes": "Sensor digital modern memiliki ADC internal dan kalibrasi pabrik, namun tetap membutuhkan validasi lapangan."
+  },
+  {
+    "title": "Accuracy vs Precision vs Resolution",
+    "body": "- **Accuracy**: Kedekatan terhadap nilai referensi (*true value*).\n- **Precision**: Konsistensi hasil antar-pengulangan.\n- **Resolution**: Perubahan terkecil yang bisa dibaca (misal $0{,}01\\,^\\circ\\text{C}$).\n- **Sensitivity**: Kemiringan respons keluaran terhadap masukan ($\\Delta y / \\Delta x$).",
+    "fragment": "Resolusi 4 angka di belakang koma TIDAK otomatis berarti sensor akurat!",
+    "notes": "Contoh klasik: jam yang mati tepat akurat 2 kali sehari, atau timbangan yang selalu meleset +2 kg tetap presisi jika angkanya konsisten."
+  },
+  {
+    "title": "Diagram: Akurasi, Kalibrasi Dua Titik & Response Time",
+    "body": "![Akurasi vs presisi, kalibrasi dua titik, dan response time orde-1](content/chapter-08/diagram.svg)",
+    "notes": "Gunakan tiga panel ini untuk menjelaskan systematic bias (kiri), regresi kalibrasi (tengah), dan waktu tunggu 5 tau (kanan)."
+  },
+  {
+    "title": "Systematic Error vs Random Error",
+    "body": "| Jenis Error | Sumber | Cara Mengatasi |\n| --- | --- | --- |\n| **Systematic Error** | Offset nol, *gain error*, toleransi resistor $1\\%$ | **Kalibrasi** (1-titik, 2-titik, kurva) |\n| **Random Error** | *Thermal noise*, fluktuasi supply/RF | **Averaging** ($N$ sampel) & statistik ($s$) |",
+    "notes": "Kalibrasi tidak bisa menghilangkan random noise, dan averaging tidak bisa memperbaiki systematic offset!"
+  },
+  {
+    "title": "Metode Kalibrasi Satu-Titik vs Dua-Titik",
+    "body": "- **One-Point**: $T_{\\text{cal}} = T_{\\text{raw}} + b$ (hanya menggeser *offset*).\n- **Two-Point Linear**: Mengoreksi *slope* ($m$) dan *offset* ($b$) sekaligus:\n\n$$m = \\frac{T_{\\text{ref,H}} - T_{\\text{ref,L}}}{T_{\\text{raw,H}} - T_{\\text{raw,L}}}, \\qquad b = T_{\\text{ref,L}} - m \\cdot T_{\\text{raw,L}}$$\n\n$$T_{\\text{cal}} = m \\cdot T_{\\text{raw}} + b$$",
+    "notes": "Dua titik harus dipilih mendekati batas bawah dan batas atas rentang kerja aplikasi."
+  },
+  {
+    "title": "Model Non-Linier Termistor NTC (Beta)",
+    "body": "Resistansi termistor NTC berubah secara eksponensial terhadap suhu:\n\n$$\\frac{1}{T_{\\text{K}}} = \\frac{1}{T_0} + \\frac{1}{\\beta} \\ln\\left(\\frac{R_{\\text{NTC}}}{R_0}\\right)$$\n\nDi `ex01_ntc_calibrated.ino`, kita juga menambahkan **deteksi *fault*** bila tegangan ADC mendekati `0 V` (*short*) atau `3,3 V` (*open*).",
+    "notes": "Mengenali kabel sensor putus (open circuit) sangat penting agar firmware tidak melaporkan suhu ekstrem palsu."
+  },
+  {
+    "title": "Response Time (τ) & Drift",
+    "body": "- Sensor orde-1 mencapai **$63{,}2\\%$** nilai akhir dalam $1\\tau$ dan **$99{,}3\\%$** dalam **$5\\tau$**.\n- **Aturan kalibrasi**: Selalu tunggu $\\ge 5\\tau$ pada setiap titik referensi agar tidak terjadi *lag error*.\n- **Drift**: Pergeseran karakteristik sensor seiring usia/lingkungan $\\rightarrow$ jadwalkan re-kalibrasi.",
+    "notes": "Misal jika tau = 8 detik di udara tenang, mahasiswa harus menunggu minimal 40 detik sebelum mencatat titik suhu!"
+  },
+  {
+    "title": "Menghitung Ketidakpastian (GUM: Type A & Type B)",
+    "body": "- **Type A** (statistik $N$ sampel): $u_A = \\dfrac{s}{\\sqrt{N}}$\n- **Type B** (datasheet / alat referensi $\\pm a$ persegi): $u_B = \\dfrac{a}{\\sqrt{3}}$\n- **Gabungan & Diperluas ($k=2$, $\\sim 95\\%$):**\n\n$$u_c = \\sqrt{u_A^2 + u_{B,\\text{ref}}^2 + u_{B,\\text{res}}^2}, \\qquad U = 2 \\cdot u_c$$",
+    "notes": "Menjelaskan bahwa batas ketidakpastian sistem akhir tidak mungkin lebih kecil daripada ketidakpastian alat referensi yang dipakai mengkalibrasi."
+  },
+  {
+    "title": "Hasil Kalibrasi & Ketidakpastian (`calibration_uncertainty.py`)",
+    "body": "Pada dataset sintetis `telemetry.csv` ($0\\text{--}60\\,^\\circ\\text{C}$):\n\n```text\nModel kalibrasi : T_cal = 1.0381 * T_raw + (-1.4740)\nRMSE sebelum    : 0.8544 C  -->  RMSE sesudah : 0.0266 C\nu_A = 0.0221 C, u_B_ref = 0.0577 C, u_B_res = 0.0144 C\nHasil lapor (k=2, 95%) : 25.05 +/- 0.13 C\n```",
+    "notes": "Output nyata eksekusi Python (outputs.md). Perhatikan RMSE turun lebih dari 30 kali lipat!"
+  },
+  {
+    "title": "Membaca Sensor Datasheet Secara Kritis",
+    "body": "Periksa 6 parameter wajib sebelum membeli/memakai sensor:\n1. Supply & logic level ($3{,}3\\text{ V}$ vs $5\\text{ V}$)\n2. Operating vs calibrated range\n3. Accuracy vs Resolution\n4. Response time ($\\tau_{63\\%}$)\n5. Self-heating / arus eksitasi\n6. Long-term drift per tahun",
+    "notes": "Self-heating terjadi bila arus mengalir terus melalui termistor sehingga suhu termistor naik melebihi suhu udara sekitar."
+  },
+  {
+    "title": "Troubleshooting Validasi Sensor",
+    "body": "- **Pembacaan stuck di ekstrem (`-40` atau `+125 C`)**: Kabel *open/short* atau pin divider terbalik.\n- **Hasil kalibrasi meleset di suhu ruang**: Mengambil titik kalibrasi sebelum $5\\tau$ stabil.\n- **Nilai melompat-lompat**: *Random noise* tinggi tanpa *averaging* atau *common ground* kotor.",
+    "notes": "Ingatkan untuk selalu memisahkan pencatatan data mentah dan data terkalibrasi saat melakukan validasi."
+  },
+  {
+    "title": "Aplikasi Dunia Nyata: Cold-Chain & Smart Agriculture",
+    "body": "- **Cold-Chain Vaksin ($2\\text{--}8\\,^\\circ\\text{C}$)**: Wajib kalibrasi 2-titik dan pelaporan ketidakpastian $\\le \\pm 0{,}5\\,^\\circ\\text{C}$.\n- **Sensor Tanah Pertanian**: Membutuhkan kalibrasi spesifik jenis tanah (lempung vs pasir) dan kompensasi suhu.",
+    "notes": "Menghubungkan teori GUM dan kalibrasi dengan standar industri nyata."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nAnda memakai termometer referensi dengan akurasi $\\pm 0{,}5\\,^\\circ\\text{C}$ untuk mengkalibrasi sensor suhu, lalu mahasiswa melaporkan hasil kalibrasinya memiliki akurasi $\\pm 0{,}02\\,^\\circ\\text{C}$ karena simpangan bakunya kecil. Di mana letak kesalahan kesimpulan tersebut?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 09: *Actuators, Drivers & Control Fundamentals*.",
+    "notes": "Jawaban: Mereka hanya mengukur presisi/random error (Type A) dan mengabaikan Type B dari alat referensi (+-0.5 C / sqrt(3) ~ 0.29 C)!"
+  }
+]

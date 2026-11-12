@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" role="img" aria-label="Arsitektur MQTT Publish Subscribe, hierarki topic, serta pencocokan wildcard single-level plus dan multi-level hash">
+  <rect x="2" y="2" width="916" height="386" rx="14" fill="#f8faf7" stroke="#c8d4cc" stroke-width="2"/>
+  <text x="24" y="34" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#176e59">MQTT FUNDAMENTALS: PUBLISH / SUBSCRIBE, TOPIC HIERARCHY &amp; WILDCARDS</text>
+  <text x="24" y="54" font-family="system-ui, sans-serif" font-size="12" fill="#4f6059">Publisher dan Subscriber tidak saling mengenal alamat IP; Broker merutekan pesan berdasarkan Topic</text>
+
+  <defs>
+    <marker id="m-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#176e59"/>
+    </marker>
+    <marker id="m-amb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+  </defs>
+
+  <!-- Publishers -->
+  <rect x="24" y="84" width="210" height="78" rx="8" fill="#eef4ef" stroke="#176e59" stroke-width="1.6"/>
+  <text x="129" y="106" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#1d2b27">Publisher A (ESP32-01)</text>
+  <text x="129" y="126" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#176e59">PUBLISH</text>
+  <text x="129" y="144" text-anchor="middle" font-family="monospace" font-size="10" fill="#3a4c45">lab/gh01/temp_c -&gt; 28.4</text>
+
+  <rect x="24" y="182" width="210" height="78" rx="8" fill="#eef4ef" stroke="#176e59" stroke-width="1.6"/>
+  <text x="129" y="204" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#1d2b27">Publisher B (ESP32-02)</text>
+  <text x="129" y="224" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#176e59">PUBLISH</text>
+  <text x="129" y="242" text-anchor="middle" font-family="monospace" font-size="10" fill="#3a4c45">lab/gh02/humidity -&gt; 65</text>
+
+  <!-- Broker -->
+  <rect x="316" y="104" width="240" height="136" rx="12" fill="#e7efe5" stroke="#176e59" stroke-width="2.2"/>
+  <text x="436" y="134" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#176e59">MQTT BROKER</text>
+  <text x="436" y="154" text-anchor="middle" font-family="monospace" font-size="11" fill="#1d2b27">(Mosquitto · TCP 1883)</text>
+  <line x1="336" y1="166" x2="536" y2="166" stroke="#c8d4cc" stroke-width="1.3"/>
+  <text x="436" y="188" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3a4c45">• Autentikasi &amp; ACL Topic</text>
+  <text x="436" y="206" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3a4c45">• Pencocokan Wildcard (+ / #)</text>
+  <text x="436" y="224" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3a4c45">• Fan-out ke banyak Subscriber</text>
+
+  <!-- Subscribers -->
+  <rect x="638" y="84" width="258" height="78" rx="8" fill="#ffffff" stroke="#176e59" stroke-width="1.6"/>
+  <text x="767" y="106" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#1d2b27">Subscriber 1 (Dashboard)</text>
+  <text x="767" y="126" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#176e59">SUBSCRIBE lab/+/temp_c</text>
+  <text x="767" y="144" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10.5" fill="#3a4c45">Terima temp_c semua greenhouse</text>
+
+  <rect x="638" y="182" width="258" height="78" rx="8" fill="#fff7ed" stroke="#b45309" stroke-width="1.6"/>
+  <text x="767" y="204" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#92400e">Subscriber 2 (Archiver DB)</text>
+  <text x="767" y="224" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#92400e">SUBSCRIBE lab/#</text>
+  <text x="767" y="242" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10.5" fill="#78350f">Terima seluruh level di bawah lab/</text>
+
+  <line x1="234" y1="123" x2="312" y2="152" stroke="#176e59" stroke-width="2" marker-end="url(#m-arr)"/>
+  <line x1="234" y1="221" x2="312" y2="192" stroke="#176e59" stroke-width="2" marker-end="url(#m-arr)"/>
+  <line x1="556" y1="152" x2="634" y2="123" stroke="#176e59" stroke-width="2" marker-end="url(#m-arr)"/>
+  <line x1="556" y1="192" x2="634" y2="221" stroke="#b45309" stroke-width="2" marker-end="url(#m-amb)"/>
+
+  <!-- Wildcard Rules Footer -->
+  <rect x="24" y="282" width="872" height="84" rx="10" fill="#ffffff" stroke="#176e59" stroke-width="1.4"/>
+  <text x="40" y="306" font-family="system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#1d2b27">Aturan Topic &amp; Wildcard MQTT:</text>
+  <text x="40" y="326" font-family="monospace" font-size="11" fill="#176e59">• '+' = tepat 1 level  (lab/+/temp_c cocok dengan lab/gh01/temp_c, TIDAK dengan lab/gh01/zone/temp_c)</text>
+  <text x="40" y="344" font-family="monospace" font-size="11" fill="#92400e">• '#' = 0 atau lebih level di akhir (lab/# valid; lab/#/temp_c TIDAK VALID!)</text>
+  <text x="40" y="360" font-family="system-ui, sans-serif" font-size="10.5" fill="#4f6059">Hindari awalan slash (/lab/...) karena menciptakan level kosong di indeks ke-0; hindari subscribe '#' global di produksi.</text>
+</svg>
+

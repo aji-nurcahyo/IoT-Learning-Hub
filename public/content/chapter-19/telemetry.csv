@@ -1,0 +1,11 @@
+seq_id,utc_epoch,time_synced,temp_c,buffer_depth,delivery_phase
+1,1762819200,true,27.10,0,live
+2,1762819210,true,27.15,0,live
+3,1762819220,true,27.30,1,buffered_offline
+4,1762819230,true,27.45,2,buffered_offline
+5,1762819240,true,27.60,3,buffered_offline
+6,1762819250,true,27.55,4,buffered_offline
+7,1762819260,true,27.40,5,buffered_offline
+8,1762819270,true,27.35,4,replayed_after_reconnect
+9,1762819280,true,27.25,0,live
+

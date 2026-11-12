@@ -1,0 +1,14 @@
+step,t_ms,raw_mv,btn_press,interlock_open,expected_mode,expected_fan,source
+1,1000,1650,false,false,AUTO_NORMAL,OFF,synthetic
+2,2000,1440,false,false,AUTO_NORMAL,ON,synthetic
+3,3000,1500,false,false,AUTO_NORMAL,ON,synthetic
+4,4000,1560,false,false,AUTO_NORMAL,OFF,synthetic
+5,5000,1530,true,false,AUTO_STRICT,ON,synthetic
+6,6000,1590,false,false,AUTO_STRICT,ON,synthetic
+7,7000,1650,false,false,AUTO_STRICT,OFF,synthetic
+8,8000,1650,true,false,MANUAL_ON,ON,synthetic
+9,9000,1650,false,true,FAULT_SAFE,OFF,synthetic
+10,10000,1650,false,false,MANUAL_ON,ON,synthetic
+11,11000,3280,false,false,FAULT_SAFE,OFF,synthetic
+12,12000,1650,false,false,MANUAL_ON,ON,synthetic
+13,13000,1650,true,false,AUTO_NORMAL,OFF,synthetic

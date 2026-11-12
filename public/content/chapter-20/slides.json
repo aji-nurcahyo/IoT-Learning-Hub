@@ -1,0 +1,78 @@
+[
+  {
+    "title": "Chapter 20 — Connected Device Capstone",
+    "body": "Integrasi menyeluruh seluruh materi Level 2 (*Networking, Wi-Fi, HTTP, MQTT, Time Sync & Buffering*) menjadi satu perangkat pemantau lingkungan tangguh.\n\n- **Prinsip Utama**: *Simulator-First + Broker Lokal*, bebas ketergantungan cloud berbayar!",
+    "notes": "Capstone ini menguji apakah node tetap aman secara fisik dan utuh datanya saat jaringan bermasalah."
+  },
+  {
+    "title": "Arsitektur End-to-End Capstone Level 2",
+    "body": "![Diagram Arsitektur Connected Environmental Monitoring System](content/chapter-20/diagram.svg)\n\nPerhatikan aliran antara **Perangkat Lapangan**, **Firmware ESP32**, dan **Server/Broker Lokal**.",
+    "notes": "Tunjukkan bagaimana NVS, HTTP Config, SNTP, Ring Buffer, MQTT, dan Fail-Safe Lokal bekerja paralel."
+  },
+  {
+    "title": "Pemetaan Pin Hardware & Rangkaian Wokwi",
+    "body": "| Pin ESP32 | Fungsi | Catatan Rekayasa |\n| --- | --- | --- |\n| `GPIO34` | Sensor Suhu Analog (`ADC1_CH6`) | Aman dipakai bersama Wi-Fi aktif (hindari ADC2!) |\n| `GPIO26` | Aktuator Kipas / Relay Lokal | Dikendalikan histeresis meski link putus |\n| `GPIO2` | LED Status Konektivitas | Menyala saat Wi-Fi + MQTT aktif |\n| `GPIO27` | Tombol Mode / Re-sync (`INPUT_PULLUP`) | Debounce FSM non-blocking |",
+    "notes": "Lihat konfigurasi kabel lengkap di content/chapter-20/src/wokwi_diagram.json."
+  },
+  {
+    "title": "Lapisan 1: NVS Preferences & HTTP Config Fallback",
+    "body": "- Saat *cold boot*, [`loadConfigFromNvs()`](content/chapter-20/src/connected_env_capstone/connected_env_capstone.ino) memuat `ssid`, `brokerHost`, `sampleMs`, dan `tempHighC` dari *flash* NVS (`namespace = \"capstone\"`).\n- Setelah Wi-Fi aktif, node memanggil **`HTTP GET /api/v1/config/node-01`** (*timeout `2500 ms`*) untuk menyinkronkan ambang terbaru.\n- Jika server HTTP mati atau `timeout`, node langsung memakai nilai NVS terakhir (*graceful fallback*).",
+    "notes": "Jangan pernah membuat HTTP request gagal menghentikan loop kontrol sensor."
+  },
+  {
+    "title": "Lapisan 2: Kontrol Histeresis Lokal (Fail-Safe Offline)",
+    "body": "- Sensor dibaca tiap `sampleMs` dan langsung mengevaluasi kontrol kipas **sebelum** mengecek koneksi Wi-Fi:\n  - Nyala (`HIGH`) jika $T \\ge T_{\\text{high}}$ (`30.0 C`)\n  - Mati (`LOW`) jika $T \\le T_{\\text{high}} - \\Delta T$ (`28.5 C`)\n- Menjamin keselamatan perangkat atau ruangan tetap terjaga meski router Wi-Fi mati semalaman.",
+    "notes": "Pita histeresis 1,5 C mencegah relay berkedut (chattering) di sekitar titik ambang."
+  },
+  {
+    "title": "Lapisan 3: Wi-Fi FSM & Full-Jitter Backoff Tanpa Blocking",
+    "body": "- Jangan gunakan `while (WiFi.status() != WL_CONNECTED) delay(500);` di dalam `loop()`!\n- Wi-Fi dan MQTT memiliki penjadwal `computeFullJitterMs()` masing-masing berbasis entropy hardware `esp_random()`.\n- Timer memakai perbandingan aman *rollover* `static_cast<long>(nowMs - nextRetryMs) >= 0`.",
+    "notes": "Penanganan millis() yang aman rollover krusial bagi perangkat yang berjalan berbulan-bulan."
+  },
+  {
+    "title": "Lapisan 4: SNTP UTC & Ring Buffer 32 Slot Tanpa String Heap",
+    "body": "- `TelemetryFrame` disimpan sebagai *struct* tetap (`seqId`, `timestamp`, `timeSynced`, `tempC`, `tempHighC`, `relayOn`) dalam array `ringBuf[32]`.\n- Jika jaringan putus lebih lama dari 32 slot, kebijakan **Drop-Oldest** menimpa slot terlama dan mencatat `droppedOldest`.\n- Setelah pulih, `MAX_DRAIN_PER_TICK = 4` mencegah *Task Watchdog* macet.",
+    "notes": "Data masuk ring buffer terlebih dahulu baik saat online maupun offline agar urutan seqId selalu konsisten."
+  },
+  {
+    "title": "Lapisan 5: Kontrak Topik & Payload JSON MQTT",
+    "body": "- **Telemetry** (`iot/lab/node-01/telemetry`):\n  `{\"dev\":\"node-01\",\"seq\":1,\"ts\":1762822800,\"synced\":true,\"temp\":27.80,\"th\":30.00,\"relay\":false,\"q\":0,\"drop\":0}`\n- **Status** (`iot/lab/node-01/status`): **Retained** `\"online\"` saat terhubung; **LWT** `\"offline\"` otomatis saat putus mendadak.\n- **Command** (`iot/lab/node-01/cmd`): Menerima pembaruan `temp_high_c` jarak jauh.",
+    "notes": "Ingatkan untuk memanggil mqtt.setBufferSize(512) agar JSON dan paket CONNECT+LWT muat lega."
+  },
+  {
+    "title": "Keamanan Input pada Topic Command (`cmd`)",
+    "body": "- Pesan kontrol dari broker tidak boleh dipercaya begitu saja!\n- Firmware memeriksa batas wajar (`15.0f <= newVal && newVal <= 60.0f`) sebelum menerapkan `cfg.tempHighC` dan menyimpannya ke NVS.\n- Input korup, `NaN`, atau di luar batas otomatis ditolak dengan log diagnostik `[CMD] Rejected`.",
+    "notes": "Validasi input mencegah salah ketik operator atau payload nyasar merusak sistem pendinginan."
+  },
+  {
+    "title": "Menjalankan Broker & Server Lokal Tanpa Cloud Berbayar",
+    "body": "- **Opsi A (Python Loopback Suite)**: Jalankan langsung [`capstone_connectivity_test.py`](content/chapter-20/src/capstone_connectivity_test.py) untuk memverifikasi HTTP + MQTT 3.1.1 + LWT + Replay di `127.0.0.1`.\n- **Opsi B (Mosquitto LAN + ESP32/Wokwi)**: Jalankan `mosquitto -v` + server HTTP lokal di laptop, lalu sambungkan ESP32 ke IP LAN laptop.",
+    "notes": "Pendekatan lokal membuat praktikum kelas selalu bisa dijalankan walaupun internet kampus terbatas."
+  },
+  {
+    "title": "Hasil 6 Kasus Uji Penerimaan (`capstone_connectivity_test.py`)",
+    "body": "- **`TC-01`**: HTTP GET config `200 OK` $\\rightarrow$ `temp_high_c=30.0 C, sample_ms=5000`\n- **`TC-02`**: LWT `\"offline\"` terdaftar & Retained `\"online\"` diterima subscriber\n- **`TC-03`**: Live telemetry `seq=1..2` valid UTC + `time_synced=true`\n- **`TC-04`**: Outage `depth=4` & histeresis lokal menyalakan `relay=true` di `30.80 C`\n- **`TC-05`**: Batch replay sukses (`stored=6 unique, duplicates_ignored=1`)\n- **`TC-06`**: Remote CMD `29.0 C` & drop mendadak memicu LWT `\"offline\"`",
+    "notes": "Lihat log eksekusi utuh di tab Bukti & Output (outputs.md)."
+  },
+  {
+    "title": "Analisis Jejak `telemetry.csv` Multi-Fase",
+    "body": "```text\nseq 1..2 | q=0 | live_online            | relay=false\nseq 3..6 | q=1..4 | offline_buffered    | relay=true @ 30.80 C\nseq 7    | q=2 | replayed_after_reconnect | relay=true\nseq 9    | q=0 | cmd_threshold_update   | th=29.00 C -> relay=true @ 29.20 C\n```",
+    "notes": "Jejak ini mendemonstrasikan transisi mulus dari online -> offline -> recovery -> remote update."
+  },
+  {
+    "title": "Checklist Troubleshooting Saat Demo Capstone",
+    "body": "1. **MQTT `rc = -2`?** Cek IP broker & izinkan TCP `1883` di firewall host.\n2. **Payload hilang di broker?** Pastikan `mqtt.setBufferSize(512)` sudah dipanggil sebelum `connect()`.\n3. **Sensor selalu `0` atau acak saat Wi-Fi aktif?** Pastikan memakai **ADC1** (`GPIO32–39`), bukan ADC2!\n4. **LWT tidak langsung muncul saat kabel dicabut?** Broker menunggu $1{,}5\\times$ `keepAlive` (`45 s` jika `keepAlive = 30 s`) sebelum menembak Will.",
+    "notes": "Kesalahpahaman jeda keepAlive LWT adalah pertanyaan paling sering muncul saat demo."
+  },
+  {
+    "title": "Kejujuran Pelaporan Bukti Pengujian",
+    "body": "- Selalu bedakan 4 tingkat bukti verifikasi:\n  1. **Software Simulation** (Python loopback suite / logika model)\n  2. **Compile Verification** (Kompilasi asli `arduino-cli` target `esp32:esp32:esp32`)\n  3. **Simulator Verification** (Eksekusi nyata di Wokwi CLI/Web)\n  4. **Hardware Verification** (Pengujian di papan ESP32 + Mosquitto LAN nyata)\n- Jangan pernah menaikkan status uji sebelum bukti log aktual tersedia!",
+    "notes": "Standar kejujuran teknis ini menjadi bagian eksplisit rubrik penilaian."
+  },
+  {
+    "title": "Penutup Level 2 & Langkah Selanjutnya",
+    "body": "**Selamat menuntaskan Level 2 (Connectivity & Communication Protocols)!**\n\n- Kerjakan seluruh **Exercises** & **Tugas & Rubrik (100 Poin)** pada Chapter 20.\n- Dokumentasikan 6 skenario uji konektivitas lengkap beserta bukti log aktual.\n- Pada level berikutnya (**Level 3 — *Edge Processing & Cloud Integration***, segera hadir), data dari node tangguh ini akan diolah menjadi *pipeline* analitik dan sistem cerdas.",
+    "notes": "Arahkan mahasiswa meninjau kembali tab Source Code dan Bukti & Output sebelum mengumpul tugas."
+  }
+]
+

@@ -1,0 +1,4921 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "title": "IoT & Embedded Foundations",
+      "description": "Bangun pemahaman perangkat, elektronika, dan Firmware yang aman."
+    },
+    {
+      "id": 2,
+      "title": "Connectivity & Communication Protocols",
+      "description": "Hubungkan perangkat dan rancang pertukaran data yang andal."
+    },
+    {
+      "id": 3,
+      "title": "Data, Gateways & IoT Applications",
+      "description": "Ubah telemetry menjadi aplikasi yang berguna dan dapat dikelola."
+    },
+    {
+      "id": 4,
+      "title": "Advanced & Intelligent IoT Systems",
+      "description": "Rancang sistem yang efisien, cerdas, dan siap dievaluasi."
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "slug": "chapter-01",
+      "levelId": 1,
+      "title": "Introduction to the Internet of Things",
+      "description": "Membedakan perangkat terhubung dan sistem IoT berdasarkan aliran data. Memetakan Sensor, Gateway, dan aplikasi pada satu use case.",
+      "objectives": [
+        "Membedakan perangkat terhubung sederhana, Embedded System, Cyber-Physical System, dan sistem IoT berdasarkan aliran data",
+        "Memetakan Sensor, Microcontroller, Actuator, Gateway, dan Platform pada satu use case nyata",
+        "Menghitung estimasi beban paket serta mengevaluasi tantangan scalability, security, interoperability, dan reliability"
+      ],
+      "prerequisites": [],
+      "tags": [
+        "Introduction",
+        "Internet",
+        "Things"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-01/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-01/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-01/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi alur data chapter ini dijalankan melalui skrip Python standar tanpa notebook."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-01/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-01/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-01/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-01/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-01/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT Program (NISTIR 8259)",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Espressif ESP-IDF Programming Guide",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "OASIS MQTT Version 5.0 Specification",
+          "url": "https://mqtt.org/mqtt-specification/",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Skrip simulasi software iot_flow_demo.py telah dijalankan nyata dengan data sintetis (telemetry.csv); belum menguji perangkat keras fisik atau jaringan radio.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-01/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-01/src/iot_flow_demo.py",
+            "date": "2026-11-10",
+            "sha256": "3ea3d25457e5250fb1fed0e387e66eb3e561259675211146afbd539ed61f117a"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-01/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Pemetaan komponen ekosistem",
+          "points": 25,
+          "description": "Ketepatan membedakan dan memetakan Sensor, Embedded Node, Actuator, Connectivity, Gateway, dan Platform pada kasus pilihan."
+        },
+        {
+          "criterion": "Analisis alur data uplink & downlink",
+          "points": 25,
+          "description": "Alur dua arah digambarkan jelas dengan payload JSON sintetis terstruktur (device_id, seq, dan satuan eksplisit)."
+        },
+        {
+          "criterion": "Estimasi beban data & batasan teknis",
+          "points": 25,
+          "description": "Perhitungan paket serta volume data harian akurat dan mempertimbangkan skenario kegagalan jaringan."
+        },
+        {
+          "criterion": "Kejelasan diagram, keselamatan & referensi",
+          "points": 25,
+          "description": "Diagram blok terbaca rapi, mekanisme fail-safe lokal dijelaskan, dan rujukan primer dicantumkan valid."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Chapter 01 membahas fondasi konseptual ekosistem IoT; praktik dijalankan via Path A simulasi software tanpa pembelian hardware."
+      }
+    },
+    {
+      "id": 2,
+      "slug": "chapter-02",
+      "levelId": 1,
+      "title": "IoT Architecture, Use Cases & System Requirements",
+      "description": "Menyusun kebutuhan fungsional dan batasan terukur satu sistem IoT. Membandingkan arsitektur Edge dan Cloud melalui studi kasus monitoring suhu terdistribusi.",
+      "objectives": [
+        "Membandingkan model three-layer dan five-layer IoT architecture beserta tanggung jawab tiap lapisannya",
+        "Menyusun functional dan non-functional requirements secara numerik (latensi, daya, bandwidth, jangkauan, ketersediaan, biaya)",
+        "Merancang use-case diagram, block diagram, dan trade-off Edge vs Cloud pada studi kasus monitoring suhu terdistribusi"
+      ],
+      "prerequisites": [
+        1
+      ],
+      "tags": [
+        "Architecture",
+        "Cases",
+        "System",
+        "Requirements"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-02/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-02/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-02/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Analisis kapasitas bandwidth dan buffer dijalankan melalui skrip Python terstruktur."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-02/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-02/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-02/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-02/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-02/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NISTIR 8228: Managing IoT Cybersecurity and Privacy Risks",
+          "url": "https://csrc.nist.gov/publications/detail/nistir/8228/final",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Espressif ESP-IDF Programming Guide",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Raspberry Pi Official Documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Model analitis requirements_budget.py telah dieksekusi nyata; belum menguji latensi jaringan WAN aktual atau perangkat Gateway fisik.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-02/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-02/src/requirements_budget.py",
+            "date": "2026-11-10",
+            "sha256": "43768b66870b8e9d650c72362375097469aca679922a55360c3e585fc486b191"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-02/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Spesifikasi kebutuhan fungsional & non-fungsional",
+          "points": 25,
+          "description": "Seluruh kebutuhan terukur secara numerik (latensi, daya, bandwidth, jangkauan, ketersediaan, biaya) dan konsisten dengan skenario."
+        },
+        {
+          "criterion": "Desain arsitektur 5-lapis & system boundaries",
+          "points": 25,
+          "description": "Pembagian tanggung jawab 5 lapisan tepat, batas sistem jelas, serta use-case dan block diagram mudah dipahami."
+        },
+        {
+          "criterion": "Analisis trade-off Edge vs Cloud & perhitungan kapasitas",
+          "points": 25,
+          "description": "Keputusan penempatan logika di Edge/Cloud beralasan kuat dan perhitungan bandwidth serta offline buffer tepat."
+        },
+        {
+          "criterion": "Skenario kegagalan, fail-safe & referensi",
+          "points": 25,
+          "description": "Penanganan gangguan koneksi/daya/buffer realistis dengan perilaku fail-safe dan rujukan teknis valid."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Chapter 02 berfokus pada perancangan arsitektur dan pemodelan kapasitas perangkat lunak tanpa kewajiban hardware fisik."
+      }
+    },
+    {
+      "id": 3,
+      "slug": "chapter-03",
+      "levelId": 1,
+      "title": "Electronics, Power & Hardware Safety",
+      "description": "Menghitung kebutuhan resistor, voltage divider, dan power budget pada rangkaian low-voltage DC. Mengidentifikasi risiko tegangan, arus, dan polaritas sebelum wiring.",
+      "objectives": [
+        "Menghitung tegangan, arus, resistansi, dan daya pada rangkaian DC menggunakan Hukum Ohm dan Hukum Kirchhoff",
+        "Menentukan resistor pembatas arus LED, pull-up/pull-down, voltage divider aman GPIO, serta power budget baterai",
+        "Menerapkan prosedur keselamatan breadboard, common ground, dan pengukuran multimeter untuk mencegah overcurrent dan short circuit"
+      ],
+      "prerequisites": [
+        2
+      ],
+      "tags": [
+        "Electronics",
+        "Power",
+        "Hardware",
+        "Safety"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-03/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-03/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-03/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Verifikasi matematis rangkaian DC dijalankan dengan skrip Python standar."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Chapter elektronika dasar ini tidak menggunakan log telemetry deret waktu."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-03/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-03/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-03/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-03/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP32 Series Datasheet",
+          "url": "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino Digital Pins & Pull-Up Guide",
+          "url": "https://docs.arduino.cc/learn/microcontrollers/digital-pins/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "SparkFun Multimeter Tutorial",
+          "url": "https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Perhitungan Hukum Ohm, voltage divider, dan power budget telah dieksekusi pada Python (electronics_calc.py); pengukuran fisik breadboard dan multimeter belum dilakukan di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-03/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-03/src/electronics_calc.py",
+            "date": "2026-11-10",
+            "sha256": "e75cdb841c1f661122127428f8baa449e07c999187203619714beeb6bd9b9482"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-03/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Perhitungan Hukum Ohm, LED & voltage divider",
+          "points": 30,
+          "description": "Ketepatan persamaan, pemilihan resistor standar, perhitungan arus aktual, disipasi daya, dan keamanan level tegangan."
+        },
+        {
+          "criterion": "Penyusunan power budget & estimasi baterai",
+          "points": 25,
+          "description": "Ketepatan perhitungan arus rata-rata duty-cycle serta analisis faktor yang memengaruhi umur baterai nyata."
+        },
+        {
+          "criterion": "Audit keselamatan, batas GPIO & prosedur multimeter",
+          "points": 25,
+          "description": "Kejelasan SOP power-off wiring, pencegahan short/overcurrent/reverse polarity, dan prosedur ukur paralel vs seri."
+        },
+        {
+          "criterion": "Dokumentasi skema & kejujuran verifikasi",
+          "points": 20,
+          "description": "Kejelasan label skema (common GND, nilai komponen) serta pemisahan tegas antara hitungan teoretis dan pengukuran fisik."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Chapter 03 mengikuti pendekatan Simulator-First (Path A perhitungan software); praktik breadboard dan multimeter fisik bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 4,
+      "slug": "chapter-04",
+      "levelId": 1,
+      "title": "Microcontrollers, ESP32 & Development Boards",
+      "description": "Membedakan Microcontroller dan Single-Board Computer. Mengidentifikasi varian chip, revisi board, dan pin dari dokumentasi.",
+      "objectives": [
+        "Membedakan arsitektur Microcontroller dan Single-Board Computer berdasarkan memori, daya, dan sistem operasi",
+        "Mengidentifikasi perbedaan varian chip ESP32, ESP32-S3, dan ESP32-C3 serta batasan pin dari datasheet",
+        "Memilih framework pengembangan dan mendiagnosis kesalahan flashing, boot mode, dan Serial Monitor"
+      ],
+      "prerequisites": [
+        3
+      ],
+      "tags": [
+        "Microcontrollers",
+        "ESP32",
+        "Development",
+        "Boards"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-04/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-04/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-04/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Audit varian ESP32 dijalankan via skrip Python standar dan sketsa Arduino/Wokwi."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Chapter pengenalan board dan flashing ini tidak menggunakan dataset deret waktu."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-04/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-04/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-04/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-04/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP32 Series Datasheet",
+          "url": "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Espressif ESP-IDF Programming Guide",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino-ESP32 Official Documentation",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Wokwi ESP32 Simulation Guide",
+          "url": "https://docs.wokwi.com/guides/esp32",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ch04_board_probe.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-04/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-04/src/board_matrix.py",
+            "date": "2026-11-10",
+            "sha256": "c618552ac2455812fc03a6db1021c668d9948bfeb293e56790d2bba4b1edb561"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-04/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-04/src/ch04_board_probe",
+            "date": "2026-11-11",
+            "sha256": "c618552ac2455812fc03a6db1021c668d9948bfeb293e56790d2bba4b1edb561"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-04/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Justifikasi pemilihan varian chip & framework",
+          "points": 25,
+          "description": "Pemilihan SoC (ESP32/S3/C3) dan framework beralasan teknis serta mempertimbangkan perbedaan keluarga chip."
+        },
+        {
+          "criterion": "Alokasi pin aman & analisis batasan",
+          "points": 30,
+          "description": "Seluruh pin valid sesuai datasheet varian; tidak bentrok dengan SPI Flash, input-only, atau boot strapping."
+        },
+        {
+          "criterion": "Kelengkapan BOM, wiring & prosedur bring-up",
+          "points": 25,
+          "description": "BOM lengkap, resistor pengaman dicantumkan, versi toolchain/board package tercatat, dan langkah uji jelas."
+        },
+        {
+          "criterion": "Troubleshooting & kejujuran status uji",
+          "points": 20,
+          "description": "Prosedur diagnosis boot/serial akurat dan klaim status verifikasi sesuai bukti aktual."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Path A Wokwi & Python); board fisik ESP32-DevKitC V4 bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 5,
+      "slug": "chapter-05",
+      "levelId": 1,
+      "title": "Embedded Programming with C/C++",
+      "description": "Menyusun program C/C++ modular dengan tipe data fixed-width, timing non-blocking millis(), dan Finite State Machine dasar. Menganalisis penggunaan memori Flash dan SRAM pada Firmware.",
+      "objectives": [
+        "Menyusun program C/C++ modular menggunakan tipe data fixed-width dan header file ber-include guard",
+        "Menerapkan timing non-blocking berbasis millis() yang aman terhadap rollover 32-bit untuk menggantikan delay()",
+        "Menganalisis penggunaan Flash vs SRAM (stack vs heap) dan merancang Finite State Machine sederhana"
+      ],
+      "prerequisites": [
+        4
+      ],
+      "tags": [
+        "Embedded",
+        "Programming",
+        "with",
+        "C/C++"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-05/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-05/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-05/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Verifikasi timing rollover dan transisi FSM dijalankan dengan skrip Python dan kode Arduino C++."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Chapter pemrograman dasar C/C++ ini menggunakan simulasi state internal tanpa dataset CSV eksternal."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-05/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-05/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-05/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-05/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Arduino Blink Without Delay Guide",
+          "url": "https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino-ESP32 Official Documentation",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "cppreference Fixed Width Integer Types",
+          "url": "https://en.cppreference.com/w/cpp/types/integer",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ex01_types_serial.ino`, `ex02_nonblocking_fsm.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-05/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-05/src/fsm_timing_sim.py",
+            "date": "2026-11-10",
+            "sha256": "7423c73339ea61a1b4d92410df8f1dfeb237ba61baa087324c1faeb6363ffc37"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-05/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-05/src/ex01_types_serial",
+            "date": "2026-11-11",
+            "sha256": "7423c73339ea61a1b4d92410df8f1dfeb237ba61baa087324c1faeb6363ffc37"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-05/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Struktur C/C++, tipe data & modularitas header",
+          "points": 25,
+          "description": "Memakai uint*_t, constexpr, minimal 1 file .h ber-include guard, dan bebas alokasi heap String di loop()."
+        },
+        {
+          "criterion": "Implementasi non-blocking millis()",
+          "points": 30,
+          "description": "Nol delay() di loop(), pengurangan unsigned aman rollover, dan ketiga interval berjalan independen."
+        },
+        {
+          "criterion": "Desain Finite State Machine (FSM)",
+          "points": 25,
+          "description": "Menggunakan enum class dan switch-case bersih dengan kondisi transisi terdefinisi dan status awal aman."
+        },
+        {
+          "criterion": "Dokumentasi, bukti uji & kejujuran status",
+          "points": 20,
+          "description": "Kode rapi, ada tabel/diagram transisi, serta pemisahan tegas antara simulasi/expected output dan eksekusi nyata."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Path A Wokwi & Python); board fisik ESP32-DevKitC V4 bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 6,
+      "slug": "chapter-06",
+      "levelId": 1,
+      "title": "GPIO, Digital Input/Output & Debouncing",
+      "description": "Merancang pembacaan tombol dengan pull-up/pull-down dan software debouncing berbasis millis(). Membandingkan polling, edge detection, dan interrupt pada ESP32.",
+      "objectives": [
+        "Mengonfigurasi GPIO OUTPUT, INPUT_PULLUP, dan INPUT_PULLDOWN sesuai batasan pin ESP32-DevKitC V4",
+        "Membandingkan debouncing berbasis waktu dan hardware RC serta menerapkan falling-edge detection",
+        "Mengimplementasikan button-controlled LED FSM non-blocking dan membandingkan polling dengan external interrupt"
+      ],
+      "prerequisites": [
+        5
+      ],
+      "tags": [
+        "GPIO",
+        "Digital",
+        "Input/Output",
+        "Debouncing"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-06/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-06/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-06/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi bounce dijalankan via skrip Python dan skema Wokwi."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-06/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-06/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-06/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-06/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-06/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP-IDF GPIO API Reference",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino Debounce on a Pushbutton",
+          "url": "https://docs.arduino.cc/built-in-examples/digital/Debounce/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Wokwi Pushbutton Simulation Reference",
+          "url": "https://docs.wokwi.com/parts/wokwi-pushbutton",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ex01_button_debounce_fsm.ino`, `ex02_interrupt_flag.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-06/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-06/src/debounce_sim.py",
+            "date": "2026-11-10",
+            "sha256": "a34aa8dc36c48cd88e106efa4bcc68f812bd3de7743f8359a860ee04b67fa04c"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-06/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-06/src/ex01_button_debounce_fsm",
+            "date": "2026-11-11",
+            "sha256": "a34aa8dc36c48cd88e106efa4bcc68f812bd3de7743f8359a860ee04b67fa04c"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-06/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Konfigurasi GPIO & keamanan rangkaian",
+          "points": 20,
+          "description": "Pin valid sesuai ESP32-DevKitC V4, resistor LED 220 ohm tercantum, dan konfigurasi INPUT_PULLUP benar."
+        },
+        {
+          "criterion": "Implementasi debouncing & edge detection",
+          "points": 30,
+          "description": "Debounce non-blocking bebas pantulan dan tidak memicu berulang saat tombol ditahan."
+        },
+        {
+          "criterion": "Desain FSM & logika short/long press",
+          "points": 30,
+          "description": "Transisi state (OFF, ON, BLINK, LOCKED) bersih, akurat, dan bebas delay()."
+        },
+        {
+          "criterion": "Dokumentasi, wiring & kejujuran status uji",
+          "points": 20,
+          "description": "Pin mapping jelas, skenario uji terperinci, dan bukti/status sesuai pengujian aktual."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Path A Wokwi & Python); board fisik ESP32-DevKitC V4 bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 7,
+      "slug": "chapter-07",
+      "levelId": 1,
+      "title": "Analog Signals, ADC, PWM & Sampling",
+      "description": "Menghitung konversi ADC dan duty cycle PWM. Menganalisis pengaruh sampling terhadap sinyal yang diamati.",
+      "objectives": [
+        "Menghitung resolusi kuantisasi ADC, duty cycle PWM, dan tegangan rata-rata keluaran LEDC",
+        "Menerapkan kanal ADC1 ESP32, analogReadMilliVolts(), dan filter moving average non-blocking",
+        "Menganalisis kriteria sampling Nyquist serta memprediksi frekuensi aliasing akibat undersampling"
+      ],
+      "prerequisites": [
+        6
+      ],
+      "tags": [
+        "Analog",
+        "Signals",
+        "ADC",
+        "Sampling"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-07/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-07/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-07/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi kuantisasi, moving average, dan Nyquist aliasing dijalankan via skrip Python standar."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-07/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-07/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-07/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-07/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-07/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP-IDF ADC One-Shot & Calibration",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc_oneshot.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino-ESP32 LEDC (PWM) API Documentation",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Wokwi Potentiometer Reference",
+          "url": "https://docs.wokwi.com/parts/wokwi-potentiometer",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ex01_adc_pwm_dimmer.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-07/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-07/src/adc_nyquist_sim.py",
+            "date": "2026-11-10",
+            "sha256": "4d6d9a769479b6e542caedc1953b6f42aa46d9cc283842b190e036bae1c638a1"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-07/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-07/src/ex01_adc_pwm_dimmer",
+            "date": "2026-11-11",
+            "sha256": "4d6d9a769479b6e542caedc1953b6f42aa46d9cc283842b190e036bae1c638a1"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-07/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Pemilihan pin ADC1 & perhitungan kuantisasi",
+          "points": 25,
+          "description": "Wajib memakai ADC1 aman Wi-Fi, atenuasi tepat, analogReadMilliVolts(), dan hitungan LSB akurat."
+        },
+        {
+          "criterion": "Desain filter noise & analisis sampling",
+          "points": 25,
+          "description": "Implementasi moving average circular buffer non-blocking dan justifikasi laju sampling vs kriteria Nyquist."
+        },
+        {
+          "criterion": "Konfigurasi LEDC PWM & pemetaan duty cycle",
+          "points": 30,
+          "description": "API ledcAttach/ledcWrite benar, dua channel komplementer akurat dengan clamping aman."
+        },
+        {
+          "criterion": "Dokumentasi, simulasi & kejujuran bukti",
+          "points": 20,
+          "description": "Skema wiring lengkap dan log aktual/expected output terpisah jelas."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Path A Wokwi & Python); board fisik ESP32-DevKitC V4 bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 8,
+      "slug": "chapter-08",
+      "levelId": 1,
+      "title": "Sensors, Calibration & Measurement Uncertainty",
+      "description": "Menyusun prosedur kalibrasi dua titik dengan referensi yang sesuai. Membedakan resolusi, akurasi, presisi, response time, dan ketidakpastian pengukuran.",
+      "objectives": [
+        "Membedakan resolusi, akurasi, presisi, sensitivitas, serta systematic error dan random error",
+        "Menyusun prosedur kalibrasi dua titik (slope & offset) dengan memperhatikan waktu respons 5 tau",
+        "Menghitung ketidakpastian gabungan (Type A + Type B) serta mengevaluasi validasi pengukuran terhadap referensi"
+      ],
+      "prerequisites": [
+        7
+      ],
+      "tags": [
+        "Sensors",
+        "Calibration",
+        "Measurement",
+        "Uncertainty"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-08/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-08/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-08/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Regresi kalibrasi dua titik dan propagasi ketidakpastian dijalankan melalui skrip Python standar."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-08/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-08/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-08/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-08/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-08/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "BIPM JCGM 100:2008 GUM Uncertainty Guide",
+          "url": "https://www.bipm.org/en/committees/jc/jcgm/publications",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "NIST Engineering Statistics Handbook — Measurement Uncertainty",
+          "url": "https://www.itl.nist.gov/div898/handbook/mpc/section5/mpc5.htm",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Wokwi NTC Temperature Sensor Reference",
+          "url": "https://docs.wokwi.com/parts/wokwi-ntc-temperature-sensor",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ex01_ntc_calibrated.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-08/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-08/src/calibration_uncertainty.py",
+            "date": "2026-11-10",
+            "sha256": "bedec288519540ab0ca1835da2614e139dbf9a4dc12df318695742349241d82e"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-08/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-08/src/ex01_ntc_calibrated",
+            "date": "2026-11-11",
+            "sha256": "bedec288519540ab0ca1835da2614e139dbf9a4dc12df318695742349241d82e"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-08/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Metodologi kalibrasi & penanganan waktu respons",
+          "points": 25,
+          "description": "Titik acuan valid, syarat stabilitas 5 tau diperhatikan, serta systematic vs random error teridentifikasi tepat."
+        },
+        {
+          "criterion": "Perhitungan model kalibrasi & validasi error",
+          "points": 30,
+          "description": "Rumus slope/offset tepat dan perbandingan RMSE sebelum vs sesudah kalibrasi dihitung akurat."
+        },
+        {
+          "criterion": "Analisis ketidakpastian (Type A, Type B & k=2)",
+          "points": 25,
+          "description": "Perhitungan u_A, u_B, u_c, dan pelaporan akhir (x_bar +/- U) konsisten dengan kaidah metrologi."
+        },
+        {
+          "criterion": "Implementasi akuisisi & kejujuran data",
+          "points": 20,
+          "description": "Kode akuisisi menyertakan averaging & deteksi fault; sumber data (sintetis vs fisik) dilabeli jujur."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Path A Python & Wokwi); sensor NTC dan instrumen referensi fisik bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 9,
+      "slug": "chapter-09",
+      "levelId": 1,
+      "title": "Actuators, Drivers & Control Fundamentals",
+      "description": "Memilih driver low-voltage DC dan flyback protection berdasarkan kebutuhan Actuator. Menerapkan kontrol histeresis, safety interlock, dan prinsip fail-safe.",
+      "objectives": [
+        "Memilih rangkaian driver transistor/MOSFET dan flyback diode berdasarkan batas arus dan beban induktif low-voltage DC",
+        "Membedakan kontrol open-loop, closed-loop threshold tunggal, dan kontrol histeresis anti-chattering",
+        "Merancang mekanisme safety interlock dan fail-safe shutdown pada kondisi sensor fault atau boot awal"
+      ],
+      "prerequisites": [
+        8
+      ],
+      "tags": [
+        "Actuators",
+        "Drivers",
+        "Control",
+        "Fundamentals"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-09/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-09/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-09/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi perbandingan single-threshold vs histeresis dijalankan via skrip Python standar."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-09/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-09/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-09/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-09/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-09/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP-IDF LEDC & Motor Control",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/ledc.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino Servo & Low-Voltage Actuator Guide",
+          "url": "https://docs.arduino.cc/learn/electronics/servo-motors/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Wokwi Buzzer Simulation Reference",
+          "url": "https://docs.wokwi.com/parts/wokwi-buzzer",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ex01_hysteresis_driver.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-09/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-09/src/hysteresis_control_sim.py",
+            "date": "2026-11-10",
+            "sha256": "e9b855590aea1ca283a6e74397059182efd4a5d77a6c6d345ef8465b1dbb8e4d"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-09/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-09/src/ex01_hysteresis_driver",
+            "date": "2026-11-11",
+            "sha256": "e9b855590aea1ca283a6e74397059182efd4a5d77a6c6d345ef8465b1dbb8e4d"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-09/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Desain rangkaian driver & proteksi induktif",
+          "points": 30,
+          "description": "Driver MOSFET/BJT tepat, flyback diode, resistor gate/base, pull-down fail-safe, dan common GND lengkap."
+        },
+        {
+          "criterion": "Implementasi kontrol histeresis & PWM",
+          "points": 25,
+          "description": "Deadband tepat bebas chattering, aktuasi PWM LEDC benar dan non-blocking."
+        },
+        {
+          "criterion": "Safety interlock & prinsip fail-safe",
+          "points": 25,
+          "description": "Penanganan sensor NaN, interlock darurat prioritas tertinggi, serta inisialisasi boot aman."
+        },
+        {
+          "criterion": "Dokumentasi, simulasi & kejujuran bukti",
+          "points": 20,
+          "description": "BOM low-voltage DC lengkap, log simulasi/expected output terdokumentasi tanpa klaim palsu."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First low-voltage DC (Path A Python & Wokwi); praktik hardware driver bersifat opsional (Path B) tanpa AC mains."
+      }
+    },
+    {
+      "id": 10,
+      "slug": "chapter-10",
+      "levelId": 1,
+      "title": "Embedded Foundations Capstone",
+      "description": "Merancang prototipe Sensor dan Actuator low-voltage DC. Menyusun laporan build, pengujian, dan keterbatasan prototipe.",
+      "objectives": [
+        "Mengintegrasikan akuisisi ADC1 terkalibrasi, input tombol debounced, safety interlock, dan kontrol PWM histeresis dalam Firmware non-blocking",
+        "Merancang BOM, wiring low-voltage DC, dan pin mapping ESP32-DevKitC V4 untuk Smart Environmental Monitoring & Local Control System",
+        "Melaksanakan pengujian berbasis acceptance test cases serta menyusun laporan teknis yang jujur terhadap bukti verifikasi"
+      ],
+      "prerequisites": [
+        9
+      ],
+      "tags": [
+        "Embedded",
+        "Foundations",
+        "Capstone"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-10/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-10/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-10/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Acceptance test harness dan verifikasi logika capstone dijalankan melalui skrip Python standar."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-10/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-10/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-10/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-10/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-10/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP-IDF & ESP32 Documentation",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Arduino-ESP32 Official Documentation",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "Wokwi ESP32 Simulation Guide",
+          "url": "https://docs.wokwi.com/guides/esp32",
+          "checkedOn": "2026-11-10"
+        },
+        {
+          "title": "NIST Cybersecurity for IoT Program",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-10"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`capstone_env_monitor.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-10/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-10/src/capstone_logic_test.py",
+            "date": "2026-11-10",
+            "sha256": "130a03ce46979b5b57421e2f53c07bc5168cbd587dbb7d28784a6528f78b59a2"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-10/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-10/src/capstone_env_monitor",
+            "date": "2026-11-11",
+            "sha256": "130a03ce46979b5b57421e2f53c07bc5168cbd587dbb7d28784a6528f78b59a2"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-10",
+        "report": "content/chapter-10/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Arsitektur, BOM & keselamatan wiring DC",
+          "points": 20,
+          "description": "Diagram arsitektur lengkap, BOM realistis, pin mapping valid, serta driver MOSFET/flyback dan common GND benar."
+        },
+        {
+          "criterion": "Akuisisi terkalibrasi & kontrol histeresis",
+          "points": 25,
+          "description": "Pembacaan ADC1 terfilter moving average, kalibrasi terdokumentasi, dan histeresis mencegah chattering."
+        },
+        {
+          "criterion": "Firmware non-blocking, FSM & fail-safe",
+          "points": 25,
+          "description": "Kode modular .h/.ino, bebas delay() di loop(), debounce tombol akurat, serta interlock dan fault NaN aman."
+        },
+        {
+          "criterion": "Pengujian test-case, dokumentasi & kejujuran",
+          "points": 30,
+          "description": "Minimal 7 skenario uji dijalankan dan dicatat lengkap (Expected vs Actual) dengan status verifikasi sesuai bukti nyata."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Path A Wokwi & Python acceptance test); rangkaian hardware fisik ESP32-DevKitC V4 low-voltage DC bersifat opsional (Path B)."
+      }
+    },
+    {
+      "id": 11,
+      "slug": "chapter-11",
+      "levelId": 2,
+      "title": "Networking Fundamentals for IoT",
+      "description": "Menjelaskan peran IP, DNS, TCP, dan UDP dalam aliran telemetry. Mendiagnosis kegagalan konektivitas pada jaringan lokal.",
+      "objectives": [
+        "Menjelaskan peran lapisan TCP/IP, IPv4 CIDR subnetting, DHCP, dan DNS dalam konektivitas perangkat IoT",
+        "Membandingkan TCP vs UDP, ports/sockets, serta menghitung efisiensi goodput pada payload IoT kecil",
+        "Mendiagnosis kegagalan konektivitas lokal secara berlapis menggunakan metrik latency, jitter, dan packet loss"
+      ],
+      "prerequisites": [
+        10,
+        1
+      ],
+      "tags": [
+        "Networking",
+        "Fundamentals"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-11/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-11/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-11/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Perhitungan CIDR, goodput, dan analisis probe jaringan dijalankan via skrip Python standar."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-11/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-11/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-11/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-11/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-11/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "IETF RFC 1918 — Private Internets",
+          "url": "https://datatracker.ietf.org/doc/html/rfc1918",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "IETF RFC 9293 — TCP Specification",
+          "url": "https://datatracker.ietf.org/doc/html/rfc9293",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif ESP-IDF lwIP TCP/IP Stack",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/lwip.html",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Skrip network_diagnostics_sim.py telah dijalankan nyata pada data probe sintetis (telemetry.csv); belum menguji jaringan LAN atau router fisik.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-11/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-11/src/network_diagnostics_sim.py",
+            "date": "2026-11-11",
+            "sha256": "ab76c55e8037fd01801ee11ad176886aee8e9ed67eba8a71dca2179206dba5ee"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-11/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Perhitungan pengalamatan IPv4 & CIDR subnetting",
+          "points": 25,
+          "description": "Pembagian subnet dari /24 bebas tumpang tindih, kapasitas mencukupi margin, serta netmask/gateway/broadcast akurat."
+        },
+        {
+          "criterion": "Analisis protokol Transport (TCP vs UDP) & goodput",
+          "points": 25,
+          "description": "Perbandingan handshake/header tepat dan perhitungan persentase goodput benar."
+        },
+        {
+          "criterion": "Prosedur troubleshooting jaringan berlapis",
+          "points": 30,
+          "description": "SOP diagnosis berurutan (Link -> IP/DHCP -> Gateway -> DNS -> Port/Firewall) dilengkapi perintah uji nyata."
+        },
+        {
+          "criterion": "Dokumentasi, simulasi & kejujuran bukti",
+          "points": 20,
+          "description": "Penyajian tabel rapi, hasil uji skrip/perhitungan terdokumentasi jujur tanpa klaim jaringan fiktif."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Chapter 11 berfokus pada fondasi TCP/IP dan perhitungan jaringan berbasis software tanpa kewajiban hardware fisik."
+      }
+    },
+    {
+      "id": 12,
+      "slug": "chapter-12",
+      "levelId": 2,
+      "title": "Wi-Fi Connectivity & Device Provisioning",
+      "description": "Menyusun alur Device Provisioning NVS tanpa kredensial dalam source code. Merancang connection state machine dengan timeout dan exponential backoff.",
+      "objectives": [
+        "Menyusun alur Device Provisioning berbasis NVS Preferences tanpa menanam kredensial di source code",
+        "Merancang connection state machine non-blocking dengan timeout dan exponential backoff",
+        "Mengevaluasi DHCP vs Static IP, diagnostik RSSI, kanal 2,4 GHz, konflik ADC2, dan keamanan Wi-Fi"
+      ],
+      "prerequisites": [
+        11
+      ],
+      "tags": [
+        "Wi-Fi",
+        "Connectivity",
+        "Device",
+        "Provisioning"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-12/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-12/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-12/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi FSM provisioning dan exponential backoff dijalankan melalui skrip Python standar."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Chapter manajemen koneksi Wi-Fi ini berfokus pada state machine dan kredensial NVS."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-12/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-12/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-12/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-12/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Espressif ESP-IDF Wi-Fi Driver Guide",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/wifi.html",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Arduino-ESP32 Preferences API",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/api/preferences.html",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "NIST Cybersecurity for IoT Program",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`wifi_prov_fsm.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-12/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-12/src/wifi_fsm_sim.py",
+            "date": "2026-11-11",
+            "sha256": "1f6b657faa9e3a0b856b38bde265e75015afc3235ff31c7de87e566b7f244e7a"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-12/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-12/src/wifi_prov_fsm",
+            "date": "2026-11-11",
+            "sha256": "1f6b657faa9e3a0b856b38bde265e75015afc3235ff31c7de87e566b7f244e7a"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-12/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Device provisioning & penyimpanan NVS aman",
+          "points": 30,
+          "description": "Nol kredensial hardcoded, persistensi Preferences benar, fitur wipe tersedia, dan password ter-redaksi di log."
+        },
+        {
+          "criterion": "Connection state machine & exponential backoff",
+          "points": 30,
+          "description": "FSM non-blocking millis(), batas timeout jelas, urutan backoff sampai cap maksimum, dan reset saat CONNECTED."
+        },
+        {
+          "criterion": "Diagnostik Wi-Fi, Static/DHCP & keamanan",
+          "points": 20,
+          "description": "Pemantauan RSSI, analisis DHCP vs Static IP, dan praktik keamanan WPA2/WPA3 terdokumentasi baik."
+        },
+        {
+          "criterion": "Dokumentasi, simulasi & kejujuran bukti",
+          "points": 20,
+          "description": "Diagram FSM rapi, skrip uji/Wokwi terdokumentasi, serta status uji dilaporkan sesuai bukti nyata."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (Python FSM & Wokwi); Access Point dan board fisik ESP32-DevKitC V4 bersifat opsional."
+      }
+    },
+    {
+      "id": 13,
+      "slug": "chapter-13",
+      "levelId": 2,
+      "title": "HTTP, REST APIs & JSON",
+      "description": "Menyusun payload JSON dan kontrak REST API. Membedakan status HTTP dan penanganan timeout, retry, serta dasar TLS pada client ESP32.",
+      "objectives": [
+        "Merancang kontrak REST endpoint (GET, POST, PUT, DELETE) dan skema JSON berunit eksplisit",
+        "Membedakan HTTP status codes (2xx, 4xx, 5xx) untuk kebijakan retry client yang tepat",
+        "Mengimplementasikan HTTPClient ESP32 dengan timeout eksplisit, pembersihan koneksi, serta memahami dasar TLS/HTTPS"
+      ],
+      "prerequisites": [
+        12
+      ],
+      "tags": [
+        "HTTP",
+        "REST",
+        "APIs",
+        "JSON"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-13/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-13/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-13/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Pengujian REST server-client dijalankan langsung melalui loopback HTTP Python."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Payload JSON diuji langsung dalam skrip transaksi HTTP loopback."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-13/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-13/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-13/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-13/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "IETF RFC 9110 — HTTP Semantics",
+          "url": "https://datatracker.ietf.org/doc/html/rfc9110",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "IETF RFC 8259 — JSON Data Interchange Format",
+          "url": "https://datatracker.ietf.org/doc/html/rfc8259",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif ESP-IDF HTTP Client Guide",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/esp_http_client.html",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`http_rest_client.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-13/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-13/src/http_rest_sim.py",
+            "date": "2026-11-11",
+            "sha256": "796c9e3ec6c1a9c2429cec2a6a8a6c2b4e029ac187f9037cf570504afa042a7b"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-13/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-13/src/http_rest_client",
+            "date": "2026-11-11",
+            "sha256": "796c9e3ec6c1a9c2429cec2a6a8a6c2b4e029ac187f9037cf570504afa042a7b"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-13/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Desain kontrak REST API & skema JSON",
+          "points": 25,
+          "description": "Endpoint semantik (GET/POST), header lengkap, validasi skema, dan satuan fisik eksplisit."
+        },
+        {
+          "criterion": "Penanganan status code, timeout & retry",
+          "points": 30,
+          "description": "Membedakan 2xx, 4xx (tanpa retry), dan 5xx/timeout (retry terbatas) serta memanggil http.end()."
+        },
+        {
+          "criterion": "Implementasi client & server uji lokal",
+          "points": 25,
+          "description": "Server & klien lokal Python berjalan nyata; kode ESP32 rapi tanpa kredensial hardcoded."
+        },
+        {
+          "criterion": "Analisis TLS/HTTPS & kejujuran bukti",
+          "points": 20,
+          "description": "Penjelasan Root CA vs setInsecure() akurat serta pelaporan status verifikasi jujur."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Pengujian REST dilakukan melalui server HTTP loopback lokal dan sketsa klien ESP32 tanpa kewajiban hardware fisik."
+      }
+    },
+    {
+      "id": 14,
+      "slug": "chapter-14",
+      "levelId": 2,
+      "title": "MQTT Fundamentals & Publish/Subscribe",
+      "description": "Memetakan Publisher, Broker, Subscriber, dan topic. Merancang hierarki topic untuk satu use case telemetry.",
+      "objectives": [
+        "Memetakan arsitektur Publish/Subscribe (Publisher, Broker, Subscriber) serta tiga bentuk decoupling MQTT",
+        "Merancang hierarki topic yang teratur dan menerapkan aturan wildcard '+' dan '#'",
+        "Mengonfigurasi Mosquitto lokal yang aman dan mengimplementasikan klien MQTT non-blocking pada ESP32"
+      ],
+      "prerequisites": [
+        13
+      ],
+      "tags": [
+        "MQTT",
+        "Fundamentals",
+        "Publish/Subscribe"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-14/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-14/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-14/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Uji protokol biner MQTT dan pencocokan wildcard dijalankan via skrip Python standar."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Payload telemetry JSON diuji langsung melalui transaksi loopback socket MQTT."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-14/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-14/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-14/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-14/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "OASIS MQTT Version 3.1.1 & 5.0 Specifications",
+          "url": "https://mqtt.org/mqtt-specification/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Eclipse Mosquitto Documentation",
+          "url": "https://mosquitto.org/documentation/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "PubSubClient Arduino MQTT Library API",
+          "url": "https://pubsubclient.knolleary.net/api",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`mqtt_pubsub_client.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-14/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-14/src/mqtt_broker_sim.py",
+            "date": "2026-11-11",
+            "sha256": "36321ca8aeaeb90b795c92f881904332614a6feeca728bb1ff523114f2bcd7f4"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-14/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-14/src/mqtt_pubsub_client",
+            "date": "2026-11-11",
+            "sha256": "36321ca8aeaeb90b795c92f881904332614a6feeca728bb1ff523114f2bcd7f4"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-14/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Desain hierarki topic & aturan wildcard",
+          "points": 25,
+          "description": "Topic konsisten tanpa leading '/', bebas wildcard di publish, dan penggunaan '+'/'#' tepat."
+        },
+        {
+          "criterion": "Desain skema payload JSON & keamanan broker",
+          "points": 25,
+          "description": "Payload ringkas berunit eksplisit serta konfigurasi Mosquitto aman (tanpa anonymous publik)."
+        },
+        {
+          "criterion": "Implementasi klien Pub/Sub non-blocking",
+          "points": 30,
+          "description": "clientId unik, mqtt.loop(), buffer memadai, dan callback kendali bersih tanpa delay()."
+        },
+        {
+          "criterion": "Pengujian loopback/broker & kejujuran bukti",
+          "points": 20,
+          "description": "Hasil uji pub-sub terdokumentasi jelas beserta status verifikasi aktual."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (loopback socket MQTT & Mosquitto lokal); board ESP32 fisik bersifat opsional."
+      }
+    },
+    {
+      "id": 15,
+      "slug": "chapter-15",
+      "levelId": 2,
+      "title": "MQTT QoS, Sessions, Retained Messages & Last Will",
+      "description": "Membandingkan QoS 0, 1, dan 2 berdasarkan jaminan per-hop. Menganalisis deduplikasi, session persistence, retained message, Last Will, dan MQTT 3.1.1 vs 5.0.",
+      "objectives": [
+        "Membandingkan QoS 0, 1, dan 2 berdasarkan alur paket, jaminan pengiriman per-hop, serta beban memori",
+        "Merancang penanganan duplikasi pesan (idempotensi berbasis seq) pada QoS 1 dan membedakan batas PubSubClient vs esp-mqtt",
+        "Mengonfigurasi Retained Messages, Last Will (LWT), Keepalive, dan pola reconnect untuk session MQTT 3.1.1 vs 5.0"
+      ],
+      "prerequisites": [
+        14
+      ],
+      "tags": [
+        "MQTT",
+        "QoS",
+        "Sessions",
+        "Retained",
+        "Messages",
+        "Last",
+        "Will"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-15/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-15/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-15/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi QoS 0/1/2, deduplikasi, retained, dan LWT dijalankan via skrip Python standar."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Aliran pesan duplikat dan LWT disimulasikan langsung di dalam mqtt_qos_lwt_sim.py."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-15/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-15/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-15/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-15/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "OASIS MQTT Version 5.0 Specification",
+          "url": "https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif ESP-IDF ESP-MQTT Documentation",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Eclipse Mosquitto Configuration Manual",
+          "url": "https://mosquitto.org/man/mosquitto-conf-5.html",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`mqtt_lwt_retained.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-15/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-15/src/mqtt_qos_lwt_sim.py",
+            "date": "2026-11-11",
+            "sha256": "1e2b70ba016b6549894f20bf70627ff72db1dfc15dd863dd10b45127503a4329"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-15/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-15/src/mqtt_lwt_retained",
+            "date": "2026-11-11",
+            "sha256": "1e2b70ba016b6549894f20bf70627ff72db1dfc15dd863dd10b45127503a4329"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-15/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Pemilihan tingkat QoS per jenis topic",
+          "points": 25,
+          "description": "Justifikasi QoS 0/1/2 tepat untuk telemetry, alarm, status, dan command serta sadar batas library."
+        },
+        {
+          "criterion": "Desain Retained, LWT & Keepalive",
+          "points": 25,
+          "description": "Penggunaan retain=true hanya pada status (tidak pada command), LWT dan keepalive tepat."
+        },
+        {
+          "criterion": "Deduplikasi & manajemen Session/Reconnect",
+          "points": 30,
+          "description": "Mekanisme idempoten seq, alur re-subscribe pada cleanSession, serta perbandingan MQTT 5.0."
+        },
+        {
+          "criterion": "Simulasi pengujian & kejujuran bukti",
+          "points": 20,
+          "description": "Output uji terdokumentasi asli dengan pemisahan jelas antara simulasi software dan uji hardware."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Simulasi fitur protokol QoS/LWT/Retained dijalankan melalui skrip Python tanpa kewajiban hardware fisik."
+      }
+    },
+    {
+      "id": 16,
+      "slug": "chapter-16",
+      "levelId": 2,
+      "title": "UART, I2C & SPI",
+      "description": "Membandingkan wiring, frame format, pull-up, addressing, dan mode clock UART, I2C, dan SPI. Memilih bus berdasarkan kebutuhan sensor dan batasan pin ESP32.",
+      "objectives": [
+        "Membedakan komunikasi serial asinkron (UART) dan sinkron (I2C, SPI) beserta format frame dan clock",
+        "Menghitung efisiensi frame UART 8N1, rise time pull-up I2C, dan durasi transfer SPI",
+        "Memetakan pin UART2, I2C, dan VSPI pada ESP32-DevKitC V4 serta mendiagnosis kesalahan umum bus serial"
+      ],
+      "prerequisites": [
+        15
+      ],
+      "tags": [
+        "UART",
+        "I2C",
+        "SPI"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-16/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-16/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-16/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Perhitungan frame UART, rise time pull-up I2C, dan mode SPI dijalankan via skrip Python standar."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Chapter bus perangkat keras ini menguji parameter timing dan protokol tanpa dataset CSV."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-16/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-16/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-16/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-16/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; modul bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NXP UM10204 I2C-bus Specification",
+          "url": "https://www.nxp.com/docs/en/user-guide/UM10204.pdf",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif ESP-IDF Peripherals API (UART/I2C/SPI)",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/index.html",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Arduino Wire (I2C) Official Reference",
+          "url": "https://docs.arduino.cc/language-reference/en/functions/communication/wire/",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`i2c_uart_spi_probe.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-16/outputs.md",
+            "environment": "Windows, Python 3.12.10",
+            "command": "python public/content/chapter-16/src/bus_protocol_sim.py",
+            "date": "2026-11-11",
+            "sha256": "2d0064a0a8a81db833c98cb01ef836520a19d68ad6296e4196d3080707673a54"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-16/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-16/src/i2c_uart_spi_probe",
+            "date": "2026-11-11",
+            "sha256": "2d0064a0a8a81db833c98cb01ef836520a19d68ad6296e4196d3080707673a54"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-16/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Pemilihan bus & pemetaan pin ESP32",
+          "points": 25,
+          "description": "Alokasi pin UART/I2C/SPI valid pada ESP32-DevKitC V4, bebas konflik Flash/strapping."
+        },
+        {
+          "criterion": "Perhitungan parameter protokol & elektrikal",
+          "points": 25,
+          "description": "Efisiensi 8N1, durasi SPI vs UART, rise time pull-up I2C, dan cek alamat 7-bit tepat."
+        },
+        {
+          "criterion": "Implementasi kode / skema komunikasi",
+          "points": 30,
+          "description": "Konfigurasi Wire, Serial2, dan SPI.beginTransaction() + CS rapi dan non-blocking."
+        },
+        {
+          "criterion": "Panduan troubleshooting & kejujuran bukti",
+          "points": 20,
+          "description": "SOP diagnosis TX/RX, pull-up, CPOL/CPHA jelas; laporan status uji sesuai bukti aktual."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (kalkulasi protokol Python & kode probe ESP32); modul sensor I2C/SPI fisik bersifat opsional."
+      }
+    },
+    {
+      "id": 17,
+      "slug": "chapter-17",
+      "levelId": 2,
+      "title": "Bluetooth Low Energy",
+      "description": "Memetakan service, characteristic, dan peran perangkat BLE. Merancang pertukaran data melalui GATT.",
+      "objectives": [
+        "Membedakan Bluetooth Classic (BR/EDR) vs BLE (40 kanal 2 MHz) serta peran GAP Peripheral/Central",
+        "Merancang hierarki GATT Profile (Service, Characteristic, CCCD 0x2902) dan memilih Notify vs Indicate",
+        "Menghitung fragmentasi ATT MTU (23 vs 247 byte) serta anggaran daya baterai pada Advertising Interval berbeda",
+        "Mengimplementasikan GATT Server ESP32 lengkap dengan pemulihan advertising saat Central terputus"
+      ],
+      "prerequisites": [
+        16
+      ],
+      "tags": [
+        "BLE",
+        "GATT",
+        "GAP",
+        "ATT-MTU",
+        "ESP32"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-17/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-17/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-17/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini berfokus pada simulasi GATT/MTU Python dan firmware BLE ESP32."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Pembahasan berfokus pada tabel atribut GATT, fragmentasi MTU, dan estimasi daya."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-17/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-17/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-17/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-17/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Bluetooth SIG — Technical Overview",
+          "url": "https://www.bluetooth.com/learn-about-bluetooth/tech-overview/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Bluetooth SIG — GATT Assigned Numbers",
+          "url": "https://www.bluetooth.com/specifications/assigned-numbers/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif Arduino-ESP32 Documentation",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`ble_gatt_sensor.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-17/outputs.md",
+            "environment": "Python 3.12.10 (Windows 11)",
+            "command": "python public/content/chapter-17/src/ble_gatt_sim.py",
+            "date": "2026-11-11",
+            "sha256": "17f86112e5476cce3d7f5a24cb1e1016b502af3b780d59b9ca67610e42026a9d"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-17/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-17/src/ble_gatt_sensor",
+            "date": "2026-11-11",
+            "sha256": "17f86112e5476cce3d7f5a24cb1e1016b502af3b780d59b9ca67610e42026a9d"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-17/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Desain GAP & hierarki GATT Profile",
+          "points": 25,
+          "description": "Pemetaan Service, Characteristic UUID, Properties, dan CCCD 0x2902 tepat."
+        },
+        {
+          "criterion": "Pengodean payload & analisis ATT MTU",
+          "points": 25,
+          "description": "Encoding biner little-endian akurat dan perbandingan MTU 23 vs 247 terhitung benar."
+        },
+        {
+          "criterion": "Implementasi firmware & simulasi",
+          "points": 30,
+          "description": "Sketsa/skrip valid, ada restart advertising pada onDisconnect(), dan validasi WRITE."
+        },
+        {
+          "criterion": "Anggaran daya, keamanan & kejujuran bukti",
+          "points": 20,
+          "description": "Perhitungan daya masuk akal, mitigasi pairing/MITM jelas, serta status uji dicatat jujur."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (model Python & kode GATT Server ESP32); papan ESP32 fisik + aplikasi Central (nRF Connect) bersifat opsional."
+      }
+    },
+    {
+      "id": 18,
+      "slug": "chapter-18",
+      "levelId": 2,
+      "title": "LoRa & LoRaWAN Fundamentals",
+      "description": "Membedakan LoRa sebagai modulasi dan LoRaWAN sebagai protokol jaringan. Menyusun kebutuhan Gateway dan parameter regional yang perlu diverifikasi.",
+      "objectives": [
+        "Membedakan modulasi fisik LoRa (CSS) dari protokol MAC/jaringan LoRaWAN (Star-of-Stars)",
+        "Menjelaskan dampak Spreading Factor (SF7-SF12), Bandwidth, dan Coding Rate terhadap sensitivitas dan baterai",
+        "Menghitung Time-on-Air (ToA) dan Link Budget menggunakan persamaan Semtech AN1200.13",
+        "Mengidentifikasi parameter spektrum regional yang wajib diverifikasi melalui LoRa Alliance RP2 dan regulator nasional"
+      ],
+      "prerequisites": [
+        17
+      ],
+      "tags": [
+        "LoRa",
+        "LoRaWAN",
+        "LPWAN",
+        "Link-Budget",
+        "ToA"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-18/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-18/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-18/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Analisis ToA dan Link Budget dijalankan langsung melalui skrip Python deterministik."
+        },
+        "telemetry": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Fokus analisis pada kalkulasi fisika radio ToA, sensitivitas, dan margin propagasi."
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-18/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-18/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-18/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-18/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "LoRa Alliance — LoRaWAN & Regional Parameters (RP2)",
+          "url": "https://lora-alliance.org/about-lorawan/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Semtech — LoRa Wireless RF & AN1200.13",
+          "url": "https://www.semtech.com/products/wireless-rf/lora-connect",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "The Things Network — LoRaWAN Fundamentals",
+          "url": "https://www.thethingsnetwork.org/docs/lorawan/",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Kalkulator ToA dan Link Budget Python (lora_airtime_budget.py) telah diverifikasi lokal; uji radio sub-GHz fisik (SX127x/SX126x), Gateway LoRaWAN, dan Network Server belum dijalankan.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-18/outputs.md",
+            "environment": "Python 3.12.10 (Windows 11)",
+            "command": "python public/content/chapter-18/src/lora_airtime_budget.py",
+            "date": "2026-11-11",
+            "sha256": "1e4a1fd067b3c63e6565e0613293637baf64b0db73484a76378d9cb365df5789"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-18/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Ketepatan arsitektur LoRa PHY vs LoRaWAN",
+          "points": 25,
+          "description": "Membedakan CSS PHY dan protokol MAC Star-of-Stars, Class A, OTAA, dan ADR secara akurat."
+        },
+        {
+          "criterion": "Desain payload biner & kalkulasi ToA",
+          "points": 30,
+          "description": "Format biner terdokumentasi rapi dan perhitungan Time-on-Air diverifikasi dengan skrip Python."
+        },
+        {
+          "criterion": "Analisis link budget & dampak SF",
+          "points": 25,
+          "description": "Perhitungan FSPL + fading margin konsisten serta mengulas trade-off baterai dan tabrakan kanal."
+        },
+        {
+          "criterion": "Kepatuhan regulasi regional & kejujuran bukti",
+          "points": 20,
+          "description": "Merujuk LoRa Alliance RP2 / regulator resmi tanpa mengarang angka legal dan mencatat status uji jujur."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (kalkulator fisika ToA & link budget Python); modul transceiver LoRa + Gateway bersifat opsional."
+      }
+    },
+    {
+      "id": 19,
+      "slug": "chapter-19",
+      "levelId": 2,
+      "title": "Connectivity Reliability, Time Synchronization & Offline Buffering",
+      "description": "Merancang antrean telemetry saat perangkat offline. Menentukan strategi sinkronisasi waktu dan deduplikasi.",
+      "objectives": [
+        "Mengimplementasikan sinkronisasi waktu UTC via SNTP serta penandaan jujur time_synced saat belum tersinkron",
+        "Merancang Circular Ring Buffer berkapasitas tetap dengan kebijakan Drop-Oldest bebas fragmentasi heap",
+        "Menerapkan Exponential Backoff dengan Full Jitter untuk mencegah Thundering Herd saat pemulihan jaringan",
+        "Membangun mekanisme replay bertahap dan deduplikasi idempoten berbasis (device_id, seq_id)"
+      ],
+      "prerequisites": [
+        18
+      ],
+      "tags": [
+        "Reliability",
+        "SNTP",
+        "Ring-Buffer",
+        "Jitter",
+        "Idempotency"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-19/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-19/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-19/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Simulasi ring buffer, backoff jitter, dan deduplikasi dijalankan lewat skrip Python & kode ESP32."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-19/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-19/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-19/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-19/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-19/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "AWS Architecture Blog — Exponential Backoff And Jitter",
+          "url": "https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif ESP-IDF — System Time & SNTP",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "IETF RFC 5905 — Network Time Protocol v4 / SNTP",
+          "url": "https://datatracker.ietf.org/doc/html/rfc5905",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`offline_queue_ntp.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-19/outputs.md",
+            "environment": "Python 3.12.10 (Windows 11)",
+            "command": "python public/content/chapter-19/src/offline_buffer_sync.py",
+            "date": "2026-11-11",
+            "sha256": "8908e7b35ff185263377f4d0cdd3ae8f23c6f832e0e142de4b1e09fafb07904f"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-19/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-19/src/offline_queue_ntp",
+            "date": "2026-11-11",
+            "sha256": "8908e7b35ff185263377f4d0cdd3ae8f23c6f832e0e142de4b1e09fafb07904f"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-19/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Desain Ring Buffer & manajemen memori",
+          "points": 25,
+          "description": "Struct fixed-size bebas fragmentasi heap, hitungan kapasitas tepat, kebijakan Drop-Oldest jelas."
+        },
+        {
+          "criterion": "Sinkronisasi waktu SNTP & strategi Jitter Backoff",
+          "points": 25,
+          "description": "Pemakaian UTC + flag time_synced akurat serta Full Jitter mencegah thundering herd."
+        },
+        {
+          "criterion": "Implementasi replay & idempotent deduplication",
+          "points": 30,
+          "description": "Batch drain bertahap, head hanya maju saat ACK sukses, dan deduplikasi (device_id, seq_id) berfungsi."
+        },
+        {
+          "criterion": "Kelengkapan log pengujian & kejujuran bukti",
+          "points": 20,
+          "description": "Metrik pengujian lengkap serta status uji software vs compile/hardware dicatat jujur."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First (simulasi Python offline buffer + kode SNTP ESP32); pengujian lapangan fisik bersifat opsional."
+      }
+    },
+    {
+      "id": 20,
+      "slug": "chapter-20",
+      "levelId": 2,
+      "title": "Connected Device Capstone",
+      "description": "Mengintegrasikan perangkat dengan Broker dan subscriber lokal. Menyusun skenario uji reconnect serta kegagalan jaringan.",
+      "objectives": [
+        "Mengintegrasikan NVS Preferences, HTTP Config Client, SNTP, Offline Ring Buffer, dan MQTT PubSubClient dalam satu firmware ESP32",
+        "Menjamin kontrol lokal fail-safe (histeresis kipas pada GPIO26) tetap berjalan saat jaringan terputus",
+        "Mengimplementasikan JSON telemetry, Retained status, Last Will and Testament (LWT), serta validasi remote command",
+        "Mengeksekusi 6 skenario uji konektivitas dan pemulihan pada broker lokal serta melaporkan bukti verifikasi secara jujur"
+      ],
+      "prerequisites": [
+        19
+      ],
+      "tags": [
+        "Capstone",
+        "ESP32",
+        "MQTT",
+        "HTTP",
+        "Resilience"
+      ],
+      "status": "published",
+      "resources": {
+        "reading": {
+          "status": "available",
+          "path": "content/chapter-20/reading.md"
+        },
+        "slides": {
+          "status": "available",
+          "path": "content/chapter-20/slides.json"
+        },
+        "code": {
+          "status": "available",
+          "path": "content/chapter-20/code.md"
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Capstone difokuskan pada integrasi firmware ESP32 dan harness uji konektivitas lokal."
+        },
+        "telemetry": {
+          "status": "available",
+          "path": "content/chapter-20/telemetry.csv"
+        },
+        "outputs": {
+          "status": "available",
+          "path": "content/chapter-20/outputs.md"
+        },
+        "exercises": {
+          "status": "available",
+          "path": "content/chapter-20/exercises.md"
+        },
+        "assignment": {
+          "status": "available",
+          "path": "content/chapter-20/assignment.md"
+        },
+        "diagram": {
+          "status": "available",
+          "path": "content/chapter-20/diagram.svg"
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "OASIS — MQTT Version 3.1.1 / 5.0 Specification",
+          "url": "https://mqtt.org/mqtt-specification/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Eclipse Mosquitto Documentation",
+          "url": "https://mosquitto.org/documentation/",
+          "checkedOn": "2026-11-11"
+        },
+        {
+          "title": "Espressif Arduino-ESP32 Libraries",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/",
+          "checkedOn": "2026-11-11"
+        }
+      ],
+      "verification": {
+        "status": "compile-verified",
+        "limitations": "Kompilasi native sketsa (`connected_env_capstone.ino`) terverifikasi sukses (EXIT=0) menggunakan arduino-cli 1.5.1 + esp32:esp32@3.3.12 FQBN esp32:esp32:esp32. Simulasi Wokwi CLI dan pengujian board hardware fisik tetap bertanda Not Tested karena simulator CLI/token dan perangkat fisik tidak tersedia di lingkungan ini.",
+        "records": [
+          {
+            "kind": "software",
+            "path": "content/chapter-20/outputs.md",
+            "environment": "Python 3.12.10 (Windows 11, loopback 127.0.0.1)",
+            "command": "python public/content/chapter-20/src/capstone_connectivity_test.py",
+            "date": "2026-11-11",
+            "sha256": "ab9b18d417729b3889d2a903f7281981e9bb3a573ab44c306662ce0825f7312f"
+          },
+          {
+            "kind": "compile",
+            "path": "content/chapter-20/outputs.md",
+            "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
+            "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-20/src/connected_env_capstone",
+            "date": "2026-11-11",
+            "sha256": "ab9b18d417729b3889d2a903f7281981e9bb3a573ab44c306662ce0825f7312f"
+          }
+        ]
+      },
+      "review": {
+        "reviewer": "Aji Pamungkas Tri Nurcahyo",
+        "date": "2026-11-11",
+        "report": "content/chapter-20/review.md"
+      },
+      "rubric": [
+        {
+          "criterion": "Arsitektur firmware terintegrasi & NVS/HTTP fallback",
+          "points": 25,
+          "description": "NVS, ADC1, histeresis lokal fail-safe, HTTP GET fallback, dan FSM non-blocking tersusun modular."
+        },
+        {
+          "criterion": "Implementasi protokol MQTT, JSON, LWT & validasi cmd",
+          "points": 25,
+          "description": "Payload JSON akurat, Retained online + LWT offline bekerja, dan cmd tersanitasi."
+        },
+        {
+          "criterion": "Ketahanan jaringan (SNTP, Ring Buffer, Jitter & Idempotency)",
+          "points": 30,
+          "description": "Ring buffer statis, time_synced jujur, Full-Jitter aktif, batch drain aman, dan replay bebas duplikat."
+        },
+        {
+          "criterion": "Eksekusi 6 skenario uji konektivitas & kejujuran bukti",
+          "points": 20,
+          "description": "Seluruh 6 test case (TC-01..TC-06) terdokumentasi dan status uji dilaporkan jujur."
+        }
+      ],
+      "hardware": {
+        "required": false,
+        "reason": "Menggunakan pendekatan Simulator-First + Broker Lokal (capstone_connectivity_test.py, wokwi_diagram.json, dan Mosquitto LAN); papan ESP32 fisik bersifat opsional."
+      }
+    },
+    {
+      "id": 21,
+      "slug": "chapter-21",
+      "levelId": 3,
+      "title": "IoT Data Models, Telemetry & Event Design",
+      "description": "Merancang schema telemetry dengan unit dan timestamp. Membedakan event, state, dan command dalam sistem IoT.",
+      "objectives": [
+        "Merancang schema telemetry dengan unit dan timestamp",
+        "Membedakan event, state, dan command dalam sistem IoT"
+      ],
+      "prerequisites": [
+        20,
+        1
+      ],
+      "tags": [
+        "Data",
+        "Models",
+        "Telemetry",
+        "Event",
+        "Design"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 22,
+      "slug": "chapter-22",
+      "levelId": 3,
+      "title": "Raspberry Pi, Linux & IoT Gateways",
+      "description": "Memetakan fungsi Gateway pada jaringan perangkat. Menyusun prosedur layanan Linux dan isolasi environment.",
+      "objectives": [
+        "Memetakan fungsi Gateway pada jaringan perangkat",
+        "Menyusun prosedur layanan Linux dan isolasi environment"
+      ],
+      "prerequisites": [
+        21
+      ],
+      "tags": [
+        "Raspberry",
+        "Linux",
+        "Gateways"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Python venv",
+          "url": "https://docs.python.org/3/library/venv.html",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 23,
+      "slug": "chapter-23",
+      "levelId": 3,
+      "title": "Edge Processing & Local Automation",
+      "description": "Merancang pemrosesan lokal ketika cloud tidak tersedia. Mengevaluasi pembagian tanggung jawab antara edge dan cloud.",
+      "objectives": [
+        "Merancang pemrosesan lokal ketika cloud tidak tersedia",
+        "Mengevaluasi pembagian tanggung jawab antara edge dan cloud"
+      ],
+      "prerequisites": [
+        22
+      ],
+      "tags": [
+        "Edge",
+        "Processing",
+        "Local",
+        "Automation"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 24,
+      "slug": "chapter-24",
+      "levelId": 3,
+      "title": "Node-RED & Event-Driven Integration",
+      "description": "Merancang flow event-driven dengan validasi payload. Menganalisis penanganan error dan penyimpanan konfigurasi flow.",
+      "objectives": [
+        "Merancang flow event-driven dengan validasi payload",
+        "Menganalisis penanganan error dan penyimpanan konfigurasi flow"
+      ],
+      "prerequisites": [
+        23
+      ],
+      "tags": [
+        "Node-RED",
+        "Event-Driven",
+        "Integration"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Node-RED",
+          "url": "https://nodered.org/docs/getting-started/local",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 25,
+      "slug": "chapter-25",
+      "levelId": 3,
+      "title": "Time-Series Storage & Data Retention",
+      "description": "Menyusun model penyimpanan telemetry berdasarkan pola query. Menentukan kebijakan retention dan downsampling.",
+      "objectives": [
+        "Menyusun model penyimpanan telemetry berdasarkan pola query",
+        "Menentukan kebijakan retention dan downsampling"
+      ],
+      "prerequisites": [
+        24
+      ],
+      "tags": [
+        "Time-Series",
+        "Storage",
+        "Data",
+        "Retention"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 26,
+      "slug": "chapter-26",
+      "levelId": 3,
+      "title": "Dashboards, Visualization & Alerting",
+      "description": "Memilih visualisasi yang sesuai dengan unit dan rentang waktu. Merancang alert dengan threshold, hysteresis, dan eskalasi.",
+      "objectives": [
+        "Memilih visualisasi yang sesuai dengan unit dan rentang waktu",
+        "Merancang alert dengan threshold, hysteresis, dan eskalasi"
+      ],
+      "prerequisites": [
+        25
+      ],
+      "tags": [
+        "Dashboards",
+        "Visualization",
+        "Alerting"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 27,
+      "slug": "chapter-27",
+      "levelId": 3,
+      "title": "Device Configuration, Inventory & Fleet Management",
+      "description": "Merancang inventaris perangkat dengan identitas yang konsisten. Menyusun perubahan konfigurasi yang dapat diaudit.",
+      "objectives": [
+        "Merancang inventaris perangkat dengan identitas yang konsisten",
+        "Menyusun perubahan konfigurasi yang dapat diaudit"
+      ],
+      "prerequisites": [
+        26
+      ],
+      "tags": [
+        "Device",
+        "Configuration",
+        "Inventory",
+        "Fleet",
+        "Management"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 28,
+      "slug": "chapter-28",
+      "levelId": 3,
+      "title": "IoT Security: Identity, TLS & Access Control",
+      "description": "Memetakan identitas perangkat, trust, dan izin akses. Menganalisis validasi sertifikat TLS pada koneksi IoT.",
+      "objectives": [
+        "Memetakan identitas perangkat, trust, dan izin akses",
+        "Menganalisis validasi sertifikat TLS pada koneksi IoT"
+      ],
+      "prerequisites": [
+        27
+      ],
+      "tags": [
+        "Security:",
+        "Identity",
+        "Access",
+        "Control"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 29,
+      "slug": "chapter-29",
+      "levelId": 3,
+      "title": "OTA Updates, Observability & Device Lifecycle",
+      "description": "Merancang alur OTA Update dengan verifikasi dan rollback. Menentukan log serta metrik untuk siklus hidup perangkat.",
+      "objectives": [
+        "Merancang alur OTA Update dengan verifikasi dan rollback",
+        "Menentukan log serta metrik untuk siklus hidup perangkat"
+      ],
+      "prerequisites": [
+        28
+      ],
+      "tags": [
+        "Updates",
+        "Observability",
+        "Device",
+        "Lifecycle"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 30,
+      "slug": "chapter-30",
+      "levelId": 3,
+      "title": "End-to-End IoT Application Capstone",
+      "description": "Mengintegrasikan telemetry dari perangkat sampai aplikasi. Menyusun evaluasi kebutuhan, keamanan, dan bukti pengujian.",
+      "objectives": [
+        "Mengintegrasikan telemetry dari perangkat sampai aplikasi",
+        "Menyusun evaluasi kebutuhan, keamanan, dan bukti pengujian"
+      ],
+      "prerequisites": [
+        29
+      ],
+      "tags": [
+        "End-to-End",
+        "Application",
+        "Capstone"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 31,
+      "slug": "chapter-31",
+      "levelId": 4,
+      "title": "Low-Power Design, Sleep Modes & Energy Measurement",
+      "description": "Menyusun anggaran energi berdasarkan mode operasi. Merancang prosedur pengukuran arus tanpa mengarang hasil.",
+      "objectives": [
+        "Menyusun anggaran energi berdasarkan mode operasi",
+        "Merancang prosedur pengukuran arus tanpa mengarang hasil"
+      ],
+      "prerequisites": [
+        30,
+        1
+      ],
+      "tags": [
+        "Low-Power",
+        "Design",
+        "Sleep",
+        "Modes",
+        "Energy",
+        "Measurement"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 32,
+      "slug": "chapter-32",
+      "levelId": 4,
+      "title": "RTOS, Concurrency & Scheduling",
+      "description": "Memetakan task, queue, dan prioritas dalam RTOS. Menganalisis race condition dan risiko blocking.",
+      "objectives": [
+        "Memetakan task, queue, dan prioritas dalam RTOS",
+        "Menganalisis race condition dan risiko blocking"
+      ],
+      "prerequisites": [
+        31
+      ],
+      "tags": [
+        "RTOS",
+        "Concurrency",
+        "Scheduling"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 33,
+      "slug": "chapter-33",
+      "levelId": 4,
+      "title": "Industrial IoT, Modbus & OPC UA",
+      "description": "Membandingkan model data Modbus dan OPC UA. Merancang integrasi industri dengan pemisahan jaringan.",
+      "objectives": [
+        "Membandingkan model data Modbus dan OPC UA",
+        "Merancang integrasi industri dengan pemisahan jaringan"
+      ],
+      "prerequisites": [
+        32
+      ],
+      "tags": [
+        "Industrial",
+        "IoT",
+        "Modbus"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "OPC Foundation ? OPC UA",
+          "url": "https://opcfoundation.org/about/opc-technologies/opc-ua/",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 34,
+      "slug": "chapter-34",
+      "levelId": 4,
+      "title": "Interoperability, Matter & Thread Fundamentals",
+      "description": "Membedakan peran application layer Matter dan jaringan Thread. Memetakan kebutuhan commissioning serta border router.",
+      "objectives": [
+        "Membedakan peran application layer Matter dan jaringan Thread",
+        "Memetakan kebutuhan commissioning serta border router"
+      ],
+      "prerequisites": [
+        33
+      ],
+      "tags": [
+        "Interoperability",
+        "Matter",
+        "Thread",
+        "Fundamentals"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "Connectivity Standards Alliance ? Matter",
+          "url": "https://csa-iot.org/all-solutions/matter/",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 35,
+      "slug": "chapter-35",
+      "levelId": 4,
+      "title": "Edge AI, TinyML & Sensor Inference",
+      "description": "Menyusun pipeline data Sensor menuju inference lokal. Mengevaluasi batas memori, komputasi, dan kualitas model.",
+      "objectives": [
+        "Menyusun pipeline data Sensor menuju inference lokal",
+        "Mengevaluasi batas memori, komputasi, dan kualitas model"
+      ],
+      "prerequisites": [
+        34
+      ],
+      "tags": [
+        "Edge",
+        "TinyML",
+        "Sensor",
+        "Inference"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 36,
+      "slug": "chapter-36",
+      "levelId": 4,
+      "title": "Digital Twins & System Modeling",
+      "description": "Memodelkan state fisik dan representasi digital suatu sistem. Menganalisis sinkronisasi serta keterbatasan Digital Twin.",
+      "objectives": [
+        "Memodelkan state fisik dan representasi digital suatu sistem",
+        "Menganalisis sinkronisasi serta keterbatasan Digital Twin"
+      ],
+      "prerequisites": [
+        35
+      ],
+      "tags": [
+        "Digital",
+        "Twins",
+        "System",
+        "Modeling"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 37,
+      "slug": "chapter-37",
+      "levelId": 4,
+      "title": "Scalable IoT Architecture & Deployment",
+      "description": "Merancang partisi ingestion dan pemrosesan telemetry. Mengevaluasi trade-off biaya, kapasitas, dan failure domain.",
+      "objectives": [
+        "Merancang partisi ingestion dan pemrosesan telemetry",
+        "Mengevaluasi trade-off biaya, kapasitas, dan failure domain"
+      ],
+      "prerequisites": [
+        36
+      ],
+      "tags": [
+        "Scalable",
+        "Architecture",
+        "Deployment"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 38,
+      "slug": "chapter-38",
+      "levelId": 4,
+      "title": "IoT Testing, Fault Injection & Reliability Engineering",
+      "description": "Menyusun skenario fault injection yang dapat direproduksi. Membedakan bukti compile, simulasi, dan uji fisik.",
+      "objectives": [
+        "Menyusun skenario fault injection yang dapat direproduksi",
+        "Membedakan bukti compile, simulasi, dan uji fisik"
+      ],
+      "prerequisites": [
+        37
+      ],
+      "tags": [
+        "Testing",
+        "Fault",
+        "Injection",
+        "Reliability",
+        "Engineering"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "planned",
+          "path": null,
+          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 39,
+      "slug": "chapter-39",
+      "levelId": 4,
+      "title": "Privacy, Threat Modeling & IoT Governance",
+      "description": "Menyusun threat model berdasarkan aset dan trust boundary. Merancang minimisasi data serta kebijakan akses dan retensi.",
+      "objectives": [
+        "Menyusun threat model berdasarkan aset dan trust boundary",
+        "Merancang minimisasi data serta kebijakan akses dan retensi"
+      ],
+      "prerequisites": [
+        38
+      ],
+      "tags": [
+        "Privacy",
+        "Threat",
+        "Modeling",
+        "Governance"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    },
+    {
+      "id": 40,
+      "slug": "chapter-40",
+      "levelId": 4,
+      "title": "Advanced IoT Systems Capstone",
+      "description": "Merancang sistem IoT berdasarkan kebutuhan dan risiko nyata. Menyajikan evaluasi terukur dengan bukti serta keterbatasan.",
+      "objectives": [
+        "Merancang sistem IoT berdasarkan kebutuhan dan risiko nyata",
+        "Menyajikan evaluasi terukur dengan bukti serta keterbatasan"
+      ],
+      "prerequisites": [
+        39
+      ],
+      "tags": [
+        "Advanced",
+        "Systems",
+        "Capstone"
+      ],
+      "status": "coming-soon",
+      "resources": {
+        "reading": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "slides": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "code": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "notebook": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+        },
+        "telemetry": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "outputs": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "exercises": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "assignment": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "diagram": {
+          "status": "planned",
+          "path": null,
+          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+        },
+        "pdf": {
+          "status": "not-applicable",
+          "path": null,
+          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+        }
+      },
+      "references": [
+        {
+          "title": "NIST Cybersecurity for IoT",
+          "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+          "checkedOn": "2026-11-04"
+        },
+        {
+          "title": "Raspberry Pi documentation",
+          "url": "https://www.raspberrypi.com/documentation/",
+          "checkedOn": "2026-11-04"
+        }
+      ],
+      "verification": {
+        "status": "untested",
+        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
+        "records": []
+      },
+      "review": {
+        "reviewer": "",
+        "date": null,
+        "report": null
+      },
+      "rubric": [],
+      "hardware": {
+        "required": false,
+        "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "id": "a",
+      "title": "Smart Home & Building Automation",
+      "overview": "Rancang otomasi ruang yang tetap dapat bekerja secara lokal.",
+      "topics": [
+        "Sensor okupansi dan kenyamanan",
+        "Scene dan otomasi lokal",
+        "Matter, Thread, dan interoperabilitas",
+        "Privasi penghuni"
+      ],
+      "chapters": [
+        6,
+        8,
+        14,
+        23,
+        28,
+        34
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "b",
+      "title": "Industrial IoT & Predictive Maintenance",
+      "overview": "Hubungkan data mesin dengan pemeliharaan berbasis kondisi.",
+      "topics": [
+        "Akuisisi getaran dan kondisi mesin",
+        "Modbus dan OPC UA",
+        "Deteksi anomali",
+        "Segmentasi jaringan industri"
+      ],
+      "chapters": [
+        8,
+        16,
+        25,
+        28,
+        33,
+        35,
+        38
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "c",
+      "title": "Smart Agriculture & Environmental Monitoring",
+      "overview": "Pelajari observasi lingkungan dan otomasi berbasis kondisi lapangan.",
+      "topics": [
+        "Kalibrasi Sensor lingkungan",
+        "LoRaWAN dan cakupan jaringan",
+        "Irigasi low-voltage",
+        "Ketahanan daya dan enclosure"
+      ],
+      "chapters": [
+        3,
+        8,
+        9,
+        18,
+        19,
+        31
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "d",
+      "title": "AIoT & Edge Intelligence",
+      "overview": "Tempatkan inference dekat dengan sumber data.",
+      "topics": [
+        "Kurasi data Sensor",
+        "Feature extraction",
+        "TinyML dan optimasi model",
+        "Drift dan evaluasi di edge"
+      ],
+      "chapters": [
+        7,
+        8,
+        21,
+        23,
+        32,
+        35,
+        38
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "e",
+      "title": "IoT for Telecommunications & Smart Cities",
+      "overview": "Jelajahi jaringan perangkat dan layanan publik yang dapat dikelola.",
+      "topics": [
+        "Perencanaan konektivitas",
+        "Gateway dan jaringan kota",
+        "Skalabilitas ingestion",
+        "Tata kelola dan privasi"
+      ],
+      "chapters": [
+        11,
+        18,
+        19,
+        27,
+        37,
+        39
+      ],
+      "status": "planned"
+    }
+  ],
+  "references": [
+    {
+      "title": "NIST Cybersecurity for IoT",
+      "url": "https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "MQTT / OASIS specifications",
+      "url": "https://mqtt.org/mqtt-specification/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Espressif ESP-IDF",
+      "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Raspberry Pi documentation",
+      "url": "https://www.raspberrypi.com/documentation/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Arduino IDE",
+      "url": "https://docs.arduino.cc/software/ide/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Node-RED",
+      "url": "https://nodered.org/docs/getting-started/local",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Bluetooth SIG",
+      "url": "https://www.bluetooth.com/learn-about-bluetooth/tech-overview/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "LoRa Alliance",
+      "url": "https://lora-alliance.org/about-lorawan/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Connectivity Standards Alliance ? Matter",
+      "url": "https://csa-iot.org/all-solutions/matter/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "OPC Foundation ? OPC UA",
+      "url": "https://opcfoundation.org/about/opc-technologies/opc-ua/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Eclipse Mosquitto",
+      "url": "https://mosquitto.org/documentation/",
+      "checkedOn": "2026-11-04"
+    },
+    {
+      "title": "Python venv",
+      "url": "https://docs.python.org/3/library/venv.html",
+      "checkedOn": "2026-11-04"
+    }
+  ],
+  "foundationResources": [
+    {
+      "id": "started",
+      "label": "Panduan Getting Started",
+      "path": "guides/getting-started.md",
+      "status": "available"
+    },
+    {
+      "id": "reading",
+      "label": "Template modul Markdown",
+      "path": "templates/chapter.md",
+      "status": "available"
+    },
+    {
+      "id": "slides",
+      "label": "Template slide JSON",
+      "path": "templates/slides.json",
+      "status": "available"
+    },
+    {
+      "id": "evidence",
+      "label": "Template catatan pengujian",
+      "path": "templates/evidence.md",
+      "status": "available"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+[
+  {
+    "title": "Microcontrollers, ESP32 & Development Boards",
+    "body": "Memahami arsitektur internal **MCU**, perbedaan antar varian keluarga **ESP32**, aturan pin dari datasheet, dan proses *flashing* yang andal.",
+    "notes": "Tekankan bahwa membaca datasheet dan pinout board sebelum menyambung kabel mencegah kerusakan dan debugging berjam-jam."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 04",
+    "body": "1. **Membedakan** MCU vs MPU/SBC berdasarkan memori, daya, dan OS.\n2. **Menjelaskan** peran CPU, Flash, SRAM, dan *peripherals*.\n3. **Mengidentifikasi** perbedaan varian `ESP32`, `ESP32-S3`, `ESP32-C3` & batasan pin.\n4. **Mendiagnosis** masalah *flashing*, *boot mode*, dan *Serial Monitor*.",
+    "notes": "Board acuan Level 1 adalah ESP32-DevKitC V4 (WROOM-32), tetapi konsep berlaku lintas board."
+  },
+  {
+    "title": "Microcontroller (MCU) vs Microprocessor (SBC)",
+    "body": "| Aspek | MCU (ESP32) | SBC / MPU (Raspberry Pi) |\n| --- | --- | --- |\n| Memori | Flash & SRAM di dalam chip | RAM & Storage eksternal |\n| Sistem Operasi | Bare-metal / FreeRTOS | Linux penuh |\n| Waktu Boot | Milidetik–$<1\\text{ s}$ | Puluhan detik |\n| Konsumsi Daya | Miliwatt ($\\mu\\text{W}$ saat sleep) | Beberapa Watt |\n| Peran IoT | Node sensor & aktuator | Edge Gateway & DB lokal |",
+    "notes": "Keduanya sering bekerja bersama: ESP32 sebagai node sensor, Raspberry Pi sebagai Edge Gateway."
+  },
+  {
+    "title": "Subsistem Internal SoC ESP32",
+    "body": "- **CPU Core**: Mengeksekusi instruksi *Firmware* (Xtensa atau RISC-V).\n- **Flash (Non-Volatil)**: Menyimpan kode program & data persisten (mis. 4 MiB).\n- **SRAM (Volatil)**: Menyimpan variabel runtime, *stack*, dan *heap* (hilang saat reset).\n- **Peripherals**: GPIO, ADC, PWM/LEDC, Timer, UART, I2C, SPI, Wi-Fi/BLE.",
+    "notes": "Ingatkan mahasiswa: SRAM sangat terbatas (~300–520 KiB), tidak seperti RAM GB di laptop!"
+  },
+  {
+    "title": "Keluarga ESP32 Tidak Identik!",
+    "body": "| Fitur | ESP32 (WROOM-32) | ESP32-S3 | ESP32-C3 |\n| --- | --- | --- | --- |\n| CPU | Xtensa LX6 (2 core) | Xtensa LX7 (2 core) | RISC-V (1 core) |\n| USB Native | Tidak (butuh CP2102/CH340) | Ya | Ya |\n| Flash Pins | GPIO 6–11 | GPIO 26–32 | GPIO 12–17 |\n| Input-Only | GPIO 34, 35, 36, 39 | Tidak ada | Tidak ada |",
+    "fragment": "GPIO 12 aman di ESP32-S3, strapping pin di ESP32, dan terlarang (Flash) di ESP32-C3!",
+    "notes": "Ini alasan mengapa menyalin nomor pin dari tutorial tanpa cek varian chip sangat berisiko."
+  },
+  {
+    "title": "Arsitektur & Peta Pin ESP32-DevKitC V4",
+    "body": "![Perbandingan MCU vs SBC dan klasifikasi pin ESP32-DevKitC V4](content/chapter-04/diagram.svg)",
+    "notes": "Jelaskan tiga zona warna pada diagram kanan: Hijau (aman), Kuning (input-only), Merah (hindari Flash & hati-hati strapping)."
+  },
+  {
+    "title": "Pin Terlarang & Pin Khusus pada ESP32-WROOM-32",
+    "body": "- **GPIO 6–11**: Terhubung ke *SPI Flash* internal $\\rightarrow$ **DILARANG dipakai** (menyebabkan crash!).\n- **GPIO 34, 35, 36, 39**: **Input-Only** & **tanpa internal pull-up/pull-down**.\n- **GPIO 0, 2, 5, 12, 15**: *Strapping pins* yang dibaca saat reset/boot.\n- **GPIO 1 (TX0), 3 (RX0)**: Jalur USB-UART untuk *flashing* & Serial Monitor.",
+    "notes": "Jika butuh resistor pull-up pada GPIO 34–39, mahasiswa wajib memasang resistor 10 kOhm eksternal!"
+  },
+  {
+    "title": "Audit Pin Lintas Varian (`board_matrix.py`)",
+    "body": "```text\n[ESP32 (WROOM-32) | GPIO  6 | OUTPUT] -> DITOLAK: SPI Flash internal!\n[ESP32 (WROOM-32) | GPIO 34 | OUTPUT] -> DITOLAK: input-only!\n[ESP32 (WROOM-32) | GPIO 12 | INPUT ] -> PERINGATAN: strapping pin boot\n[ESP32-C3         | GPIO 12 | OUTPUT] -> DITOLAK: SPI Flash internal!\n[ESP32-S3         | GPIO 12 | OUTPUT] -> AMAN: valid untuk ESP32-S3.\n```",
+    "notes": "Output aktual dari skrip Python board_matrix.py (status verifikasi: software)."
+  },
+  {
+    "title": "Arduino Framework vs ESP-IDF",
+    "body": "| Aspek | Arduino-ESP32 | ESP-IDF (SDK Resmi) |\n| --- | --- | --- |\n| Abstraksi | Ringkas (`setup()`, `loop()`) | Penuh (FreeRTOS tasks, HAL, menuconfig) |\n| Fondasi | Berjalan di atas ESP-IDF | SDK native langsung |\n| Target | Pembelajaran & prototipe cepat | Produk produksi & optimasi lanjut |",
+    "notes": "Jelaskan bahwa Arduino-ESP32 bukan 'mainan' terpisah—ia tetap memakai lapisan bawah ESP-IDF dan FreeRTOS."
+  },
+  {
+    "title": "Alur Build, Flashing & Serial Monitor",
+    "body": "1. Tulis kode (`.ino` / `.cpp`) $\\rightarrow$ pilih **Board Target** yang tepat.\n2. **Compile**: menerjemahkan C++ menjadi biner `.bin`.\n3. **Flash**: mengirim biner via port USB/Serial pada *Download Mode*.\n4. **Run & Monitor**: reset board, buka *Serial Monitor* pada *baud rate* yang cocok (`115200`).",
+    "notes": "Ingatkan: build sukses hanya membuktikan sintaks & linking (Compile-verified), belum membuktikan wiring benar!"
+  },
+  {
+    "title": "Memahami Boot Mode & Tombol BOOT / EN",
+    "body": "- **Normal Boot**: `GPIO 0 = HIGH` saat pin `EN` (Reset) dilepas $\\rightarrow$ jalankan *Firmware*.\n- **Download Mode**: `GPIO 0 = LOW` saat `EN` dilepas $\\rightarrow$ siap menerima *flashing*.\n- Jika *auto-reset* gagal: tahan **`BOOT`**, tekan **`EN`** sebentar, lalu lepas **`BOOT`**.",
+    "fragment": "Jangan memasang sensor yang menarik GPIO 0 ke LOW secara permanen saat menyalakan board!",
+    "notes": "Banyak mahasiswa bingung mengapa board tidak mau menjalankan program setelah cabut-pasang kabel: ternyata sensor eksternal menarik strapping pin ke level yang salah."
+  },
+  {
+    "title": "Contoh Praktik: `ch04_board_probe.ino`",
+    "body": "```cpp\nconstexpr uint8_t STATUS_LED_PIN = 25;\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(STATUS_LED_PIN, OUTPUT);\n  Serial.println(ESP.getChipModel());\n}\n```\nMembaca identitas chip & menguji output LED pada `GPIO 25` (+ resistor $220\\,\\Omega$).",
+    "notes": "Sketsa ini belum dikompilasi/dijalankan di server ini (status: Belum diuji). Dapat diuji pada Wokwi diagram.json atau ESP32-DevKitC V4."
+  },
+  {
+    "title": "Simulasi Path A: Wokwi ESP32-DevKitC V4",
+    "body": "Tanpa *hardware* fisik, mahasiswa dapat menguji logika pin & `Serial Monitor` lewat Wokwi:\n\n- Board: `board-esp32-devkit-c-v4`\n- Komponen: Resistor $220\\,\\Omega$ + LED pada `GPIO 25` ke `GND`\n- Konfigurasi tersedia pada `src/wokwi_diagram.json`.",
+    "notes": "Tekankan bahwa simulator memvalidasi logika program, tetapi tidak memvalidasi arus listrik nyata atau kualitas kabel USB."
+  },
+  {
+    "title": "Troubleshooting Flashing & Serial",
+    "body": "| Gejala | Penyebab Umum | Solusi |\n| --- | --- | --- |\n| Port tidak muncul | Kabel *charge-only* / driver USB | Ganti kabel data; cek driver CP210x/CH34x |\n| *Timed out packet header* | Gagal masuk *Download Mode* | Tutup monitor lain; tahan `BOOT` saat flash |\n| Karakter acak di Serial | *Baud rate* Monitor $\\neq$ `Serial.begin` | Setel ke `115200` baud |\n| *Brownout detector* | Daya USB lemah / *short* | Cabut beban berat, cek wiring |",
+    "notes": "Gunakan tabel ini sebagai panduan diagnostik pertama saat sesi praktikum atau simulasi."
+  },
+  {
+    "title": "Memilih Board yang Tepat untuk Proyek",
+    "body": "- **Node sensor hemat daya & biaya**: `ESP32-C3` (RISC-V, BLE 5, pin lebih sedikit).\n- **Node klasik multifungsi + banyak library**: `ESP32-DevKitC V4` (WROOM-32).\n- **Edge AI ringan / USB OTG / banyak GPIO**: `ESP32-S3`.\n- **Gateway & database lokal**: *SBC* seperti Raspberry Pi.",
+    "notes": "Keputusan board harus kembali ke System Requirements dari Chapter 02."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nRekan Anda memakai `GPIO 35` pada `ESP32-WROOM-32` untuk menyalakan LED status dan `GPIO 6` untuk membaca tombol. Mengapa kedua pilihan pin ini akan gagal?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 05: *Embedded Programming with C/C++*.",
+    "notes": "Jawaban: GPIO 35 bersifat input-only sehingga tidak bisa mengeluarkan tegangan ke LED; GPIO 6 terhubung ke SPI Flash internal sehingga menyebabkan crash."
+  }
+]

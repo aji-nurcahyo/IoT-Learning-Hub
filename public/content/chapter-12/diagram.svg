@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" role="img" aria-label="State machine konektivitas Wi-Fi ESP32, penyimpanan kredensial NVS, dan strategi backoff">
+  <rect x="2" y="2" width="916" height="386" rx="14" fill="#f8faf7" stroke="#c8d4cc" stroke-width="2"/>
+  <text x="24" y="34" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#176e59">WI-FI STATION STATE MACHINE, DEVICE PROVISIONING &amp; RECONNECT BACKOFF</text>
+  <text x="24" y="54" font-family="system-ui, sans-serif" font-size="12" fill="#4f6059">Kredensial Wi-Fi disimpan di NVS (Preferences), tidak pernah ditanam hardcoded di source code!</text>
+
+  <defs>
+    <marker id="w-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#176e59"/>
+    </marker>
+    <marker id="w-amb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+  </defs>
+
+  <!-- State 1: UNPROVISIONED / PROVISIONING -->
+  <rect x="30" y="96" width="210" height="88" rx="10" fill="#fff7ed" stroke="#b45309" stroke-width="1.8"/>
+  <text x="135" y="120" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#92400e">1. PROVISIONING</text>
+  <text x="135" y="140" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#78350f">NVS kosong / tombol reset</text>
+  <text x="135" y="156" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#78350f">Terima SSID &amp; Pass via</text>
+  <text x="135" y="172" text-anchor="middle" font-family="monospace" font-size="10" fill="#92400e">Serial / SoftAP / BLE -&gt; NVS</text>
+
+  <!-- State 2: CONNECTING -->
+  <rect x="315" y="96" width="230" height="88" rx="10" fill="#eef4ef" stroke="#176e59" stroke-width="1.8"/>
+  <text x="430" y="120" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1d2b27">2. CONNECTING (STA)</text>
+  <text x="430" y="140" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3a4c45">WiFi.begin(ssid, pass)</text>
+  <text x="430" y="156" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#3a4c45">Timeout usaha = 10 detik</text>
+  <text x="430" y="172" text-anchor="middle" font-family="monospace" font-size="10" fill="#176e59">Non-blocking loop tetap jalan!</text>
+
+  <!-- State 3: CONNECTED -->
+  <rect x="625" y="96" width="260" height="88" rx="10" fill="#e7efe5" stroke="#176e59" stroke-width="2"/>
+  <text x="755" y="120" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#176e59">3. CONNECTED (WL_CONNECTED)</text>
+  <text x="755" y="140" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">Dapat IP (DHCP / Static)</text>
+  <text x="755" y="156" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">Pantau RSSI &amp; WiFi.onEvent()</text>
+  <text x="755" y="172" text-anchor="middle" font-family="monospace" font-size="10" fill="#176e59">Reset backoff = 1 s</text>
+
+  <!-- State 4: BACKOFF_WAIT -->
+  <rect x="315" y="250" width="230" height="90" rx="10" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.8"/>
+  <text x="430" y="274" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#991b1b">4. BACKOFF_WAIT</text>
+  <text x="430" y="294" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#7f1d1d">Tunggu 1s -&gt; 2s -&gt; 4s -&gt; 8s ... 60s</text>
+  <text x="430" y="310" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#7f1d1d">Cegah banjir auth frame ke AP</text>
+  <text x="430" y="326" text-anchor="middle" font-family="monospace" font-size="10" fill="#991b1b">Kirim telemetry ditahan lokal</text>
+
+  <!-- NVS Storage Box -->
+  <rect x="30" y="250" width="210" height="90" rx="10" fill="#ffffff" stroke="#176e59" stroke-width="1.6"/>
+  <text x="135" y="274" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#176e59">NVS Flash (Preferences)</text>
+  <text x="135" y="296" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1d2b27">Namespace: "wifi_cfg"</text>
+  <text x="135" y="313" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#3a4c45">ssid, pass (persisten)</text>
+  <text x="135" y="329" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#4f6059">Tersimpan meski board reset</text>
+
+  <!-- Diagnostics Box -->
+  <rect x="625" y="250" width="260" height="90" rx="10" fill="#ffffff" stroke="#176e59" stroke-width="1.6"/>
+  <text x="755" y="274" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#1d2b27">Diagnostik Kualitas Sinyal</text>
+  <text x="755" y="295" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#176e59">RSSI &gt; -65 dBm : Baik / Stabil</text>
+  <text x="755" y="312" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#b45309">-75..-85 dBm   : Lemah / Rawan Drop</text>
+  <text x="755" y="329" text-anchor="middle" font-family="monospace" font-size="10.5" fill="#991b1b">&lt; -88 dBm      : Kritis / Putus</text>
+
+  <!-- Arrows -->
+  <line x1="240" y1="140" x2="311" y2="140" stroke="#176e59" stroke-width="2" marker-end="url(#w-arr)"/>
+  <text x="275" y="131" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#176e59">ada kredensial</text>
+
+  <line x1="545" y1="140" x2="621" y2="140" stroke="#176e59" stroke-width="2" marker-end="url(#w-arr)"/>
+  <text x="583" y="131" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#176e59">GOT_IP</text>
+
+  <line x1="395" y1="184" x2="395" y2="246" stroke="#b45309" stroke-width="2" marker-end="url(#w-amb)"/>
+  <text x="362" y="218" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#92400e">timeout</text>
+
+  <line x1="465" y1="250" x2="465" y2="188" stroke="#176e59" stroke-width="2" marker-end="url(#w-arr)"/>
+  <text x="502" y="218" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#176e59">retry timer</text>
+
+  <path d="M 755 184 L 755 218 L 515 218 L 515 246" fill="none" stroke="#b45309" stroke-width="2" marker-end="url(#w-amb)"/>
+  <text x="635" y="212" text-anchor="middle" font-family="monospace" font-size="9.5" fill="#92400e">DISCONNECTED event</text>
+
+  <line x1="135" y1="184" x2="135" y2="246" stroke="#176e59" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#w-arr)"/>
+</svg>
+

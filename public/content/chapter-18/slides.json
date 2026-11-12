@@ -1,0 +1,78 @@
+[
+  {
+    "title": "Chapter 18 — LoRa & LoRaWAN Fundamentals",
+    "body": "Komunikasi jarak jauh berdaya rendah (**LPWAN**) untuk *smart agriculture*, hidrologi, dan sensor lingkungan terpencil.\n\n- **Fokus**: Pemisahan lapisan **LoRa (PHY)** vs **LoRaWAN (MAC/Network)**, kalkulasi *Time-on-Air*, *Link Budget*, dan tata kelola parameter regional.",
+    "notes": "Tegaskan sejak awal bahwa jarak jauh LoRa dicapai dengan mengorbankan bitrate, bukan dengan menembakkan daya besar."
+  },
+  {
+    "title": "Mengapa LPWAN Dibutuhkan? Celah Wi-Fi, BLE & Seluler",
+    "body": "| Teknologi | Jangkauan Khas | Daya Baterai | Throughput |\n| --- | --- | --- | --- |\n| BLE | Puluhan meter | Sangat rendah | Ratusan kbps |\n| Wi-Fi | Puluhan–ratusan meter | Tinggi | Puluhan Mbps |\n| Seluler (LTE/4G) | Jangkauan luas (operator) | Sedang–tinggi | Mbps |\n| **LoRa / LoRaWAN** | **Kilometer (sub-GHz)** | **Sangat rendah** | **0,3 – ~27 kbps** |",
+    "notes": "LoRa ditujukan untuk puluhan byte telemetri setiap beberapa menit/jam, bukan streaming kamera atau audio."
+  },
+  {
+    "title": "LoRa (PHY) vs LoRaWAN (MAC/Network): Jangan Tertukar!",
+    "body": "- **LoRa (Lapisan Fisik / PHY)**: Modulasi **Chirp Spread Spectrum (CSS)** hak cipta Semtech pada chip `SX127x`/`SX126x`. Bisa dipakai P2P mentah tanpa internet, namun tanpa enkripsi jaringan maupun manajemen tabrakan massal.\n- **LoRaWAN (Lapisan MAC & Jaringan)**: Protokol terbuka **LoRa Alliance** di atas LoRa PHY (topologi *Star-of-Stars*, keamanan AES-128, *OTAA*, *ADR*, *Gateway $\\rightarrow$ Network Server*).",
+    "notes": "Banyak tugas mahasiswa menyebut 'mengirim lewat LoRaWAN' padahal kodenya hanya LoRa.beginPacket() P2P tanpa Gateway LoRaWAN."
+  },
+  {
+    "title": "Arsitektur LoRa PHY & LoRaWAN Star-of-Stars",
+    "body": "![Diagram Pemisahan LoRa PHY dan LoRaWAN Star-of-Stars](content/chapter-18/diagram.svg)\n\nPerhatikan peran terpisah **Gateway** (penerus paket transparan) dan **Network Server** (deduplikasi, MIC, ADR).",
+    "notes": "Tekankan pula peringatan merah di bagian bawah mengenai verifikasi parameter regional."
+  },
+  {
+    "title": "Bagaimana Modulasi Chirp Spread Spectrum (CSS) Bekerja?",
+    "body": "- Sinyal menyapu frekuensi secara kontinu dalam *chip* (*up-chirp* / *down-chirp*) selebar **Bandwidth (`BW`)** (`125 / 250 / 500 kHz`).\n- Setiap simbol menyandikan **Spreading Factor (`SF7` – `SF12`)** bit data dengan panjang $2^{\\text{SF}}$ *chip*:\n\n$$T_{\\text{sym}} = \\frac{2^{\\text{SF}}}{\\text{BW}}$$\n\n- Berkat *processing gain* sebaran spektrum, paket tetap dapat didekode pada rasio **SNR negatif** (di bawah *noise floor*!).",
+    "notes": "Pada SF12 BW 125 kHz, satu simbol memakan waktu 32,768 ms sehingga penerima mampu menyaring sinyal sangat lemah."
+  },
+  {
+    "title": "Trade-off SF7 vs SF12: Sensitivitas, Jarak & Baterai",
+    "body": "- Menaikkan **+1 tingkat SF** menggandakan durasi simbol ($2\\times$ *Time-on-Air* $\\rightarrow$ $2\\times$ energi TX).\n- Imbalannya, sensitivitas penerima membaik sekitar $+2{,}5\\text{ dB}$ (dari $\\approx -123\\text{ dBm}$ di `SF7` ke $\\approx -137\\text{ dBm}$ di `SF12` pada `BW 125 kHz`).\n- *Low Data Rate Optimization* (**DE = 1**) aktif bila $T_{\\text{sym}} \\ge 16\\text{ ms}$ (`SF11` & `SF12` @ `125 kHz`) untuk menstabilkan pergeseran jam kristal.",
+    "notes": "Mengirim terlalu sering di SF12 cepat mengosongkan baterai sekaligus meningkatkan probabilitas tabrakan antar-node."
+  },
+  {
+    "title": "Hasil Perhitungan Time-on-Air (`lora_airtime_budget.py`)",
+    "body": "Payload **24 byte** (`BW=125 kHz, CR=4/5, Preamble=8, CRC=ON`):\n\n| SF | $T_{\\text{sym}}$ (ms) | DE | ToA (ms) | Sens. Ref. SX1276 |\n| :---: | :---: | :---: | :---: | :---: |\n| `SF7` | `1.024` | `0` | **`61.70`** | `-123.0 dBm` |\n| `SF9` | `4.096` | `0` | **`205.82`** | `-129.0 dBm` |\n| `SF10` | `8.192` | `0` | **`370.69`** | `-132.0 dBm` |\n| `SF12` | `32.768` | `1` | **`1482.75`** | `-137.0 dBm` |",
+    "notes": "Lihat output lengkap seluruh SF7-SF12 pada tab Bukti & Output (outputs.md)."
+  },
+  {
+    "title": "Mengapa Payload Biner Wajib di LoRa/LoRaWAN?",
+    "body": "- Jangan mengirim JSON teks panjang seperti `{\"temperature\":27.85,\"humidity\":68.4}` (`39 byte` lebih)!\n- Kompresi ke **biner padat** (`int16` suhu + `uint16` kelembapan + `uint16` tegangan = **`6 byte`**).\n- Payload pendek memangkas `ToA` secara drastis, memperpanjang umur baterai, dan menjaga ukuran tetap di bawah batas maksimum payload pada `SF12`.",
+    "notes": "Payload pendek juga krusial karena di beberapa regional plan batas maksimal FRMPayload pada SF12 hanya ~51 byte."
+  },
+  {
+    "title": "Link Budget & Contoh Perhitungan Jarak 3 km",
+    "body": "$$P_{\\text{rx}} = P_{\\text{tx}} + G_{\\text{tx}} + G_{\\text{rx}} - L_{\\text{kabel}} - L_{\\text{FSPL}} - M_{\\text{fading}}$$\n\nSimulasi [`lora_airtime_budget.py`](content/chapter-18/outputs.md) pada jarak $3{,}0\\text{ km}$ ($923\\text{ MHz}$, *shadow margin* $15\\text{ dB}$):\n\n- $\\text{FSPL} = 101{,}29\\text{ dB}$, $P_{\\text{rx, est}} = -98{,}79\\text{ dBm}$\n- Margin di `SF7` ($-123\\text{ dBm}$): **`+24,21 dB`** (sangat kuat, **ADR** cukup memakai `SF7`!)",
+    "notes": "Ingatkan mahasiswa bahwa FSPL adalah batas ideal ruang terbuka; pepohonan/bangunan menambah redaman besar sehingga perlu survei RF."
+  },
+  {
+    "title": "Topologi Star-of-Stars & Peran 4 Komponen LoRaWAN",
+    "body": "1. **End-Device**: Sensor mengirim *uplink* tanpa terikat ke satu *gateway* spesifik.\n2. **Gateway**: Mendengarkan multi-kanal/multi-SF secara paralel; meneruskan paket ke *Network Server* via IP.\n3. **Network Server (LNS)**: Deduplikasi paket ganda, verifikasi integritas **MIC** (`NwkSKey`), kelola *Join* & **ADR**.\n4. **Application Server**: Dekripsi payload aplikasi (`AppSKey`) dan teruskan ke MQTT / Webhook.",
+    "notes": "Topologi Star-of-Stars menyingkirkan kebutuhan routing mesh antar-node baterai."
+  },
+  {
+    "title": "Kelas Perangkat LoRaWAN: Class A, B, dan C",
+    "body": "- **Class A** (Wajib): Paling hemat energi. Hanya membuka jendela terima **RX1** dan **RX2** singkat setelah mengirim *uplink*.\n- **Class B**: Menambah slot terima terjadwal yang disinkronkan *beacon* GPS *gateway*.\n- **Class C**: Radio penerima terus aktif hampir sepanjang waktu kecuali saat *transmit* $\\rightarrow$ latensi *downlink* rendah, boros daya.",
+    "notes": "Lebih dari 90% sensor pertanian & lingkungan bertenaga baterai menggunakan Class A."
+  },
+  {
+    "title": "Keamanan & Aktivasi: OTAA vs ABP serta Peran ADR",
+    "body": "- **OTAA (*Over-The-Air Activation*)**: Memakai `DevEUI`, `JoinEUI`, dan `AppKey` untuk menegosiasikan kunci sesi dinamis (`NwkSKey` + `AppSKey`) dan mereset *frame counter* secara aman $\\rightarrow$ **wajib dipilih untuk produksi**.\n- **ABP**: Kunci sesi ditanam keras (*hardcoded*); berisiko jika perangkat reset (*frame counter* kembali 0 sehingga LNS menolak paket).\n- **ADR**: Menurunkan `SF` & daya TX secara adaptif saat *margin* SNR besar.",
+    "notes": "Jelaskan pula mengapa LNS mengecek FCntUp (frame counter) untuk mencegah replay attack."
+  },
+  {
+    "title": "Kepatuhan Parameter Regional (LoRa Alliance RP2 & Regulator)",
+    "body": "- Pita frekuensi sub-GHz, kanal aktif, batas daya pancar (**EIRP**), serta aturan *duty cycle* atau *dwell time* **berbeda menurut wilayah dan regulasi negara**.\n- Modul ini **tidak mengklaim** parameter legal wilayah Anda secara statis.\n- **Aturan Wajib**: Verifikasi langsung terhadap **LoRa Alliance Regional Parameters (RP2)** terbaru serta peraturan regulator nasional (seperti DJID/Komdigi di Indonesia) sebelum melakukan transmisi RF nyata.",
+    "notes": "Menyalakan transceiver pada frekuensi yang salah dapat melanggar izin spektrum sekaligus gagal diterima gateway lokal."
+  },
+  {
+    "title": "Troubleshooting Umum LoRa & LoRaWAN",
+    "body": "- **Join OTAA Gagal Terus**: Salah urutan *endianness* `DevEUI`/`AppKey` (*LSB vs MSB*), ketidaksesuaian sub-band/frekuensi regional antara node dan gateway, atau jendela `RX1` terlewat akibat *clock drift*.\n- **Paket Ditolak Setelah Node Restart (ABP)**: *Frame counter* (`FCntUp`) kembali ke `0` dan ditolak proteksi *replay* LNS.\n- **Jarak Jauh Lebih Pendek dari Teori**: Antena tidak terpasang saat TX (dapat merusak *PA* modul!) atau kabel *pigtail* rusak.",
+    "notes": "Peringatan keras perangkat keras: JANGAN PERNAH memancarkan modul LoRa tanpa antena terpasang pada konektor U.FL/SMA."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nSebuah sensor tanah tetap mengirimkan paket setiap 2 menit pada `SF12` walaupun berada hanya $250\\text{ meter}$ dari gateway (`RSSI = -62 dBm`). Sebutkan 3 dampak negatif perilaku ini bagi node tersebut dan jaringan sekitar, serta fitur LoRaWAN apa yang harus diaktifkan!\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 19: *Connectivity Reliability, Time Synchronization & Offline Buffering*.",
+    "notes": "Jawaban: (1) Baterai boros ~24x lebih cepat dibanding SF7, (2) ToA 1,48 detik memicu tabrakan dengan node jauh yang benar-benar butuh SF12, (3) Risiko melanggar batas waktu udara regional. Solusi: Aktifkan ADR!"
+  }
+]
+

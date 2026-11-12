@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f766e"/>
+    </marker>
+    <marker id="arrowIndigo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4338ca"/>
+    </marker>
+  </defs>
+  <rect width="960" height="540" fill="#f8fafc" rx="14"/>
+  <text x="480" y="34" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Pemisahan Lapisan LoRa (PHY) vs LoRaWAN (MAC &amp; Arsitektur Star-of-Stars)</text>
+  <text x="480" y="56" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" fill="#475569">LoRa memodulasi sinyal fisik sub-GHz (CSS); LoRaWAN mengatur keamanan, join OTAA, dan perutean IP</text>
+
+  <!-- Left Panel: LoRa PHY Layer -->
+  <rect x="32" y="80" width="290" height="340" rx="12" fill="#eef2ff" stroke="#4338ca" stroke-width="2"/>
+  <text x="177" y="108" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#312e81">Lapisan Fisik: Modulasi LoRa (CSS)</text>
+  <text x="177" y="128" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#4338ca">Chirp Spread Spectrum (Transceiver SX127x / SX126x)</text>
+
+  <rect x="50" y="144" width="254" height="72" rx="8" fill="#ffffff" stroke="#818cf8"/>
+  <text x="64" y="166" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1e1b4b">1. Spreading Factor (SF7 – SF12)</text>
+  <text x="64" y="185" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">• Tiap +1 SF menggandakan durasi simbol (2^SF)</text>
+  <text x="64" y="203" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">• Sensitivitas naik (~+2,5 dB), Time-on-Air naik ~2x</text>
+
+  <rect x="50" y="228" width="254" height="68" rx="8" fill="#ffffff" stroke="#818cf8"/>
+  <text x="64" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1e1b4b">2. Bandwidth (BW) &amp; Coding Rate (CR)</text>
+  <text x="64" y="269" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">• BW umum: 125 kHz, 250 kHz, 500 kHz</text>
+  <text x="64" y="287" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">• FEC CR 4/5 s.d. 4/8 tahan interferensi impuls</text>
+
+  <rect x="50" y="308" width="254" height="94" rx="8" fill="#ffffff" stroke="#818cf8"/>
+  <text x="64" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1e1b4b">3. Link Budget &amp; Trade-off</text>
+  <text x="64" y="349" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">P_rx = P_tx + G_tx - L_path + G_rx</text>
+  <text x="64" y="368" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#334155">Bisa dekode di bawah noise floor (SNR &lt; 0 dB)</text>
+  <text x="64" y="387" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#4338ca">Tanpa LoRaWAN, P2P tidak punya enkripsi AES standar.</text>
+
+  <!-- Right Panel: LoRaWAN Star-of-Stars -->
+  <rect x="344" y="80" width="584" height="340" rx="12" fill="#f0fdfa" stroke="#0f766e" stroke-width="2"/>
+  <text x="636" y="108" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#134e4a">Lapisan MAC &amp; Jaringan: Topologi LoRaWAN Star-of-Stars</text>
+
+  <!-- End Devices -->
+  <rect x="364" y="138" width="128" height="66" rx="8" fill="#ffffff" stroke="#0d9488" stroke-width="1.6"/>
+  <text x="428" y="162" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">End-Device A</text>
+  <text x="428" y="180" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#475569">Class A (RX1/RX2)</text>
+  <text x="428" y="195" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#0f766e">Enkripsi AppSKey</text>
+
+  <rect x="364" y="222" width="128" height="66" rx="8" fill="#ffffff" stroke="#0d9488" stroke-width="1.6"/>
+  <text x="428" y="246" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">End-Device B</text>
+  <text x="428" y="264" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#475569">OTAA (DevEUI/AppKey)</text>
+  <text x="428" y="279" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#0f766e">MIC Integrity NwkSKey</text>
+
+  <!-- Gateways -->
+  <rect x="536" y="138" width="134" height="66" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="603" y="162" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#14532d">Gateway #1</text>
+  <text x="603" y="180" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#166534">Concentrator Multi-Ch</text>
+  <text x="603" y="195" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#166534">Packet Forwarder</text>
+
+  <rect x="536" y="222" width="134" height="66" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="603" y="246" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#14532d">Gateway #2</text>
+  <text x="603" y="264" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#166534">Dapat terima paket</text>
+  <text x="603" y="279" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#166534">yang sama (transparan)</text>
+
+  <!-- Network Server & App Server -->
+  <rect x="716" y="138" width="192" height="72" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+  <text x="812" y="160" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#92400e">Network Server (LNS)</text>
+  <text x="812" y="178" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#78350f">• Deduplikasi Multi-GW</text>
+  <text x="812" y="194" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#78350f">• ADR, Join OTAA &amp; MAC</text>
+
+  <rect x="716" y="228" width="192" height="62" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="812" y="250" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1e3a8a">Application Server</text>
+  <text x="812" y="268" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#1d4ed8">Dekripsi FRMPayload (AppSKey)</text>
+  <text x="812" y="282" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" fill="#1e40af">Integrasi MQTT / Webhook</text>
+
+  <!-- Class A Timing Box -->
+  <rect x="364" y="308" width="544" height="94" rx="8" fill="#ffffff" stroke="#0f766e"/>
+  <text x="380" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a">Siklus Komunikasi LoRaWAN Class A (Paling Hemat Baterai)</text>
+  <rect x="380" y="344" width="140" height="28" rx="5" fill="#0f766e"/>
+  <text x="450" y="362" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">Uplink TX (ToA)</text>
+  <rect x="530" y="344" width="106" height="28" rx="5" fill="#e2e8f0"/>
+  <text x="583" y="362" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#334155">Tunggu RX1</text>
+  <rect x="646" y="344" width="84" height="28" rx="5" fill="#2563eb"/>
+  <text x="688" y="362" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff">RX1 Window</text>
+  <rect x="740" y="344" width="84" height="28" rx="5" fill="#2563eb"/>
+  <text x="782" y="362" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff">RX2 Window</text>
+  <rect x="834" y="344" width="60" height="28" rx="5" fill="#64748b"/>
+  <text x="864" y="362" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff">Sleep</text>
+  <text x="380" y="391" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#475569">Downlink ke Class A hanya dapat dikirim oleh Network Server setelah perangkat melakukan Uplink.</text>
+
+  <!-- Links -->
+  <line x1="492" y1="168" x2="534" y2="168" stroke="#0f766e" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="492" y1="252" x2="534" y2="252" stroke="#0f766e" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="492" y1="184" x2="534" y2="238" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <line x1="670" y1="170" x2="714" y2="170" stroke="#4338ca" stroke-width="2" marker-end="url(#arrowIndigo)"/>
+  <line x1="670" y1="252" x2="714" y2="188" stroke="#4338ca" stroke-width="2" marker-end="url(#arrowIndigo)"/>
+  <line x1="812" y1="210" x2="812" y2="226" stroke="#4338ca" stroke-width="2" marker-end="url(#arrowIndigo)"/>
+
+  <!-- Bottom Regulatory Guard Note -->
+  <rect x="32" y="438" width="896" height="78" rx="10" fill="#fff1f2" stroke="#e11d48" stroke-width="1.6"/>
+  <text x="480" y="464" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#9f1239">Kepatuhan Parameter Regional (Wajib Verifikasi Resmi Sebelum Mengudara)</text>
+  <text x="480" y="485" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#4c0519">Pita frekuensi sub-GHz, batas daya pancar (EIRP), lebar kanal, dan duty cycle / dwell time berbeda di setiap yurisdiksi.</text>
+  <text x="480" y="503" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#4c0519">Rujuk selalu LoRa Alliance Regional Parameters (RP2) serta regulasi nasional (misal DJID/Komdigi Indonesia) sebelum deployment.</text>
+</svg>
+

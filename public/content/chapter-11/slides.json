@@ -1,0 +1,85 @@
+[
+  {
+    "title": "Networking Fundamentals for IoT",
+    "body": "Membuka **Level 2**: memahami bagaimana paket *telemetry* melintasi jaringan IP melalui **TCP/IP**, **DHCP/DNS**, **TCP vs UDP**, dan **network troubleshooting**.",
+    "notes": "Chapter 11 menjadi fondasi sebelum ESP32 menyambung ke Wi-Fi (Ch 12), HTTP (Ch 13), dan MQTT (Ch 14–15)."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 11",
+    "body": "1. **Menjelaskan** *TCP/IP 4-layer stack* & enkapsulasi paket.\n2. **Menghitung** *network*, *broadcast*, dan *usable hosts* IPv4 CIDR.\n3. **Membandingkan** **TCP vs UDP**, *ports/sockets*, dan *goodput*.\n4. **Mendiagnosis** masalah jaringan (*DHCP, DNS, firewall, packet loss*).",
+    "notes": "Seluruh kemampuan akan langsung terpakai saat debugging koneksi ESP32 di lab."
+  },
+  {
+    "title": "TCP/IP 4-Layer Stack",
+    "body": "| Lapisan | Tanggung Jawab | Protokol IoT |\n| --- | --- | --- |\n| 4. Application | Format & semantik data | MQTT, HTTP, CoAP, DNS, NTP |\n| 3. Transport | Port proses & keandalan | TCP (20 B), UDP (8 B) |\n| 2. Internet | Pengalamatan IP & routing | IPv4 (20 B), IPv6, ICMP |\n| 1. Link / Physical | Frame media fisik/radio | Wi-Fi 802.11, Ethernet |",
+    "notes": "Setiap lapisan menambahkan header (encapsulation) saat paket bergerak dari atas ke bawah."
+  },
+  {
+    "title": "Arsitektur TCP/IP, TCP vs UDP & Alur Koneksi",
+    "body": "![Model TCP/IP 4 lapis, perbandingan TCP vs UDP, dan alur DHCP/DNS/Socket](content/chapter-11/diagram.svg)",
+    "notes": "Bahas ketiga panel: stack enkapsulasi (kiri), handshake TCP vs datagram UDP (tengah), dan urutan DHCP -> DNS -> Socket (kanan)."
+  },
+  {
+    "title": "IPv4 Privat (RFC 1918) & Subnetting CIDR",
+    "body": "Blok IP privat LAN: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`.\n\nUntuk prefix `/n`, jumlah *host usable*:\n\n$$N_{\\text{usable}} = 2^{(32 - n)} - 2$$\n\n- Dikurangi 2: **Network Address** (pertama) & **Broadcast Address** (terakhir).\n- Komunikasi antar-subnet wajib lewat **Default Gateway**.",
+    "notes": "Salah subnet mask membuat dua perangkat yang berdekatan di switch sama gagal saling terhubung."
+  },
+  {
+    "title": "Worked Example: Subnet `192.168.50.37/26`",
+    "body": "Dari hasil eksekusi `network_diagnostics_sim.py`:\n- Prefix `/26` $\\implies$ $32 - 26 = 6$ bit host ($2^6 = 64$ alamat/blok).\n- **Network**: `192.168.50.0` | **Broadcast**: `192.168.50.63`\n- **Netmask**: `255.255.255.192`\n- **Usable Hosts**: `192.168.50.1` s.d. `192.168.50.62` (**62 host**).",
+    "notes": "Angka hasil langsung dari modul standar ipaddress Python pada outputs.md."
+  },
+  {
+    "title": "DHCP & DNS: Dua Layanan Tak Terlihat",
+    "body": "- **DHCP (UDP 67/68)**: Memberi node IP otomatis, *netmask*, *Gateway*, dan *DNS Server*.\n- **DNS (UDP/TCP 53)**: Menerjemahkan `broker.local` $\\rightarrow$ `192.168.10.50`.\n\n*Gejala khas*: Jika `ping 8.8.8.8` sukses tetapi `ping google.com` gagal $\\rightarrow$ masalah ada di **DNS**, bukan Wi-Fi!",
+    "fragment": "Selalu pisahkan pengujian konektivitas IP mentah vs resolusi nama DNS.",
+    "notes": "Ini trik diagnosis jaringan yang paling cepat menghemat waktu saat praktikum."
+  },
+  {
+    "title": "Ports & Sockets",
+    "body": "- **Port** (16-bit) membedakan layanan dalam satu mesin.\n- **Socket** = `IP : Port` (misal `192.168.10.50:1883`).\n\n| Layanan | Transport & Port |\n| --- | --- |\n| HTTP / HTTPS | TCP `80` / TCP `443` |\n| MQTT / MQTTS | TCP `1883` / TCP `8883` |\n| DNS / NTP | UDP `53` / UDP `123` |",
+    "notes": "Pastikan firewall pada laptop/server mengizinkan port TCP 1883 saat menguji Mosquitto lokal di Chapter 14."
+  },
+  {
+    "title": "TCP vs UDP untuk Perangkat IoT",
+    "body": "| Aspek | TCP | UDP |\n| --- | --- | --- |\n| Handshake | 3-way (`SYN, SYN-ACK, ACK`) | Tidak ada |\n| Header minimum | 20 byte | 8 byte |\n| Keandalan | Retransmisi & urutan dijamin | *Best-effort* (bisa hilang) |\n| Contoh IoT | MQTT, HTTP | DNS, NTP, CoAP |",
+    "notes": "TCP aman untuk data penting, namun handshake-nya memakan energi radio dan menambah latensi."
+  },
+  {
+    "title": "Bandwidth vs Throughput vs Goodput",
+    "body": "- **Bandwidth**: Kapasitas kanal teoretis (Mbps).\n- **Throughput**: Laju transfer total aktual termasuk header.\n- **Goodput**: Hanya *payload* aplikasi berguna yang tiba:\n\n$$\\text{Efisiensi Goodput} = \\frac{B_{\\text{payload}}}{B_{\\text{payload}} + B_{\\text{headers}}} \\times 100\\%$$",
+    "notes": "Pada payload IoT kecil, header TCP/IP sering lebih besar daripada isi datanya sendiri!"
+  },
+  {
+    "title": "Uji Goodput & Probe (`network_diagnostics_sim.py`)",
+    "body": "Untuk payload $48\\text{ B}$ (+ MAC $18\\text{ B}$):\n- **TCP/IPv4** ($106\\text{ B}$ total) $\\rightarrow$ goodput **$45{,}3\\%$**\n- **UDP/IPv4** ($94\\text{ B}$ total) $\\rightarrow$ goodput **$51{,}1\\%$**\n\nAnalisis probe sintetis (`telemetry.csv`, $n=10$):\n- *Packet loss*: `10.0%`, RTT avg: `6.57 ms`, *Jitter*: `5.16 ms`.",
+    "notes": "Hasil nyata eksekusi Python dari outputs.md."
+  },
+  {
+    "title": "Latency, Jitter & Packet Loss",
+    "body": "- **Latency (RTT)**: Total *propagation + serialization + queuing + processing delay*.\n- **Jitter**: Fluktuasi waktu tunda antar-paket (buruk untuk kontrol *real-time*).\n- **Packet Loss**: Hilangnya paket akibat interferensi RF, buffer penuh, atau tabrakan.",
+    "notes": "Di jaringan nirkabel IoT, jitter tinggi sering memicu timeout palsu jika batas timeout terlalu sempit."
+  },
+  {
+    "title": "Metodologi Troubleshooting Berlapis (Bottom-Up)",
+    "body": "1. **Link**: Cek koneksi Wi-Fi/kabel & RSSI.\n2. **IP/DHCP**: Pastikan IP bukan `0.0.0.0` dan subnet sesuai.\n3. **Gateway (`ping`)**: Cek jalur ke *default gateway*.\n4. **DNS (`nslookup`)**: Cek resolusi hostname.\n5. **Port/Firewall (`nc -vz` / `Test-NetConnection`)**: Cek apakah port broker terbuka.",
+    "fragment": "Jangan langsung menyalahkan kode MQTT jika ping ke gateway saja belum tembus!",
+    "notes": "Membiasakan diagnosis sistematis dari layer bawah ke atas."
+  },
+  {
+    "title": "Kesalahan Umum Jaringan IoT",
+    "body": "- Memakai `127.0.0.1` (*localhost*) di kode ESP32 untuk menghubungi broker di laptop!\n- Lupa membuka port firewall Windows/Linux untuk broker lokal.\n- Mengira *bandwidth* 54 Mbps Wi-Fi berarti tidak perlu memikirkan ukuran *header* paket kecil.",
+    "notes": "127.0.0.1 di ESP32 merujuk ke ESP32 itu sendiri, bukan ke PC/laptop di LAN!"
+  },
+  {
+    "title": "Aplikasi: Segmentasi Subnet & Efisiensi",
+    "body": "- Memisahkan armada sensor kampus ke subnet `/26` khusus mengurangi *broadcast traffic* dan mempermudah aturan *firewall*.\n- Mengagregasi 10 pembacaan sensor ke dalam satu paket TCP menaikkan *goodput* secara drastis dibanding mengirim 10 paket terpisah.",
+    "notes": "Menghubungkan konsep batching dengan efisiensi jaringan."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nESP32 Anda mendapat IP `192.168.1.45/24`, tetapi di kode *Firmware* tertulis `const char* BROKER = \"127.0.0.1\";`. Mengapa koneksi selalu gagal?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 12: *Wi-Fi Connectivity & Device Provisioning*.",
+    "notes": "Jawaban: 127.0.0.1 adalah alamat loopback internal ESP32 sendiri; harus diisi IP LAN mesin broker (misal 192.168.1.10)."
+  }
+]
+

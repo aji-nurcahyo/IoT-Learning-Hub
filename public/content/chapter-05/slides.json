@@ -1,0 +1,85 @@
+[
+  {
+    "title": "Embedded Programming with C/C++",
+    "body": "Menulis *Firmware* yang **responsif**, **hemat memori**, **modular**, dan **tahan jalan 24/7** menggunakan pola *non-blocking* dan *State Machine*.",
+    "notes": "Chapter 05 menjembatani pemahaman hardware Chapter 04 dengan praktik pemrograman GPIO & sensor di Chapter 06–10."
+  },
+  {
+    "title": "Tujuan Pembelajaran Chapter 05",
+    "body": "1. **Menggunakan** tipe data *fixed-width*, fungsi, dan *header* modular (`.h`).\n2. **Menerapkan** *timing* `millis()` non-blocking yang aman terhadap *rollover*.\n3. **Menganalisis** penggunaan *Flash*, *SRAM*, *stack*, dan *heap*.\n4. **Merancang** *Finite State Machine* (FSM) dasar dengan `enum class`.",
+    "notes": "Setiap tujuan langsung diuji dalam contoh kode bertahap."
+  },
+  {
+    "title": "Siklus `setup()` dan `loop()`",
+    "body": "- **`setup()`**: Berjalan **1 kali** saat boot $\\rightarrow$ `Serial.begin()`, `pinMode()`, set kondisi aman awal.\n- **`loop()`**: Berjalan **berulang tanpa henti** (*super-loop*).\n\n*Aturan Emas*: Jangan biarkan satu tugas menahan `loop()` berlama-lama!",
+    "notes": "Bandingkan dengan aplikasi CLI desktop yang berjalan sekali lalu keluar."
+  },
+  {
+    "title": "Fixed-Width Integer Types (`<cstdint>`)",
+    "body": "| Tipe | Ukuran | Rentang | Contoh IoT |\n| --- | --- | --- | --- |\n| `uint8_t` | 1 B | $0 \\dots 255$ | Pin GPIO, PWM 8-bit |\n| `uint16_t` | 2 B | $0 \\dots 65.535$ | ADC 12-bit ($0\\dots 4095$) |\n| `int16_t` | 2 B | $-32768 \\dots 32767$ | Suhu $\\times 100$ |\n| `uint32_t` | 4 B | $0 \\dots 4{,}29\\times 10^9$ | Nilai `millis()` |",
+    "notes": "Menghindari asumsi ukuran 'int' yang berbeda antar mikrokontroler 8-bit dan 32-bit."
+  },
+  {
+    "title": "Modularitas: Header File (`.h`)",
+    "body": "```cpp\n#ifndef LED_TIMER_H\n#define LED_TIMER_H\nstruct BlinkTask {\n  uint8_t pin;\n  uint32_t intervalMs;\n  uint32_t lastToggleMs;\n  bool ledState;\n};\n#endif\n```\nPisahkan utilitas *reusable* ke header dengan *include guard*.",
+    "notes": "Menunjukkan contoh nyata file src/led_timer.h dari modul."
+  },
+  {
+    "title": "Serial Debugging Tanpa Heap Fragmentation",
+    "body": "**Hindari di `loop()`:**\n```cpp\nString s = \"temp=\" + String(val) + \" C\"; // alokasi heap berulang!\n```\n\n**Gunakan buffer statis + `snprintf()`:**\n```cpp\nchar buf[64];\nsnprintf(buf, sizeof(buf), \"temp=%.2f C\", val);\nSerial.println(buf);\n```",
+    "fragment": "Memori SRAM pada MCU hanya ratusan KiB — jaga agar heap tidak terfragmentasi!",
+    "notes": "Jelaskan mengapa fragmentasi heap membuat alat bekerja normal selama 2 jam lalu tiba-tiba crash di hari ke-3."
+  },
+  {
+    "title": "Peta Memori MCU: Flash vs SRAM",
+    "body": "| Wilayah | Sifat | Isi |\n| --- | --- | --- |\n| **Flash** | Non-volatil | Kode program & konstanta `const` |\n| **SRAM Statis** | Volatil | Variabel global & buffer tetap |\n| **SRAM Stack** | Volatil (LIFO) | Variabel lokal fungsi & call stack |\n| **SRAM Heap** | Volatil (dinamis) | `malloc` / `new` / `String` dinamis |",
+    "notes": "Ingatkan: variabel global raksasa atau rekursi tanpa batas cepat menghabiskan SRAM."
+  },
+  {
+    "title": "Mengapa `delay()` Berbahaya di Sistem IoT?",
+    "body": "Selama `delay(1000)` berjalan:\n- Tombol ditekan $\\rightarrow$ **terlewat**\n- Sensor berubah $\\rightarrow$ **tidak terbaca**\n- LED / buzzer lain $\\rightarrow$ **beku**\n\nGunakan pola **non-blocking** berbasis `millis()`!",
+    "notes": "Tekankan bahwa delay singkat hanya wajar di setup() untuk stabilisasi awal serial, bukan di dalam loop()."
+  },
+  {
+    "title": "Diagram: `delay()` vs `millis()` & FSM Dasar",
+    "body": "![Perbandingan blocking delay versus non-blocking millis dan FSM dasar](content/chapter-05/diagram.svg)",
+    "notes": "Tunjukkan bagaimana loop() berputar cepat mengecek beberapa tugas sekaligus secara bergantian."
+  },
+  {
+    "title": "Timing Non-Blocking & Rollover 32-Bit",
+    "body": "`millis()` kembali ke `0` (*rollover*) setiap $2^{32}\\text{ ms} \\approx 49{,}71\\text{ hari}$.\n\n**Pola aman (unsigned subtraction):**\n```cpp\nif ((uint32_t)(nowMs - prevMs) >= intervalMs) {\n  prevMs = nowMs;\n  // aksi periodik\n}\n```",
+    "fragment": "Jangan gunakan `if (millis() >= nextTime)` karena gagal saat rollover!",
+    "notes": "Jelaskan bukti pada fsm_timing_sim.py: 0x000003D8 - 0xFFFFFFF0 = 1000 ms (mod 2^32)."
+  },
+  {
+    "title": "Verifikasi Rollover & Transisi (`fsm_timing_sim.py`)",
+    "body": "```text\n[PASS] Rollover u32: prev=0xFFFFFFF0, now=0x000003D8 -> elapsed=1000 ms\nt=1000 ms | seq=1 | sim_temp=28.4 C -> next_state=IDLE\nt=3000 ms | seq=3 | sim_temp=30.2 C -> next_state=ALERT\nt=6000 ms | seq=6 | sim_temp=27.0 C -> next_state=IDLE\n```",
+    "notes": "Ini output aktual eksekusi Python untuk memvalidasi logika sebelum dijalankan di board."
+  },
+  {
+    "title": "Menuju Finite State Machine (FSM)",
+    "body": "Ganti tumpukan `flag` boolean membingungkan dengan **state eksklusif**:\n\n```cpp\nenum class SystemState : uint8_t { IDLE, SAMPLE, ALERT };\n\nswitch (currentState) {\n  case SystemState::IDLE:   /* cek timer */ break;\n  case SystemState::SAMPLE: /* baca & evaluasi */ break;\n  case SystemState::ALERT:  /* kedip cepat & cek timer */ break;\n}\n```",
+    "notes": "Setiap state memiliki perilaku jelas dan kondisi transisi yang eksplisit."
+  },
+  {
+    "title": "Dua Task Paralel Tanpa RTOS",
+    "body": "Pada `ex02_nonblocking_fsm.ino`:\n- `statusBlink` (`GPIO 25`) berkedip **1000 ms** terus-menerus.\n- `alertBlink` (`GPIO 26`) berkedip **200 ms** hanya saat `STATE_ALERT`.\n- Keduanya berjalan mulus hanya dengan satu `loop()` dan `millis()`!",
+    "notes": "Catat bahwa sketsa .ino dan Wokwi diagram.json tersedia di src/ dan berstatus Belum diuji di server ini."
+  },
+  {
+    "title": "Readability & Maintainability Checklist",
+    "body": "- Pakai `constexpr` untuk pin & interval, bukan angka mentah.\n- Pisahkan helper logis ke fungsi kecil atau header `.h`.\n- Pastikan setiap `case` di `switch` diakhiri `break;`.\n- Sertakan *default state* aman pada inisialisasi `setup()`.",
+    "notes": "Kode yang mudah dibaca oleh rekan tim jauh lebih bernilai daripada trik sintaks yang membingungkan."
+  },
+  {
+    "title": "Kesalahan Umum Pemula di Embedded C++",
+    "body": "1. Mencampur `delay()` dan `millis()` di `loop()` yang sama.\n2. Menggunakan `int` bertanda untuk menyimpan waktu (`millis()`).\n3. Membanjiri `Serial.println()` di setiap iterasi `loop()` tanpa *throttling*.\n4. Lupa memperbarui `prevMs = nowMs;` di dalam `if` timer.",
+    "notes": "Lupa memperbarui prevMs adalah bug klasik yang membuat blok timer tereksekusi di setiap milidetik!"
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nJika sebuah node berjalan $24/7$ dan mencetak log menggunakan `String` di dalam `loop()`, mengapa node tersebut bisa bekerja lancar selama 12 jam di meja lab lalu tiba-tiba *crash* di lapangan?\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 06: *GPIO, Digital Input/Output & Debouncing*.",
+    "notes": "Arahkan diskusi pada akumulasi fragmentasi heap dan kebutuhan pengujian jangka panjang (soak test)."
+  }
+]
+

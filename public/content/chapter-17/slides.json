@@ -1,0 +1,78 @@
+[
+  {
+    "title": "Chapter 17 — Bluetooth Low Energy (BLE)",
+    "body": "Koneksi jarak pendek hemat daya untuk *wearable*, sensor ruang, dan *provisioning* lokal.\n\n- **Target**: Memahami GAP, hierarki GATT, ATT MTU, anggaran daya baterai, dan *GATT Server* ESP32.\n- **Konteks**: Alternatif efisien ketika Wi-Fi terlalu boros daya atau tidak tersedia.",
+    "notes": "Perkenalkan perbedaan skenario penggunaan BLE dibanding Wi-Fi yang dibahas di Chapter 12."
+  },
+  {
+    "title": "Bluetooth Classic (BR/EDR) vs BLE",
+    "body": "| Aspek | Bluetooth Classic | Bluetooth Low Energy (BLE) |\n| --- | --- | --- |\n| Lebar Kanal | 79 kanal × 1 MHz | 40 kanal × 2 MHz (3 Adv + 37 Data) |\n| Beban Khas | Audio streaming, SPP kontinu | Burst pendek periodik (sensor) |\n| Konsumsi Daya | Relatif tinggi | Sangat rendah (mikroampere saat *sleep*) |\n| Model Data | Stream byte / profil tetap | Tabel Atribut terstruktur (GATT) |",
+    "notes": "Tekankan bahwa ESP32 klasik mendukung Classic + BLE, sedangkan seri ESP32-C3/S3 hanya BLE."
+  },
+  {
+    "title": "Peta Kanal BLE di Pita 2,4 GHz",
+    "body": "- Kanal **37** ($2402\\text{ MHz}$), **38** ($2426\\text{ MHz}$), dan **39** ($2480\\text{ MHz}$) khusus untuk **Advertising**.\n- Ketiga kanal tersebut sengaja diletakkan di celah antara kanal utama Wi-Fi `1, 6, 11` untuk mengurangi interferensi.\n- Setelah terhubung, **37 kanal data** memakai *Adaptive Frequency Hopping* (AFH).",
+    "notes": "Jelaskan mengapa penemuan perangkat BLE tetap cepat meskipun berada di ruangan penuh access point Wi-Fi."
+  },
+  {
+    "title": "Peran Perangkat pada Lapisan GAP",
+    "body": "- **Broadcaster**: Hanya menyiarkan paket iklan satu arah (*beacon*), tanpa koneksi.\n- **Observer**: Hanya memindai paket iklan (*scanner*).\n- **Peripheral**: Menyiarkan `ADV_IND` dan menerima koneksi (peran umum **sensor ESP32**).\n- **Central**: Memindai lalu menginisiasi koneksi `CONNECT_IND` (peran *smartphone* / *gateway*).",
+    "notes": "Tegaskan bahwa peran GAP (Peripheral/Central) terpisah secara konseptual dari peran GATT (Server/Client)."
+  },
+  {
+    "title": "Arsitektur GAP & Hierarki GATT",
+    "body": "![Diagram Arsitektur BLE GAP dan Hierarki GATT](content/chapter-17/diagram.svg)\n\nPerhatikan alur *Advertising $\\rightarrow$ Connect $\\rightarrow$ Write CCCD (`0x0001`) $\\rightarrow$ GATT Notify*.",
+    "notes": "Arahkan perhatian mahasiswa pada posisi Descriptor CCCD 0x2902 di bawah Characteristic Temperature."
+  },
+  {
+    "title": "Struktur Hierarki GATT: Profile, Service, Characteristic",
+    "body": "1. **Profile**: Kumpulan *Service* standar untuk satu kasus penggunaan.\n2. **Service (`UUID`)**: Wadah fungsional (misal `0x181A` *Environmental Sensing*).\n3. **Characteristic (`UUID`)**: Titik data aktual beserta *Value* dan *Properties* (`READ`, `WRITE`, `NOTIFY`, `INDICATE`).\n4. **Descriptor**: Metadata tambahan karakteristik—paling krusial adalah **CCCD (`0x2902`)**.",
+    "notes": "UUID 16-bit hanya milik standar Bluetooth SIG; sensor kustom wajib memakai UUID 128-bit."
+  },
+  {
+    "title": "Mengapa CCCD (0x2902) Wajib Ada untuk Notify?",
+    "body": "- *Peripheral* tidak boleh membanjiri radio *Central* dengan notifikasi tanpa persetujuan.\n- *Client* mengaktifkan langganan dengan menulis nilai ke **CCCD (`0x2902`)**:\n  - `0x0000`: Nonaktif\n  - `0x0001`: Aktifkan **Notify**\n  - `0x0002`: Aktifkan **Indicate**\n- Di Arduino ESP32, lupa `addDescriptor(new BLE2902())` membuat tombol *subscribe* gagal!",
+    "notes": "Ini adalah bug paling sering dijumpai mahasiswa saat pertama menguji dengan nRF Connect."
+  },
+  {
+    "title": "Notify vs Indicate: Kecepatan vs Konfirmasi ATT",
+    "body": "- **Notify (`0x0001`)**: Server mengirim nilai tanpa menunggu konfirmasi balik pada lapis ATT $\\rightarrow$ dapat mengirim beberapa PDU dalam satu *Connection Interval*.\n- **Indicate (`0x0002`)**: Server menunggu *ATT Handle Value Confirmation* dari Client $\\rightarrow$ lebih terjamin, namun laju transaksi dibatasi $\\approx 1$ indikasi per 2× *Connection Interval* ($200\\text{ ms}$ bila interval $100\\text{ ms}$).",
+    "notes": "Pilih Notify untuk telemetri berkala (suhu setiap 2 detik) dan Indicate untuk event kritis (alarm/status kunci)."
+  },
+  {
+    "title": "ATT MTU & Masalah Fragmentasi Payload",
+    "body": "Batas muatan ATT per PDU adalah $L_{\\text{max}} = \\text{ATT\\_MTU} - 3\\text{ byte}$.\n\nHasil uji [`ble_gatt_sim.py`](content/chapter-17/outputs.md) untuk payload **64 byte**:\n\n- `ATT_MTU = 23` (baku) $\\rightarrow$ `20 B/PDU` $\\rightarrow$ **4 paket**\n- `ATT_MTU = 65` $\\rightarrow$ `62 B/PDU` $\\rightarrow$ **2 paket**\n- `ATT_MTU = 247` $\\rightarrow$ `244 B/PDU` $\\rightarrow$ **1 paket**",
+    "notes": "Negosiasi MTU Exchange dilakukan segera setelah koneksi terbentuk agar JSON atau batch sensor tidak terpecah."
+  },
+  {
+    "title": "Contoh Pengodean Biner Hemat Byte (`0x2A6E`)",
+    "body": "Alih-alih mengirim teks `{\"temp\":27.85}` (`14 byte`), standar `0x2A6E` memakai `int16` berskala $0{,}01\\,^\\circ\\text{C}$ (*little-endian*):\n\n$$27{,}85 \\times 100 = 2785 = \\texttt{0x0AE1} \\xrightarrow{\\text{LE}} \\texttt{[E1, 0A]}$$\n\nHanya **2 byte**! Hemat energi radio dan langsung muat bahkan di `MTU = 23`.",
+    "notes": "Tunjukkan hasil [GATT] dari ble_gatt_sim.py bahwa byte e1 0a terdekode ulang tepat menjadi 27.85 C."
+  },
+  {
+    "title": "Anggaran Daya Baterai Koin CR2032 (220 mAh)",
+    "body": "Model: $I_{\\text{avg}} = \\frac{t_{\\text{act}} I_{\\text{act}} + (T_{\\text{adv}} - t_{\\text{act}}) I_{\\text{sleep}}}{T_{\\text{adv}}}$ ($t_{\\text{act}}=3{,}5\\text{ ms}, I_{\\text{act}}=9{,}5\\text{ mA}, I_{\\text{sleep}}=5\\,\\mu\\text{A}$):\n\n- `100 ms` $\\rightarrow$ $0{,}3373\\text{ mA}$ $\\rightarrow$ **27,2 hari**\n- `500 ms` $\\rightarrow$ $0{,}0715\\text{ mA}$ $\\rightarrow$ **128,3 hari**\n- `1000 ms` $\\rightarrow$ $0{,}0382\\text{ mA}$ $\\rightarrow$ **239,8 hari**\n- `2000 ms` $\\rightarrow$ $0{,}0216\\text{ mA}$ $\\rightarrow$ **424,1 hari**",
+    "notes": "Menurunkan frekuensi advertising dari 10 Hz menjadi 0,5 Hz memperpanjang umur baterai lebih dari 15 kali lipat!"
+  },
+  {
+    "title": "Implementasi ESP32: `BLE2902` & Encoding",
+    "body": "```cpp\npTempChar = pService->createCharacteristic(\n  \"2A6E\",\n  BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY\n);\npTempChar->addDescriptor(new BLE2902());\n\nint16_t encoded = static_cast<int16_t>(lroundf(tempC * 100.0f));\nuint8_t payload[2] = { (uint8_t)(encoded & 0xFF), (uint8_t)((encoded >> 8) & 0xFF) };\npTempChar->setValue(payload, 2);\npTempChar->notify();\n```",
+    "notes": "Lihat sketsa lengkap di content/chapter-17/src/ble_gatt_sensor/ble_gatt_sensor.ino."
+  },
+  {
+    "title": "Jebakan Reconnect Advertising & Radio Coexistence",
+    "body": "1. **Lupa Restart Advertising**: Saat *Central* memutus koneksi, ESP32 tetap diam jika `onDisconnect` tidak diikuti `startAdvertising()`.\n2. **RAM & Flash Bluedroid**: Stack BLE penuh memakan ~60 KB+ RAM dan besar di flash; pilih partisi *Minimal SPIFFS* atau gunakan *NimBLE-Arduino* untuk proyek Wi-Fi + BLE.\n3. **Keamanan**: *Just Works* rentan *MITM*; gunakan *Passkey / Numeric Comparison* pada data kontrol aktuator.",
+    "notes": "Jelaskan juga bahwa Wi-Fi dan BLE berbagi antena 2,4 GHz melalui time-slicing hardware."
+  },
+  {
+    "title": "Memilih BLE vs Wi-Fi untuk Proyek IoT",
+    "body": "- Pilih **BLE** saat: node bertenaga baterai kecil, tidak ada infrastruktur *router* Wi-Fi, atau perangkat berinteraksi langsung dengan *smartphone* (misal untuk *BLE Provisioning* Wi-Fi di Chapter 12!).\n- Pilih **Wi-Fi** saat: *throughput* besar, koneksi TCP/IP langsung ke broker MQTT lokal/internet, dan tersedia catu daya USB/listrik PLN.",
+    "notes": "Hubungkan kembali dengan Chapter 12 (provisioning) dan siapkan transisi menuju LPWAN jarak jauh (Chapter 18: LoRa)."
+  },
+  {
+    "title": "Pertanyaan Diskusi & Tugas",
+    "body": "**Diskusi:**\nSebuah tim mahasiswa mengirim payload JSON `{\"id\":\"node01\",\"t\":27.85,\"h\":68.4}` (`34 byte`) lewat BLE `notify()` menggunakan MTU bawaan, lalu aplikasi penerima hanya menerima `20 byte` pertama (`{\"id\":\"node01\",\"t\":2`). Jelaskan mengapa 14 byte sisanya hilang dan dua cara memperbaikinya!\n\n- Kerjakan **Exercises** & **Tugas & Rubrik**.\n- Lanjut ke Chapter 18: *LoRa & LoRaWAN Fundamentals*.",
+    "notes": "Jawaban: ATT_MTU default=23 B hanya mengizinkan payload 20 B per notifikasi. Solusi: (1) negosiasikan MTU >= 37 (mis. 128/247), atau (2) pakai pengodean biner 4-6 byte (int16 suhu + uint16 kelembapan)."
+  }
+]
+
