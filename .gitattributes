@@ -1,0 +1,33 @@
+# Set default behavior for all files
+* text=auto eol=lf
+
+# Explicit text files - always LF across all platforms
+*.md text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+*.csv text eol=lf
+*.txt text eol=lf
+*.py text eol=lf
+*.ino text eol=lf
+*.h text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Explicit binary files - no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.zip binary
+*.tar.gz binary
+*.tar.bz2 binary

@@ -225,9 +225,17 @@ def update_chapter_outputs(ch_id: int) -> None:
     compile_sec = build_compile_section(ch_id)
     new_content = content.rstrip() + "\n" + compile_sec.rstrip() + "\n"
 
-    # Replace windows CRLF if any with LF
+    # Replace windows CRLF with canonical LF
     new_content = new_content.replace("\r\n", "\n")
-    out_file.write_text(new_content, encoding="utf-8")
+    out_file.write_bytes(new_content.encode("utf-8"))
+
+
+def canonical_evidence_hash(file_path: Path) -> str:
+    b = file_path.read_bytes()
+    # Canonicalize CRLF -> LF for textual evidence files
+    if file_path.suffix.lower() in {".md", ".txt", ".csv", ".json", ".py", ".ino", ".h", ".svg", ".log", ".yaml", ".yml"}:
+        b = b.replace(b"\r\n", b"\n")
+    return hashlib.sha256(b).hexdigest()
 
 
 def main() -> None:
@@ -245,7 +253,7 @@ def main() -> None:
         if not out_file.exists():
             continue
 
-        sha256 = hashlib.sha256(out_file.read_bytes()).hexdigest()
+        sha256 = canonical_evidence_hash(out_file)
 
         if ch_id in COMPILE_DATA:
             ch["verification"]["status"] = "compile-verified"

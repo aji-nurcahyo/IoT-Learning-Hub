@@ -5,6 +5,14 @@ import { createHash } from 'node:crypto';
 import { chapterSchema, deckSchema, type Chapter } from '../src/schema';
 import { headings } from '../src/markdown';
 const root=resolve(import.meta.dirname,'..');
+export function hashEvidence(buffer: Buffer, filePath: string): string {
+ const isText = /\.(md|txt|csv|json|py|ino|h|svg|log|ya?ml)$/i.test(filePath);
+ if (isText) {
+  const canonical = buffer.toString('utf8').replace(/\r\n/g, '\n');
+  return createHash('sha256').update(canonical, 'utf8').digest('hex');
+ }
+ return createHash('sha256').update(buffer).digest('hex');
+}
 export function validateChapter(input:unknown, publicRoot=resolve(root,'public')):string[] {
  const result=chapterSchema.safeParse(input);
  if(!result.success) return result.error.issues.map(i=>`${i.path.join('.')}: ${i.message}`);
@@ -18,7 +26,13 @@ export function validateChapter(input:unknown, publicRoot=resolve(root,'public')
    check(file(r.path),`file ${key} tidak ada / kosong`);
    if(file(r.path)&&key==='slides'){try{deckSchema.parse(JSON.parse(readFileSync(resolve(publicRoot,r.path),'utf8')));}catch{check(false,'deck tidak valid');}}
  }
- for(const e of c.verification.records){check(file(e.path),'bukti uji tidak ada');if(file(e.path))check(createHash('sha256').update(readFileSync(resolve(publicRoot,e.path))).digest('hex')===e.sha256,'hash bukti uji tidak cocok');}
+ for(const e of c.verification.records){
+   check(file(e.path),'bukti uji tidak ada');
+   if(file(e.path)){
+     const buf = readFileSync(resolve(publicRoot,e.path));
+     check(hashEvidence(buf, e.path)===e.sha256,'hash bukti uji tidak cocok');
+   }
+ }
  const kinds={'compile-verified':'compile','simulator-verified':'simulator','hardware-verified':'hardware'} as const;
  if(c.verification.status!=='untested')check(c.verification.records.some(e=>e.kind===kinds[c.verification.status as keyof typeof kinds]),'status tidak didukung bukti uji');
  if(c.hardware.required){for(const p of [c.hardware.bom,c.hardware.pinMapping,c.hardware.wiring,c.hardware.instructions])check(file(p),'dokumen hardware tidak ada');}

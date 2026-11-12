@@ -502,7 +502,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-04/src/board_matrix.py",
             "date": "2026-11-10",
-            "sha256": "c618552ac2455812fc03a6db1021c668d9948bfeb293e56790d2bba4b1edb561"
+            "sha256": "1c9cd0c8a6ed8348a9431c24052ee6ce874a284b0d2e7d72b4ccf9b33bcce302"
           },
           {
             "kind": "compile",
@@ -510,7 +510,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-04/src/ch04_board_probe",
             "date": "2026-11-11",
-            "sha256": "c618552ac2455812fc03a6db1021c668d9948bfeb293e56790d2bba4b1edb561"
+            "sha256": "1c9cd0c8a6ed8348a9431c24052ee6ce874a284b0d2e7d72b4ccf9b33bcce302"
           }
         ]
       },
@@ -639,7 +639,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-05/src/fsm_timing_sim.py",
             "date": "2026-11-10",
-            "sha256": "7423c73339ea61a1b4d92410df8f1dfeb237ba61baa087324c1faeb6363ffc37"
+            "sha256": "1e02911ca3dce681004f7dd37147f4d5d46b43dc58f42742a01e28ea59ba7f8a"
           },
           {
             "kind": "compile",
@@ -647,7 +647,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-05/src/ex01_types_serial",
             "date": "2026-11-11",
-            "sha256": "7423c73339ea61a1b4d92410df8f1dfeb237ba61baa087324c1faeb6363ffc37"
+            "sha256": "1e02911ca3dce681004f7dd37147f4d5d46b43dc58f42742a01e28ea59ba7f8a"
           }
         ]
       },
@@ -775,7 +775,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-06/src/debounce_sim.py",
             "date": "2026-11-10",
-            "sha256": "a34aa8dc36c48cd88e106efa4bcc68f812bd3de7743f8359a860ee04b67fa04c"
+            "sha256": "dcb21406aaae50d9e6873983aa5c3a58c7fcbd7cff1d1c491506342830aa9146"
           },
           {
             "kind": "compile",
@@ -783,7 +783,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-06/src/ex01_button_debounce_fsm",
             "date": "2026-11-11",
-            "sha256": "a34aa8dc36c48cd88e106efa4bcc68f812bd3de7743f8359a860ee04b67fa04c"
+            "sha256": "dcb21406aaae50d9e6873983aa5c3a58c7fcbd7cff1d1c491506342830aa9146"
           }
         ]
       },
@@ -911,7 +911,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-07/src/adc_nyquist_sim.py",
             "date": "2026-11-10",
-            "sha256": "4d6d9a769479b6e542caedc1953b6f42aa46d9cc283842b190e036bae1c638a1"
+            "sha256": "ae782ecb2be9c0664bfbb32ff2b3da094973cca7d7105052aad0d69054afc402"
           },
           {
             "kind": "compile",
@@ -919,7 +919,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-07/src/ex01_adc_pwm_dimmer",
             "date": "2026-11-11",
-            "sha256": "4d6d9a769479b6e542caedc1953b6f42aa46d9cc283842b190e036bae1c638a1"
+            "sha256": "ae782ecb2be9c0664bfbb32ff2b3da094973cca7d7105052aad0d69054afc402"
           }
         ]
       },
@@ -1047,7 +1047,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-08/src/calibration_uncertainty.py",
             "date": "2026-11-10",
-            "sha256": "bedec288519540ab0ca1835da2614e139dbf9a4dc12df318695742349241d82e"
+            "sha256": "dd489ef2d943c43e84feed6e13a432a99ed1f8ed84c014a845a4f8ed349ff68c"
           },
           {
             "kind": "compile",
@@ -1055,7 +1055,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-08/src/ex01_ntc_calibrated",
             "date": "2026-11-11",
-            "sha256": "bedec288519540ab0ca1835da2614e139dbf9a4dc12df318695742349241d82e"
+            "sha256": "dd489ef2d943c43e84feed6e13a432a99ed1f8ed84c014a845a4f8ed349ff68c"
           }
         ]
       },
@@ -1183,7 +1183,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-09/src/hysteresis_control_sim.py",
             "date": "2026-11-10",
-            "sha256": "e9b855590aea1ca283a6e74397059182efd4a5d77a6c6d345ef8465b1dbb8e4d"
+            "sha256": "a34b0037ef3b9da56bacc7decf5b0fd91a1a78bcc233c9f6b8cf0c7f15d30356"
           },
           {
             "kind": "compile",
@@ -1191,7 +1191,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-09/src/ex01_hysteresis_driver",
             "date": "2026-11-11",
-            "sha256": "e9b855590aea1ca283a6e74397059182efd4a5d77a6c6d345ef8465b1dbb8e4d"
+            "sha256": "a34b0037ef3b9da56bacc7decf5b0fd91a1a78bcc233c9f6b8cf0c7f15d30356"
           }
         ]
       },
@@ -1323,7 +1323,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-10/src/capstone_logic_test.py",
             "date": "2026-11-10",
-            "sha256": "130a03ce46979b5b57421e2f53c07bc5168cbd587dbb7d28784a6528f78b59a2"
+            "sha256": "8461b7a7b2bafa0878b91f327f41cd4d4e4ce5822172158f503e9ce0ce1674ac"
           },
           {
             "kind": "compile",
@@ -1331,7 +1331,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-10/src/capstone_env_monitor",
             "date": "2026-11-11",
-            "sha256": "130a03ce46979b5b57421e2f53c07bc5168cbd587dbb7d28784a6528f78b59a2"
+            "sha256": "8461b7a7b2bafa0878b91f327f41cd4d4e4ce5822172158f503e9ce0ce1674ac"
           }
         ]
       },
@@ -1587,7 +1587,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-12/src/wifi_fsm_sim.py",
             "date": "2026-11-11",
-            "sha256": "1f6b657faa9e3a0b856b38bde265e75015afc3235ff31c7de87e566b7f244e7a"
+            "sha256": "3204306849610579adab18b68f677944c36ce0d1d5dd6031aa97d294d13a20d5"
           },
           {
             "kind": "compile",
@@ -1595,7 +1595,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-12/src/wifi_prov_fsm",
             "date": "2026-11-11",
-            "sha256": "1f6b657faa9e3a0b856b38bde265e75015afc3235ff31c7de87e566b7f244e7a"
+            "sha256": "3204306849610579adab18b68f677944c36ce0d1d5dd6031aa97d294d13a20d5"
           }
         ]
       },
@@ -1724,7 +1724,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-13/src/http_rest_sim.py",
             "date": "2026-11-11",
-            "sha256": "796c9e3ec6c1a9c2429cec2a6a8a6c2b4e029ac187f9037cf570504afa042a7b"
+            "sha256": "cbdaae1cd08158f38623c2362e4713cf36e31a2fb1235a6e32fed3b0d3ce3021"
           },
           {
             "kind": "compile",
@@ -1732,7 +1732,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-13/src/http_rest_client",
             "date": "2026-11-11",
-            "sha256": "796c9e3ec6c1a9c2429cec2a6a8a6c2b4e029ac187f9037cf570504afa042a7b"
+            "sha256": "cbdaae1cd08158f38623c2362e4713cf36e31a2fb1235a6e32fed3b0d3ce3021"
           }
         ]
       },
@@ -1860,7 +1860,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-14/src/mqtt_broker_sim.py",
             "date": "2026-11-11",
-            "sha256": "36321ca8aeaeb90b795c92f881904332614a6feeca728bb1ff523114f2bcd7f4"
+            "sha256": "7faa001f4b82c01056a81830fea488edda6541f65a3a73ee805a08bfc157a205"
           },
           {
             "kind": "compile",
@@ -1868,7 +1868,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-14/src/mqtt_pubsub_client",
             "date": "2026-11-11",
-            "sha256": "36321ca8aeaeb90b795c92f881904332614a6feeca728bb1ff523114f2bcd7f4"
+            "sha256": "7faa001f4b82c01056a81830fea488edda6541f65a3a73ee805a08bfc157a205"
           }
         ]
       },
@@ -2000,7 +2000,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-15/src/mqtt_qos_lwt_sim.py",
             "date": "2026-11-11",
-            "sha256": "1e2b70ba016b6549894f20bf70627ff72db1dfc15dd863dd10b45127503a4329"
+            "sha256": "3d260af1c0a3cb5b467f2ca49f0f0500f5638a3c6fad947987f4da0c88a05153"
           },
           {
             "kind": "compile",
@@ -2008,7 +2008,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-15/src/mqtt_lwt_retained",
             "date": "2026-11-11",
-            "sha256": "1e2b70ba016b6549894f20bf70627ff72db1dfc15dd863dd10b45127503a4329"
+            "sha256": "3d260af1c0a3cb5b467f2ca49f0f0500f5638a3c6fad947987f4da0c88a05153"
           }
         ]
       },
@@ -2136,7 +2136,7 @@
             "environment": "Windows, Python 3.12.10",
             "command": "python public/content/chapter-16/src/bus_protocol_sim.py",
             "date": "2026-11-11",
-            "sha256": "2d0064a0a8a81db833c98cb01ef836520a19d68ad6296e4196d3080707673a54"
+            "sha256": "ef65923c48235dad2f970285c3eeb3e4f9d4ba5b502530cfbf776db085e14235"
           },
           {
             "kind": "compile",
@@ -2144,7 +2144,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-16/src/i2c_uart_spi_probe",
             "date": "2026-11-11",
-            "sha256": "2d0064a0a8a81db833c98cb01ef836520a19d68ad6296e4196d3080707673a54"
+            "sha256": "ef65923c48235dad2f970285c3eeb3e4f9d4ba5b502530cfbf776db085e14235"
           }
         ]
       },
@@ -2275,7 +2275,7 @@
             "environment": "Python 3.12.10 (Windows 11)",
             "command": "python public/content/chapter-17/src/ble_gatt_sim.py",
             "date": "2026-11-11",
-            "sha256": "17f86112e5476cce3d7f5a24cb1e1016b502af3b780d59b9ca67610e42026a9d"
+            "sha256": "b7f612c7c7691b3dedbf96506d99df23b12269330a46f779840301b088615bac"
           },
           {
             "kind": "compile",
@@ -2283,7 +2283,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-17/src/ble_gatt_sensor",
             "date": "2026-11-11",
-            "sha256": "17f86112e5476cce3d7f5a24cb1e1016b502af3b780d59b9ca67610e42026a9d"
+            "sha256": "b7f612c7c7691b3dedbf96506d99df23b12269330a46f779840301b088615bac"
           }
         ]
       },
@@ -2544,7 +2544,7 @@
             "environment": "Python 3.12.10 (Windows 11)",
             "command": "python public/content/chapter-19/src/offline_buffer_sync.py",
             "date": "2026-11-11",
-            "sha256": "8908e7b35ff185263377f4d0cdd3ae8f23c6f832e0e142de4b1e09fafb07904f"
+            "sha256": "91f4cc6aa0e3ca73bd1fde1a0644008ca319d30d6e8fbd0970ca44a2e7c8377d"
           },
           {
             "kind": "compile",
@@ -2552,7 +2552,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-19/src/offline_queue_ntp",
             "date": "2026-11-11",
-            "sha256": "8908e7b35ff185263377f4d0cdd3ae8f23c6f832e0e142de4b1e09fafb07904f"
+            "sha256": "91f4cc6aa0e3ca73bd1fde1a0644008ca319d30d6e8fbd0970ca44a2e7c8377d"
           }
         ]
       },
@@ -2682,7 +2682,7 @@
             "environment": "Python 3.12.10 (Windows 11, loopback 127.0.0.1)",
             "command": "python public/content/chapter-20/src/capstone_connectivity_test.py",
             "date": "2026-11-11",
-            "sha256": "ab9b18d417729b3889d2a903f7281981e9bb3a573ab44c306662ce0825f7312f"
+            "sha256": "d6a2006e5d13291e277be2df6d44c099d42e87ebe0fa59cb810d57cab5cd1d1f"
           },
           {
             "kind": "compile",
@@ -2690,7 +2690,7 @@
             "environment": "arduino-cli 1.5.1, esp32:esp32@3.3.12 (esp32:esp32:esp32), Windows 11",
             "command": "arduino-cli compile --fqbn esp32:esp32:esp32 public/content/chapter-20/src/connected_env_capstone",
             "date": "2026-11-11",
-            "sha256": "ab9b18d417729b3889d2a903f7281981e9bb3a573ab44c306662ce0825f7312f"
+            "sha256": "d6a2006e5d13291e277be2df6d44c099d42e87ebe0fa59cb810d57cab5cd1d1f"
           }
         ]
       },
