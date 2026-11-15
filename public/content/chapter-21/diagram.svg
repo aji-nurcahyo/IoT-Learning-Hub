@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b0f19; }
+      .box { fill: #161e2e; stroke: #2563eb; stroke-width: 2; rx: 8; }
+      .box-event { fill: #1f1b2e; stroke: #a855f7; stroke-width: 2; rx: 8; }
+      .box-cmd { fill: #1c2620; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .box-state { fill: #262118; stroke: #f59e0b; stroke-width: 2; rx: 8; }
+      .title { font-family: 'DM Sans', system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .label { font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; fill: #f1f5f9; }
+      .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .arrow { stroke: #64748b; stroke-width: 2; stroke-dasharray: 4,4; marker-end: url(#arr); }
+      .arrow-solid { stroke: #94a3b8; stroke-width: 2; marker-end: url(#arr); }
+      .tag { font-family: 'DM Sans', system-ui, sans-serif; font-size: 10px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="540" class="bg" />
+
+  <!-- Header -->
+  <text x="40" y="45" class="title">IoT Data Taxonomy: Telemetry, Event, Command &amp; Device State</text>
+  <text x="40" y="68" class="subtitle">Taksonomi Kontrak Komunikasi dan Aliran Data Sistem Internet of Things Modern</text>
+
+  <!-- Core Entities Grid -->
+  <!-- 1. Telemetry -->
+  <g transform="translate(40, 100)">
+    <rect width="420" height="185" class="box" />
+    <text x="20" y="30" class="label" fill="#60a5fa">1. Telemetry Stream (Deret Waktu Sensor)</text>
+    <text x="20" y="52" class="subtitle">Pengukuran berkala, berorientasi nilai sekarang, loss-tolerant</text>
+    <rect x="20" y="65" width="380" height="100" fill="#0f172a" rx="4" />
+    <text x="30" y="85" class="mono">Topic: iot/{tenant}/{dev}/telemetry</text>
+    <text x="30" y="105" class="mono" fill="#cbd5e1">Payload: { "v": 1, "dev": "node-01", "seq": 1042,</text>
+    <text x="30" y="125" class="mono" fill="#cbd5e1">  "ts": 1762822800, "metrics": { "temp_c": 26.75 },</text>
+    <text x="30" y="145" class="mono" fill="#cbd5e1">  "quality": "good" }</text>
+  </g>
+
+  <!-- 2. Event -->
+  <g transform="translate(500, 100)">
+    <rect width="420" height="185" class="box-event" />
+    <text x="20" y="30" class="label" fill="#c084fc">2. Discrete Event (Transisi Kondisi Kritis)</text>
+    <text x="20" y="52" class="subtitle">Asinkron, berorientasi kejadian diskrit, loss-sensitive</text>
+    <rect x="20" y="65" width="380" height="100" fill="#0f172a" rx="4" />
+    <text x="30" y="85" class="mono" fill="#c084fc">Topic: iot/{tenant}/{dev}/event/{severity}</text>
+    <text x="30" y="105" class="mono" fill="#cbd5e1">Payload: { "v": 1, "event_id": "evt-89af4c",</text>
+    <text x="30" y="125" class="mono" fill="#cbd5e1">  "type": "CHASSIS_TAMPER", "severity": "critical",</text>
+    <text x="30" y="145" class="mono" fill="#cbd5e1">  "ts": 1762822805, "payload": { "lux": 420.5 } }</text>
+  </g>
+
+  <!-- 3. Command -->
+  <g transform="translate(40, 315)">
+    <rect width="420" height="185" class="box-cmd" />
+    <text x="20" y="30" class="label" fill="#34d399">3. Actionable Command (RPC / Kontrol Jarak Jauh)</text>
+    <text x="20" y="52" class="subtitle">Inisiasi dari cloud/operator, butuh konfirmasi (ACK) &amp; TTL</text>
+    <rect x="20" y="65" width="380" height="100" fill="#0f172a" rx="4" />
+    <text x="30" y="85" class="mono" fill="#34d399">Topic: iot/{tenant}/{dev}/cmd/{cmd_id}</text>
+    <text x="30" y="105" class="mono" fill="#cbd5e1">Payload: { "v": 1, "cmd_id": "c-902", "action": "relay",</text>
+    <text x="30" y="125" class="mono" fill="#cbd5e1">  "params": { "ch": 1, "state": true, "duration_s": 10 },</text>
+    <text x="30" y="145" class="mono" fill="#cbd5e1">  "expiry_ts": 1762822900 }</text>
+  </g>
+
+  <!-- 4. Device State / Twin -->
+  <g transform="translate(500, 315)">
+    <rect width="420" height="185" class="box-state" />
+    <text x="20" y="30" class="label" fill="#fbbf24">4. Device State &amp; Digital Twin (Kondisi Bertahan)</text>
+    <text x="20" y="52" class="subtitle">Model Rekonsiliasi Desired State vs. Reported State</text>
+    <rect x="20" y="65" width="380" height="100" fill="#0f172a" rx="4" />
+    <text x="30" y="85" class="mono" fill="#fbbf24">Topic: iot/{tenant}/{dev}/state/report</text>
+    <text x="30" y="105" class="mono" fill="#cbd5e1">Payload: { "state": {</text>
+    <text x="30" y="125" class="mono" fill="#cbd5e1">    "desired":  { "temp_high_c": 28.5, "mode": "eco" },</text>
+    <text x="30" y="145" class="mono" fill="#cbd5e1">    "reported": { "temp_high_c": 30.0, "version": 4 } } }</text>
+  </g>
+</svg>

@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Beban Kerja Deret Waktu (Time-Series)",
+    "body": "Data IoT memiliki karakteristik unik: bersifat murni penambahan (append-only writes), tidak pernah diubah (immutable), dan kueri selalu dibatasi rentang waktu.",
+    "notes": "Jelaskan mengapa model basis data relasional biasa yang mengandalkan update acak sering mengalami kemacetan saat menangani jutaan rekaman IoT."
+  },
+  {
+    "title": "Pemisahan Tag dan Metrik",
+    "body": "Struktur skema memisahkan dimensi pengelompokan (Tags: device_id, site_id) dari nilai pengukuran kontinu numerik (Fields: temp_c, humidity_pct).",
+    "notes": "Tekankan pentingnya menjaga kardinalitas tag agar indeks pencarian tidak membengkak melebihi kapasitas memori RAM gateway."
+  },
+  {
+    "title": "Indeks Komposit B-Tree Temporal",
+    "body": "Membuat indeks gabungan pada kolom (device_id, timestamp) mempercepat pencarian data deret waktu dari pemindaian penuh O(N) menjadi O(log N).",
+    "notes": "Tunjukkan bahwa kueri grafik yang memfilter rentang waktu satu minggu untuk satu sensor langsung melompat ke blok memori yang relevan."
+  },
+  {
+    "title": "Masalah Penyimpanan Tanpa Batas",
+    "body": "Menyimpan data mentah 1-5 detik selamanya akan menghabiskan ruang disk kartu micro-SD, memperlambat kueri, dan memicu kerusakan sistem file.",
+    "notes": "Paparkan fakta teknis bahwa kartu memori flash memiliki batas siklus penulisan (write endurance) yang rentan rusak jika terus ditulisi tanpa henti."
+  },
+  {
+    "title": "Konsep Downsampling & Rollup",
+    "body": "Mengonversi rekaman frekuensi tinggi menjadi ringkasan berkala (1 menit, 1 jam, 1 hari). Mengurangi jutaan baris data menjadi representasi kompak.",
+    "notes": "Diskusikan bahwa monitor pengguna hanya membutuhkan puluhan titik grafik untuk melihat tren suhu harian, bukan ribuan titik yang saling bertumpuk."
+  },
+  {
+    "title": "Ember Waktu (Time Bucketing)",
+    "body": "Mengelompokkan data berdasarkan formula modular: (timestamp / Delta_T) * Delta_T. Mengakumulasi metrik dalam blok waktu diskrit tanpa celah.",
+    "notes": "Gambarkan pembagian garis waktu menjadi ember-ember 60 detik yang masing-masing menampung sampel pembacaan untuk dihitung statistiknya."
+  },
+  {
+    "title": "Metrik Agregasi Standar",
+    "body": "Setiap jendela agregasi rollup menghitung empat pilar statistik: nilai rata-rata (avg), nilai terendah (min), nilai tertinggi (max), dan jumlah sampel (count).",
+    "notes": "Tekankan bahwa menyimpan nilai min dan max sangat krusial agar lonjakan anomali sesaat tidak hilang begitu saja saat dirata-ratakan."
+  },
+  {
+    "title": "Kebijakan Retensi Berjenjang",
+    "body": "Tier 1: Data mentah disimpan 7 hari untuk troubleshooting; Tier 2: Rollup 1 menit disimpan 90 hari; Tier 3: Rollup 1 jam disimpan tahunan.",
+    "notes": "Bahas analogi siklus hidup dokumen di perusahaan: berkas harian dibersihkan berkala, sedangkan laporan tahunan disimpan permanen di arsip."
+  },
+  {
+    "title": "Pembersihan Data Otomatis (Purge)",
+    "body": "Skrip terjadwal mengeksekusi penghapusan data mentah yang melampaui batas retensi: DELETE FROM telemetry_raw WHERE timestamp < cutoff.",
+    "notes": "Jelaskan bahwa data ringkasan di tabel rollup tetap utuh dan terlindungi meskipun data mentahnya telah dihapus dari basis data."
+  },
+  {
+    "title": "Bulk Insertion & Transaksi Atomik",
+    "body": "Memasukkan puluhan sampel telemetri sekaligus dalam satu transaksi database (INSERT INTO ... VALUES (...) batch) melipatgandakan kecepatan tulis disk.",
+    "notes": "Peringatkan bahwa mengeksekusi operasi commit untuk setiap baris tunggal secara terpisah akan memperlambat proses I/O hingga ratusan kali lipat."
+  },
+  {
+    "title": "Kalkulasi Kebutuhan Kapasitas Disk",
+    "body": "Formula estimasi: Ukuran Rekaman x Frekuensi Sampling x Jumlah Perangkat x Durasi Retensi. Menghindari kejutan kehabisan kapasitas media simpan.",
+    "notes": "Tunjukkan contoh perhitungan 100 perangkat dengan sampling 5 detik yang menghasilkan 12 juta baris data mentah dalam 7 hari (~460 MB)."
+  },
+  {
+    "title": "Performa Kueri Dashboard Real-Time",
+    "body": "Dashboard seperti Grafana dapat beralih otomatis: kueri 24 jam membaca rollup 1 menit (< 15 ms), kueri 1 tahun membaca rollup 1 jam (< 30 ms).",
+    "notes": "Perlihatkan perbedaan waktu respon visualisasi yang drastis antara memuat data rollup dibanding membaca tabel mentah berukuran gigabyte."
+  },
+  {
+    "title": "Partisi Temporal Lanjutan",
+    "body": "Pada skala enterprise, tabel dipartisi per hari atau per bulan sehingga pembersihan data dapat dilakukan instan via DROP TABLE alih-alih DELETE lambat.",
+    "notes": "Bahas prinsip kerja TimescaleDB atau PostgreSQL table partitioning yang mengoptimalkan penghapusan data pada partisi lawas."
+  },
+  {
+    "title": "Keandalan Media Penyimpanan Flash",
+    "body": "Mengombinasikan downsampling dan retention policy memperpanjang masa pakai kartu SD Raspberry Pi dengan meminimalkan beban penulisan I/O harian.",
+    "notes": "Beri saran praktis penggunaan mode SQLite WAL (Write-Ahead Logging) untuk meningkatkan throughput tulis pada penyimpanan embedded."
+  },
+  {
+    "title": "Menuju Visualisasi & Sistem Alerting",
+    "body": "Dengan struktur basis data deret waktu yang cepat dan terkelola rapi, kita siap menghubungkannya ke antarmuka Grafana pada Chapter 26.",
+    "notes": "Arahkan peserta untuk mencoba skrip timeseries_retention_engine.py sebelum melangkah ke pembuatan dashboard dan sistem peringatan dini."
+  }
+]

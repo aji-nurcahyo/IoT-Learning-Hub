@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Risiko Tertinggi Operasional IoT",
+    "body": "Memperbarui firmware pada ribuan perangkat lapangan yang terpasang di lokasi fisik sulit dijangkau menuntut mekanisme Over-The-Air (OTA) yang anti-gagal.",
+    "notes": "Tekankan bahaya fenomena bricked device di mana sensor mati suri total dan mengharuskan teknisi membongkar dinding gedung."
+  },
+  {
+    "title": "Arsitektur Flash Dual-Bank (A/B)",
+    "body": "Membagi flash menjadi dua partisi aplikasi terpisah: app0 (Bank A) dan app1 (Bank B), diawasi oleh sektor otadata yang menentukan target bootloader.",
+    "notes": "Gambarkan peta memori flash 4MB dengan partisi nvs, otadata, app0 (1.5MB), dan app1 (1.5MB) yang saling bergantian peran."
+  },
+  {
+    "title": "Pembaruan Tanpa Henti (Zero Downtime)",
+    "body": "Mikrokontroler tetap menjalankan firmware lama di Bank A saat mengunduh biner baru ke Bank B. Operasi pemantauan tetap berjalan normal.",
+    "notes": "Jelaskan bahwa jika koneksi internet terputus di tengah proses transfer biner, sistem tidak rusak dan tetap menjalankan Bank A."
+  },
+  {
+    "title": "Integritas & Tanda Tangan Kriptografis",
+    "body": "Setiap biner wajib ditandatangani dengan kunci privat pengembang (RSA/ECDSA). Bootloader memverifikasi tanda tangan menggunakan kunci publik terpercaya.",
+    "notes": "Peringatkan bahaya serangan Man-in-the-Middle di mana penyerang mencoba menyuntikkan firmware palsu untuk mengambil alih perangkat."
+  },
+  {
+    "title": "Pencocokan Digest SHA-256",
+    "body": "Pemeriksaan hash SHA-256 memastikan tidak ada satu bit pun yang terkorupsi selama transmisi jaringan sebelum biner diizinkan di-booting.",
+    "notes": "Tunjukkan bahwa kegagalan pencocokan hash langsung menggugurkan proses instalasi dan membuang biner dari partisi pasif."
+  },
+  {
+    "title": "Status Kritis: PENDING_VERIFY",
+    "body": "Setelah biner baru ditulis, bootloader beralih ke bank baru dengan status percobaan (PENDING_VERIFY). Firmware baru belum dinyatakan sah.",
+    "notes": "Bahas analogi masa percobaan karyawan: firmware baru harus membuktikan dirinya mampu bekerja dengan baik sebelum diangkat permanen."
+  },
+  {
+    "title": "Uji Kesehatan Runtime (Health-Check)",
+    "body": "Firmware baru harus membuktikan dirinya sehat: inisialisasi sensor sukses, koneksi Wi-Fi tersambung, dan handshake MQTT broker berhasil.",
+    "notes": "Tekankan bahwa jika salah satu subsistem kritis gagal dalam 30 detik pertama, firmware tidak boleh memanggil konfirmasi valid."
+  },
+  {
+    "title": "Konfirmasi Permanen (Mark As Valid)",
+    "body": "Jika health-check lolos, aplikasi memanggil esp_ota_mark_app_valid_cancel_rollback(). Status di otadata berubah menjadi VALID permanen.",
+    "notes": "Gambarkan transisi status partisi yang mengunci biner baru sebagai sistem operasi default untuk booting-booting berikutnya."
+  },
+  {
+    "title": "Penyembuhan Mandiri (Automatic Rollback)",
+    "body": "Jika firmware baru crash, panic, atau bootloop, bootloader mendeteksi kegagalan kuota boot dan otomatis kembali ke bank lama yang stabil.",
+    "notes": "Tunjukkan bahwa fitur automatic rollback ini mengeliminasi risiko perangkat mati suri total akibat kesalahan kode programmer."
+  },
+  {
+    "title": "Hardware Watchdog Timer Integration",
+    "body": "Pewaktu anjing penjaga (Watchdog) mereset mikrokontroler jika aplikasi baru mengalami hang atau perulangan tak berujung (infinite loop).",
+    "notes": "Jelaskan peran sinergis antara Watchdog hardware dan bootloader A/B dalam mendeteksi aplikasi yang macet total."
+  },
+  {
+    "title": "Anti-Rollback Version Counter",
+    "body": "Bootloader memeriksa nomor versi keamanan. Mencegah penyerang memaksa perangkat melakukan downgrade ke firmware resmi versi lama yang rentan.",
+    "notes": "Bahas konsep eFuse hardware bit counter pada chip ESP32 yang membakar bit permanen agar versi lama tidak dapat diinstal kembali."
+  },
+  {
+    "title": "Strategi Rilis Bertahap (Canary Release)",
+    "body": "Pembaruan diluncurkan bertahap: Kelompok uji lab -> 5% armada acak (Canary) -> Evaluasi 24 jam -> 25% -> 50% -> 100% armada penuh.",
+    "notes": "Diskusikan prinsip Blast Radius: jika ada bug tersembunyi, dampaknya hanya mengenai 5% perangkat uji dan bukan seluruh armada pabrik."
+  },
+  {
+    "title": "Observabilitas Siklus Hidup Armada",
+    "body": "Memantau metrik crash rate, distribusi versi firmware aktif, dan laporan log kepanikan (crash panic dumps) secara real-time di server.",
+    "notes": "Perlihatkan dashboard inventaris yang menampilkan grafik progres migrasi firmware armada dari v1.0.0 menuju v1.2.0."
+  },
+  {
+    "title": "Verifikasi Mesin Simulator OTA",
+    "body": "Skrip ota_lifecycle_simulator.py membuktikan penolakan paket biner palsu, eksekusi automatic rollback saat bootloop, dan konfirmasi sukses.",
+    "notes": "Tinjau kembali log keluaran terminal dari pengujian skrip simulasi Python dan evaluasi transisi ketiga skenario uji."
+  },
+  {
+    "title": "Menuju Proyek Capstone Level 3",
+    "body": "Dengan seluruh fondasi data, gateway, edge, visualisasi, keamanan, dan OTA yang telah dikuasai, kita siap membangun Capstone pada Chapter 30.",
+    "notes": "Arahkan peserta untuk mempersiapkan integrasi menyeluruh seluruh komponen Level 3 ke dalam platform monitoring kampus terpadu."
+  }
+]

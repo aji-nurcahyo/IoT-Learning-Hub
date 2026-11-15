@@ -1,0 +1,78 @@
+{
+  "title": "IoT Campus Environmental & Fleet Monitoring Dashboard",
+  "uid": "iot-campus-env-v1",
+  "timezone": "browser",
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Active Device Fleet Health",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "count(telemetry_raw{status='online'})", "legendFormat": "Online Nodes" }],
+      "options": {
+        "colorMode": "value",
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            { "color": "red", "value": null },
+            { "color": "orange", "value": 80 },
+            { "color": "green", "value": 95 }
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Packet Delivery Ratio (PDR)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "rate(telemetry_packets_received[5m]) / rate(telemetry_packets_sent[5m]) * 100", "legendFormat": "PDR (%)" }],
+      "options": {
+        "colorMode": "background",
+        "unit": "percent"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Live Temperature Gauge",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "latest(temp_c)", "legendFormat": "{{device_id}}" }],
+      "fieldConfig": {
+        "defaults": {
+          "min": 15,
+          "max": 45,
+          "unit": "celsius",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 20 },
+              { "color": "orange", "value": 28 },
+              { "color": "red", "value": 32 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "24-Hour Environmental Temperature & Humidity Trend",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "SELECT avg_temp FROM telemetry_rollup_1m", "legendFormat": "Avg Temp (1m Rollup)" },
+        { "expr": "SELECT max_temp FROM telemetry_rollup_1m", "legendFormat": "Max Temp Spike" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth"
+          }
+        }
+      }
+    }
+  ]
+}

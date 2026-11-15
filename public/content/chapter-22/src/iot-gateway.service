@@ -1,0 +1,27 @@
+[Unit]
+Description=IoT Serial-to-MQTT Gateway Daemon
+After=network.target local-fs.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=iotgateway
+Group=dialout
+WorkingDirectory=/opt/iot-gateway
+ExecStart=/opt/iot-gateway/venv/bin/python3 /opt/iot-gateway/serial_mqtt_gateway.py
+Restart=always
+RestartSec=5s
+
+# Resource limits & Sandboxing
+LimitNOFILE=65536
+ProtectSystem=full
+ProtectHome=true
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=iot-gateway
+
+[Install]
+WantedBy=multi-user.target

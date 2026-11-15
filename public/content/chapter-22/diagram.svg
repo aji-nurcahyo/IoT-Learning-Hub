@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b0f19; }
+      .box { fill: #161e2e; stroke: #2563eb; stroke-width: 2; rx: 8; }
+      .box-edge { fill: #1f2937; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .box-cloud { fill: #1e1b4b; stroke: #8b5cf6; stroke-width: 2; rx: 8; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.5; rx: 6; }
+      .title { font-family: 'DM Sans', system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .label { font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 600; fill: #f1f5f9; }
+      .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .arrow { stroke: #64748b; stroke-width: 2; stroke-dasharray: 4,4; marker-end: url(#arr); }
+      .arrow-solid { stroke: #38bdf8; stroke-width: 2; marker-end: url(#arr); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" />
+
+  <text x="40" y="45" class="title">Industrial IoT Gateway Architecture: Field to Network Bridge</text>
+  <text x="40" y="68" class="subtitle">Integrasi Mikrokontroler Lapangan, Raspberry Pi Linux Gateway, dan Broker Pesan</text>
+
+  <!-- Left: Sensor Nodes -->
+  <g transform="translate(40, 105)">
+    <rect width="220" height="395" class="box" />
+    <text x="20" y="32" class="label" fill="#60a5fa">Sensor Nodes</text>
+    <text x="20" y="52" class="subtitle">Mikrokontroler Lapangan</text>
+
+    <!-- Node 1 -->
+    <rect x="20" y="75" width="180" height="90" class="subbox" />
+    <text x="30" y="100" class="label" font-size="13">ESP32 Node 01</text>
+    <text x="30" y="120" class="mono">Port: /dev/ttyUSB0</text>
+    <text x="30" y="140" class="mono" fill="#94a3b8">Baud: 115200 8N1</text>
+
+    <!-- Node 2 -->
+    <rect x="20" y="185" width="180" height="90" class="subbox" />
+    <text x="30" y="210" class="label" font-size="13">STM32 Sensor 02</text>
+    <text x="30" y="230" class="mono">Port: /dev/ttyAMA0</text>
+    <text x="30" y="250" class="mono" fill="#94a3b8">RS485 Modbus RTU</text>
+
+    <!-- Node 3 -->
+    <rect x="20" y="295" width="180" height="80" class="subbox" />
+    <text x="30" y="320" class="label" font-size="13">BLE Beacon Cluster</text>
+    <text x="30" y="340" class="mono">HCI Bluetooth 5.0</text>
+  </g>
+
+  <!-- Middle: Gateway Daemon on Linux OS -->
+  <g transform="translate(300, 105)">
+    <rect width="360" height="395" class="box-edge" />
+    <text x="25" y="32" class="label" fill="#34d399">Raspberry Pi IoT Gateway (Linux)</text>
+    <text x="25" y="52" class="subtitle">Daemon Layer, systemd Supervisor &amp; Isolation</text>
+
+    <!-- Systemd Unit -->
+    <rect x="20" y="70" width="320" height="85" class="subbox" />
+    <text x="30" y="92" class="label" font-size="13" fill="#a7f3d0">systemd Service Unit</text>
+    <text x="30" y="112" class="mono">Service: iot-gateway.service</text>
+    <text x="30" y="130" class="mono" fill="#94a3b8">User: iotgateway (dialout) | Restart=always</text>
+
+    <!-- Gateway Core Pipeline -->
+    <rect x="20" y="170" width="320" height="110" class="subbox" />
+    <text x="30" y="192" class="label" font-size="13" fill="#a7f3d0">Python Gateway Core (venv)</text>
+    <text x="30" y="212" class="mono">1. Framing Parser &amp; LRC Checksum Check</text>
+    <text x="30" y="232" class="mono">2. Schema Normalization &amp; Timestamps</text>
+    <text x="30" y="252" class="mono">3. Graceful Signal Handler (SIGTERM)</text>
+
+    <!-- Diagnostics & Logs -->
+    <rect x="20" y="295" width="320" height="80" class="subbox" />
+    <text x="30" y="318" class="label" font-size="13" fill="#a7f3d0">Diagnostics &amp; Health</text>
+    <text x="30" y="338" class="mono">journalctl -u iot-gateway -f</text>
+    <text x="30" y="356" class="mono">Offline SQLite Spool Buffer</text>
+  </g>
+
+  <!-- Right: Brokering & Upstream -->
+  <g transform="translate(700, 105)">
+    <rect width="220" height="395" class="box-cloud" />
+    <text x="20" y="32" class="label" fill="#c084fc">Message Broker</text>
+    <text x="20" y="52" class="subtitle">Local / Edge Ingestion</text>
+
+    <rect x="20" y="75" width="180" height="135" class="subbox" />
+    <text x="30" y="100" class="label" font-size="13">Mosquitto MQTT</text>
+    <text x="30" y="125" class="mono">Port: 1883 / 8883</text>
+    <text x="30" y="145" class="mono">TLS v1.3 Support</text>
+    <text x="30" y="165" class="mono">ACL Rule Isolation</text>
+    <text x="30" y="185" class="mono">Persistent Storage</text>
+
+    <rect x="20" y="235" width="180" height="140" class="subbox" />
+    <text x="30" y="260" class="label" font-size="13">Ingestion Clients</text>
+    <text x="30" y="285" class="mono">Node-RED Engine</text>
+    <text x="30" y="305" class="mono">Time-Series DB</text>
+    <text x="30" y="325" class="mono">Grafana Dashboard</text>
+    <text x="30" y="345" class="mono">Cloud Forwarder</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="260" y1="230" x2="300" y2="230" class="arrow-solid" />
+  <line x1="660" y1="230" x2="700" y2="230" class="arrow-solid" />
+</svg>

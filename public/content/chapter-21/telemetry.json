@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "dev": "sensor-node-alpha",
+  "seq": 1042,
+  "ts": 1762822800,
+  "metrics": {
+    "temp_c": 26.75,
+    "humidity_pct": 62.40,
+    "battery_mv": 3280,
+    "rssi_dbm": -68
+  },
+  "quality": "good"
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Urgensi Keamanan Sistem IoT",
+    "body": "Celah keamanan pada satu sensor berharga murah dapat dieksploitasi penyerang untuk meretas seluruh infrastruktur jaringan kampus atau fasilitas pabrik.",
+    "notes": "Bahas kasus nyata serangan Mirai Botnet yang melumpuhkan sebagian besar internet dunia akibat perangkat IoT dengan kata sandi bawaan pabrik."
+  },
+  {
+    "title": "Model Ancaman STRIDE untuk IoT",
+    "body": "Enam vektor ancaman terdistribusi: Spoofing (pemalsuan), Tampering (manipulasi), Repudiation, Information Disclosure, Denial of Service, dan Elevation of Privilege.",
+    "notes": "Uraikan bagaimana setiap kategori ancaman STRIDE memiliki mitigasi kriptografis spesifik dalam perancangan sistem terhubung."
+  },
+  {
+    "title": "Prinsip Pertahanan Berlapis",
+    "body": "Keamanan tidak boleh hanya bergantung pada satu lapis (seperti firewall router). Terapkan Defense-in-Depth: Identitas fisik, Transport TLS, dan Otorisasi ACL.",
+    "notes": "Jelaskan prinsip Zero Trust: jangan pernah berasumsi bahwa jaringan internal lokal selalu aman dari serangan penyerang yang telah masuk."
+  },
+  {
+    "title": "Identitas Kriptografis (X.509)",
+    "body": "Setiap perangkat memiliki sertifikat digital X.509 yang diterbitkan oleh Root Certificate Authority (CA) internal. Menghilangkan kata sandi teks statis.",
+    "notes": "Paparkan komponen berkas sertifikat: nama umum (Common Name), kunci publik, masa berlaku, dan tanda tangan digital otoritas penerbit."
+  },
+  {
+    "title": "Proteksi Kunci Privat (Private Key)",
+    "body": "Kunci privat disimpan di dalam hardware secure element (seperti ATECC608A) atau flash NVS terenkripsi. Tidak pernah boleh diekspor keluar perangkat.",
+    "notes": "Tekankan bahwa jika penyerang mencuri perangkat fisik di lapangan, kunci privat tetap tidak bisa dibaca berkat enkripsi silikon perangkat keras."
+  },
+  {
+    "title": "Kekuatan Kunci: ECC vs RSA",
+    "body": "Kurva eliptik ECC NIST P-256 (256-bit) memberikan tingkat keamanan setara RSA 3072-bit, namun dengan kebutuhan memori RAM dan daya komputasi jauh lebih hemat.",
+    "notes": "Perlihatkan perbandingan ukuran paket sertifikat yang membuat proses jabat tangan jaringan nirkabel berlangsung jauh lebih cepat pada mikrokontroler."
+  },
+  {
+    "title": "Mutual TLS (mTLS v1.3)",
+    "body": "Otentikasi dua arah: mikrokontroler memverifikasi keaslian broker MQTT, dan broker secara ketat memverifikasi sertifikat mikrokontroler sebelum mengizinkan koneksi.",
+    "notes": "Gambarkan langkah-langkah paket jabat tangan TLS v1.3: ClientHello, ServerHello, CertificateRequest, dan pertukaran kunci rahasia sesi."
+  },
+  {
+    "title": "Enkripsi Data Melintasi Jaringan",
+    "body": "Seluruh aliran paket dienkripsi dengan sandi modern (AES-GCM / ChaCha20-Poly1305). Melindungi telemetri dari penyadapan (anti-eavesdropping).",
+    "notes": "Tunjukkan bahwa teknisi yang memantau kabel jaringan dengan Wireshark hanya akan melihat deretan byte acak terenkripsi yang tidak terbaca."
+  },
+  {
+    "title": "Otorisasi Topik MQTT (ACL Matrix)",
+    "body": "Menegakkan prinsip Least Privilege menggunakan aturan berbasis pola (%u). Setiap perangkat hanya diizinkan membaca dan menulis pada jalurnya sendiri.",
+    "notes": "Bahas analogi kunci kamar hotel: tamu hanya boleh membuka pintunya sendiri dan tidak boleh membuka kamar tamu lain di lorong yang sama."
+  },
+  {
+    "title": "Pencegahan Spionase Antar Perangkat",
+    "body": "Node-01 dilarang keras berlangganan ke topik iot/fleet/node-02/telemetry. Broker secara aktif menolak permintaan subskripsi yang tidak sah.",
+    "notes": "Jelaskan bahwa isolasi multi-tenant ini mencegah satu sensor yang terkompromi memata-matai informasi dari sensor-sensor di sekitarnya."
+  },
+  {
+    "title": "Pencegahan Pembajakan Perintah",
+    "body": "Node-01 dilarang mempublikasikan ke topik kendali iot/fleet/node-02/cmd/relay. Mengeliminasi risiko sabotase aktuator oleh perangkat liar.",
+    "notes": "Tunjukkan bahwa hanya akun terpercaya (seperti operator_admin) yang diizinkan menerbitkan perintah aksi ke topik kontrol aktuator."
+  },
+  {
+    "title": "Konfigurasi mosquitto_acl.conf",
+    "body": "Menonaktifkan akses anonim secara global (allow_anonymous false) dan mendaftarkan pola hak akses topik untuk seluruh armada perangkat secara deklaratif.",
+    "notes": "Tinjau kembali struktur berkas konfigurasi ACL Mosquitto yang diterapkan di laboratorium untuk membatasi hak akses."
+  },
+  {
+    "title": "Kepatuhan Pedoman NIST IR 8259",
+    "body": "Standar kapabilitas dasar perangkat IoT: Device Identification, Secure Configuration, Data Protection, Interface Access, dan Software Update.",
+    "notes": "Bahas mengapa kepatuhan terhadap standar internasional NIST sangat penting jika produk IoT ingin disertifikasi secara komersial."
+  },
+  {
+    "title": "Evaluasi & Pengujian Keamanan",
+    "body": "Skrip iot_security_evaluator.py membuktikan penolakan sertifikat kedaluwarsa, penolakan kunci RSA lemah, dan pemblokiran pelanggaran ACL topik.",
+    "notes": "Tinjau kembali log keluaran terminal dari pengujian skrip Python mandiri dan diskusikan hasil temuan pemodelan STRIDE."
+  },
+  {
+    "title": "Langkah Menuju Pembaruan Firmware OTA",
+    "body": "Dengan fondasi identitas dan enkripsi yang kokoh, kita siap melangkah ke mekanisme pembaruan firmware jarak jauh (OTA Updates) pada Chapter 29.",
+    "notes": "Arahkan peserta untuk memahami bahwa update OTA membutuhkan tanda tangan kriptografis yang telah dipelajari di bab ini."
+  }
+]

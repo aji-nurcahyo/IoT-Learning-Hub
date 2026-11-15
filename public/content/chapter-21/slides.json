@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Taksonomi Data IoT Modern",
+    "body": "Dalam arsitektur IoT terdistribusi, pertukaran informasi dibagi ke dalam empat kategori fundamental: Telemetry Stream, Discrete Event, Actionable Command, dan Device State.",
+    "notes": "Jelaskan mengapa mencampuradukkan telemetri reguler dengan event alarm darurat adalah kesalahan fatal dalam perancangan arsitektur sistem."
+  },
+  {
+    "title": "Telemetry Streams",
+    "body": "Pengukuran sensor berulang berkala (suhu, kelembapan, getaran). Karakteristik utama: loss-tolerant, berorientasi nilai saat ini, dan membutuhkan volume transmisi efisien.",
+    "notes": "Diskusikan bahwa jika satu paket telemetri hilang di tengah jalan, data berikutnya akan segera menggantikan nilai tersebut tanpa merusak sistem."
+  },
+  {
+    "title": "Discrete Events",
+    "body": "Kejadian diskrit yang dipicu oleh perubahan kondisi penting (misal: pintu panel terbuka, alarm kebocoran gas). Karakteristik: asinkron, loss-sensitive, dan butuh logging permanen.",
+    "notes": "Tekankan pentingnya penggunaan QoS 1 atau QoS 2 pada broker MQTT untuk pesan bertipe event agar tidak ada alarm darurat yang terlewat."
+  },
+  {
+    "title": "Actionable Commands",
+    "body": "Instruksi yang dikirimkan oleh sistem kendali atau operator ke perangkat (misal: membuka katup selenoid, mengubah frekuensi sampling). Wajib menyertakan Time-To-Live (TTL).",
+    "notes": "Jelaskan risiko bahaya jika perintah yang tertunda berjam-jam tiba-tiba dieksekusi saat jaringan pulih tanpa pemeriksaan parameter TTL."
+  },
+  {
+    "title": "Digital Twin & State",
+    "body": "Model rekonsiliasi antara 'Desired State' (kondisi yang diharapkan oleh operator di cloud) dan 'Reported State' (kondisi aktual yang dilaporkan perangkat fisik).",
+    "notes": "Perkenalkan konsep status retained pada broker MQTT dan bagaimana cloud platform seperti AWS IoT Core atau Azure IoT Hub memanfaatkan state twin."
+  },
+  {
+    "title": "Desain Topik Hierarkis",
+    "body": "Pola penamaan topik yang terstruktur: tenant_id / site_id / device_id / message_type. Memudahkan pengelompokan ACL, filtering wildcard, dan routing data pipeline.",
+    "notes": "Bahas aturan penataan topik agar broker tidak mengalami pembebanan komputasi berlebih saat memetakan subskripsi wildcard multi-level."
+  },
+  {
+    "title": "JSON Schema Kontrak Data",
+    "body": "Penggunaan JSON Schema untuk memvalidasi tipe primitif, rentang batas fisik (minimum & maximum), field wajib (required), dan pembatasan enumeration.",
+    "notes": "Tunjukkan bahwa validasi ketat di sisi gerbang (gateway) mencegah database terkotori oleh nilai sensor yang korup atau rusak akibat kabel putus."
+  },
+  {
+    "title": "Stempel Waktu & Time Skew",
+    "body": "Wajib menggunakan stempel waktu saat akuisisi fisik (t_capture) berbasis Unix Epoch UTC integer. Tandai flag status sinkronisasi waktu jika NTP belum stabil.",
+    "notes": "Uraikan masalah fatal yang muncul bila server cloud menggunakan waktu penerimaan (t_ingest) untuk data yang sempat tertahan lama di buffer offline."
+  },
+  {
+    "title": "Tantangan Jaringan & Duplikasi",
+    "body": "Protokol transmisi berbasis ACK (seperti MQTT QoS 1) menjamin at-least-once delivery, yang berpotensi melahirkan pesan duplikat saat terjadi fluktuasi sinyal.",
+    "notes": "Gambarkan diagram waktu ketika paket PUBLISH berhasil diterima broker, namun paket PUBACK gagal mencapai mikrokontroler sehingga memicu retransmisi."
+  },
+  {
+    "title": "Prinsip Idempotensi",
+    "body": "Menjamin eksekusi berulang dari sebuah pesan tidak akan mengubah kondisi akhir sistem. Membutuhkan kunci unik komposit: (device_id + sequence_number).",
+    "notes": "Beri contoh nyata: perintah 'matikan pompa' bersifat idempoten, sedangkan 'toggle sakelar pompa' tidak idempoten dan sangat berbahaya jika terduplikasi."
+  },
+  {
+    "title": "Cache Deduplikasi Berbasis TTL",
+    "body": "Gateway memelihara sliding window memory untuk mencatat ID pesan yang telah diproses. Entri otomatis dibersihkan setelah batas waktu kedaluwarsa terlampaui.",
+    "notes": "Jelaskan mengapa gateway tidak boleh menyimpan seluruh histori pesan di memori RAM selamanya demi mencegah kehabisan kapasitas memori (Out-of-Memory)."
+  },
+  {
+    "title": "Efisiensi Payload & Biaya Data",
+    "body": "Format JSON tekstual memiliki redundansi tinggi akibat pengulangan nama kunci. Pada jaringan seluler atau LPWAN, biaya data ditentukan oleh jumlah byte per bulan.",
+    "notes": "Paparkan kalkulasi biaya transmisi telemetri jika perangkat mengirimkan JSON tiap detik melalui koneksi kartu SIM seluler IoT komersial."
+  },
+  {
+    "title": "Teknik Pemadatan Biner",
+    "body": "Mengonversi nilai float ke fixed-point integer dan menyusun byte payload menggunakan binary struct packing. Mampu memangkas ukuran paket hingga di atas 80%.",
+    "notes": "Perlihatkan tabel pemetaan tipe data struct C/Python (seperti int16 untuk suhu resolusi 0.01 C) dan perbandingannya dengan representasi teks desimal."
+  },
+  {
+    "title": "Quality Tagging & Anomali",
+    "body": "Menyematkan metadata kualitas ('good', 'uncertain', 'bad') pada telemetri untuk memisahkan anomali lingkungan nyata dari kegagalan probe fisik sensor.",
+    "notes": "Tekankan pentingnya flag kualitas data bagi algoritma machine learning di cloud agar model analitik prediktif tidak dilatih dengan data korup."
+  },
+  {
+    "title": "Ringkasan & Integrasi Level 3",
+    "body": "Standarisasi model data, kontrak schema, idempotensi, dan efisiensi serialisasi adalah syarat mutlak sebelum melangkah ke pemrosesan edge gateway pada bab berikutnya.",
+    "notes": "Arahkan mahasiswa untuk mencoba skrip validator mandiri di lab sebelum mempelajari integrasi gerbang fisik Raspberry Pi pada Chapter 22."
+  }
+]

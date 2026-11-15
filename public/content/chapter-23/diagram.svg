@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b0f19; }
+      .stage-box { fill: #161e2e; stroke: #2563eb; stroke-width: 2; rx: 8; }
+      .stage-rule { fill: #1e1b4b; stroke: #8b5cf6; stroke-width: 2; rx: 8; }
+      .stage-buffer { fill: #1f2937; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.5; rx: 6; }
+      .title { font-family: 'DM Sans', system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .label { font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; fill: #f1f5f9; }
+      .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; marker-end: url(#arr); }
+      .arrow-dash { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 4,4; marker-end: url(#arr-gray); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" />
+
+  <text x="40" y="45" class="title">Edge Computing Pipeline: Filtering, Windowing, Local Rules &amp; Spooling</text>
+  <text x="40" y="68" class="subtitle">Alur Reduksi Bandwidth, Otomasi Mandiri Nol Latensi, dan Sinkronisasi Cloud</text>
+
+  <!-- Step 1: Input & Filtering -->
+  <g transform="translate(40, 105)">
+    <rect width="260" height="395" class="stage-box" />
+    <text x="20" y="32" class="label" fill="#60a5fa">1. Data Conditioning Layer</text>
+    <text x="20" y="52" class="subtitle">Penyaringan Derau &amp; Outlier</text>
+
+    <!-- Raw Data -->
+    <rect x="20" y="75" width="220" height="70" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12">Raw Sensor Ingestion</text>
+    <text x="30" y="118" class="mono">Rate: 10 Hz / Stream Serial</text>
+    <text x="30" y="134" class="mono" fill="#f87171">[26.1, 99.9, 26.3, -45.0]</text>
+
+    <!-- IQR Filter -->
+    <rect x="20" y="160" width="220" height="75" class="subbox" />
+    <text x="30" y="183" class="label" font-size="12">Statistical IQR Outlier Filter</text>
+    <text x="30" y="203" class="mono">Q1 - 1.5*IQR &lt;= X &lt;= Q3 + 1.5*IQR</text>
+    <text x="30" y="221" class="mono" fill="#34d399">Spike 99.9 &amp; -45 dibuang</text>
+
+    <!-- Deadband -->
+    <rect x="20" y="250" width="220" height="75" class="subbox" />
+    <text x="30" y="273" class="label" font-size="12">Deadband Compression</text>
+    <text x="30" y="293" class="mono">|T_curr - T_prev| &gt;= 0.5 C</text>
+    <text x="30" y="311" class="mono" fill="#fbbf24">Redam 60% paket statis</text>
+
+    <text x="20" y="360" class="mono" fill="#94a3b8">Latency: &lt; 2 ms</text>
+  </g>
+
+  <!-- Step 2: Windowing & Local Rules -->
+  <g transform="translate(350, 105)">
+    <rect width="260" height="395" class="stage-rule" />
+    <text x="20" y="32" class="label" fill="#c084fc">2. Analytics &amp; Local Control</text>
+    <text x="20" y="52" class="subtitle">Agregasi &amp; Mesin Aturan Mandiri</text>
+
+    <!-- Windowing -->
+    <rect x="20" y="75" width="220" height="85" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12">Sliding Window (N=5)</text>
+    <text x="30" y="118" class="mono">Mean: 26.0 C | StdDev: 0.34</text>
+    <text x="30" y="136" class="mono">Min: 25.5 C  | Max: 26.5 C</text>
+
+    <!-- Hysteresis Engine -->
+    <rect x="20" y="175" width="220" height="115" class="subbox" />
+    <text x="30" y="198" class="label" font-size="12">Hysteretic Rule Engine</text>
+    <text x="30" y="218" class="mono">High Threshold: 30.0 C</text>
+    <text x="30" y="236" class="mono">Low (Off) Band: 28.5 C</text>
+    <text x="30" y="256" class="mono" fill="#34d399">Output: Kipas / Relay Lokal</text>
+    <text x="30" y="274" class="mono" fill="#94a3b8">Bebas chatter / osilasi</text>
+
+    <!-- Disconnected Safety -->
+    <rect x="20" y="305" width="220" height="65" class="subbox" />
+    <text x="30" y="328" class="label" font-size="12">Local Fail-Safe State</text>
+    <text x="30" y="348" class="mono" fill="#fbbf24">Mandiri tanpa koneksi internet</text>
+  </g>
+
+  <!-- Step 3: Spooling & Sync -->
+  <g transform="translate(660, 105)">
+    <rect width="260" height="395" class="stage-buffer" />
+    <text x="20" y="32" class="label" fill="#34d399">3. Spooling &amp; Sync Layer</text>
+    <text x="20" y="52" class="subtitle">Buffer Lokal &amp; Drain ke Cloud</text>
+
+    <!-- FIFO Buffer -->
+    <rect x="20" y="75" width="220" height="110" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12">Circular Spool Buffer</text>
+    <text x="30" y="118" class="mono">Kapasitas: 1000 slot</text>
+    <text x="30" y="136" class="mono">Mode: Store-and-Forward</text>
+    <text x="30" y="156" class="mono" fill="#f87171">Offline: buffer bertambah</text>
+    <text x="30" y="174" class="mono" fill="#34d399">Online: kirim batch bertahap</text>
+
+    <!-- Upstream Uplink -->
+    <rect x="20" y="200" width="220" height="90" class="subbox" />
+    <text x="30" y="223" class="label" font-size="12">Cloud Synchronizer</text>
+    <text x="30" y="243" class="mono">Batch Size: 20 item/tx</text>
+    <text x="30" y="263" class="mono">Full-Jitter Backoff</text>
+    <text x="30" y="281" class="mono">MQTT QoS 1 / TLS v1.3</text>
+
+    <text x="20" y="360" class="mono" fill="#94a3b8">Integrity: Zero Loss</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="300" y1="210" x2="350" y2="210" class="arrow" />
+  <line x1="610" y1="210" x2="660" y2="210" class="arrow" />
+</svg>

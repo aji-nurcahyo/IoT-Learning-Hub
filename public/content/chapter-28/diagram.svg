@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b0f19; }
+      .box-pki { fill: #161e2e; stroke: #2563eb; stroke-width: 2; rx: 8; }
+      .box-tls { fill: #1e1b4b; stroke: #8b5cf6; stroke-width: 2; rx: 8; }
+      .box-acl { fill: #1f2937; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.5; rx: 6; }
+      .title { font-family: 'DM Sans', system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .label { font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; fill: #f1f5f9; }
+      .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; marker-end: url(#arr); }
+      .arrow-red { stroke: #ef4444; stroke-width: 2; stroke-dasharray: 4,4; marker-end: url(#arr-red); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" />
+
+  <text x="40" y="45" class="title">IoT Defense-in-Depth: X.509 PKI, mTLS v1.3 &amp; MQTT ACL Matrix</text>
+  <text x="40" y="68" class="subtitle">Arsitektur Keamanan Berlapis: Identitas Kriptografis, Enkripsi Transport, Otorisasi Topik, dan NIST IR 8259</text>
+
+  <!-- Step 1: PKI & Identity -->
+  <g transform="translate(40, 105)">
+    <rect width="260" height="395" class="box-pki" />
+    <text x="20" y="32" class="label" fill="#60a5fa">1. PKI &amp; Cryptographic ID</text>
+    <text x="20" y="52" class="subtitle">Identitas Kriptografis Perangkat</text>
+
+    <!-- Root CA & Device Cert -->
+    <rect x="20" y="75" width="220" height="110" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12">X.509 Certificate Chain</text>
+    <text x="30" y="118" class="mono">Root CA: ITERA-IoT-Root</text>
+    <text x="30" y="136" class="mono">Device Cert: node-env-01</text>
+    <text x="30" y="156" class="mono">Key: ECC NIST P-256 / RSA</text>
+    <text x="30" y="174" class="mono" fill="#34d399">Hardware Secure Element</text>
+
+    <!-- Security Principles -->
+    <rect x="20" y="200" width="220" height="95" class="subbox" />
+    <text x="30" y="223" class="label" font-size="12">Proteksi Private Key</text>
+    <text x="30" y="243" class="mono">• Never Exported from Flash</text>
+    <text x="30" y="261" class="mono">• Zero Hardcoded Secrets</text>
+    <text x="30" y="279" class="mono">• Flash Encryption Enabled</text>
+
+    <text x="20" y="360" class="mono" fill="#94a3b8">NIST IR 8259 Compliant</text>
+  </g>
+
+  <!-- Step 2: mTLS Handshake -->
+  <g transform="translate(350, 105)">
+    <rect width="260" height="395" class="box-tls" />
+    <text x="20" y="32" class="label" fill="#c084fc">2. Mutual TLS (mTLS v1.3)</text>
+    <text x="20" y="52" class="subtitle">Enkripsi &amp; Otentikasi Dua Arah</text>
+
+    <!-- Handshake Steps -->
+    <rect x="20" y="75" width="220" height="115" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12">TLS v1.3 Handshake</text>
+    <text x="30" y="118" class="mono">1. ClientHello (ECDHE Key)</text>
+    <text x="30" y="136" class="mono">2. ServerHello + Cert</text>
+    <text x="30" y="156" class="mono">3. Client Cert Verify (mTLS)</text>
+    <text x="30" y="174" class="mono" fill="#a7f3d0">4. Session Secret Established</text>
+
+    <!-- Cipher Suites -->
+    <rect x="20" y="205" width="220" height="90" class="subbox" />
+    <text x="30" y="228" class="label" font-size="12">Sandi Kuat (Strong Ciphers)</text>
+    <text x="30" y="248" class="mono">TLS_AES_128_GCM_SHA256</text>
+    <text x="30" y="266" class="mono">TLS_CHACHA20_POLY1305</text>
+    <text x="30" y="284" class="mono" fill="#34d399">Perfect Forward Secrecy</text>
+
+    <text x="20" y="360" class="mono" fill="#38bdf8">Mitigasi: Anti-Sniffing &amp; MitM</text>
+  </g>
+
+  <!-- Step 3: MQTT ACL Matrix -->
+  <g transform="translate(660, 105)">
+    <rect width="260" height="395" class="box-acl" />
+    <text x="20" y="32" class="label" fill="#34d399">3. Topic Authorization (ACL)</text>
+    <text x="20" y="52" class="subtitle">Prinsip Hak Akses Terkecil</text>
+
+    <!-- Allowed Pattern -->
+    <rect x="20" y="75" width="220" height="110" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12" fill="#86efac">Diizinkan (Self Topics)</text>
+    <text x="30" y="118" class="mono">WRITE iot/fleet/%u/telemetry</text>
+    <text x="30" y="136" class="mono">WRITE iot/fleet/%u/status</text>
+    <text x="30" y="156" class="mono">READ  iot/fleet/%u/cmd/+</text>
+    <text x="30" y="174" class="mono" fill="#34d399">Strict Tenant Isolation</text>
+
+    <!-- Denied Violations -->
+    <rect x="20" y="200" width="220" height="95" class="subbox" fill="#2d1519" stroke="#e11d48" />
+    <text x="30" y="223" class="label" font-size="12" fill="#fda4af">Ditolak Tegas (Violations)</text>
+    <text x="30" y="243" class="mono" fill="#fca5a5">BLOCKED: Read node-02 telemetry</text>
+    <text x="30" y="261" class="mono" fill="#fca5a5">BLOCKED: Write node-02 command</text>
+    <text x="30" y="279" class="mono" fill="#fca5a5">BLOCKED: Anonymous connect</text>
+
+    <text x="20" y="360" class="mono" fill="#34d399">Mitigasi: Anti-Spoofing / Sabotase</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="300" y1="210" x2="350" y2="210" class="arrow" />
+  <line x1="610" y1="210" x2="660" y2="210" class="arrow" />
+</svg>

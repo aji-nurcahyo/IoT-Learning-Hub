@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Mengapa Butuh Edge Processing?",
+    "body": "Mengirimkan seluruh data mentah ke cloud memicu pembengkakan bandwidth, latensi tinggi, dan ketergantungan fatal terhadap ketersediaan jaringan internet.",
+    "notes": "Tekankan bahwa sistem keselamatan industri tidak boleh menunggu respon server cloud di benua lain untuk mematikan mesin berbahaya."
+  },
+  {
+    "title": "Arsitektur Komputasi Edge",
+    "body": "Mentransformasi gateway menjadi simpul pemroses lokal: menyaring derau, menghitung agregasi statistik, mengeksekusi aturan kendali, dan mengelola buffer.",
+    "notes": "Gambarkan posisi gerbang edge di antara sensor lapangan dan platform analitik awan dalam topologi tiga tingkat."
+  },
+  {
+    "title": "Penyaringan Outlier Statistik (IQR)",
+    "body": "Sensor fisik rentan terkena lonjakan tegangan sesaat. Filter Interquartile Range (IQR) membuang nilai ekstrem di luar batas Q1 - 1.5*IQR dan Q3 + 1.5*IQR.",
+    "notes": "Jelaskan keunggulan IQR dibanding rata-rata sederhana karena IQR tidak mudah terbiaskan oleh satu nilai anomali berbobot raksasa."
+  },
+  {
+    "title": "Kompresi Berbasis Deadband",
+    "body": "Data hanya dipublikasikan jika perubahan nilai melebihi ambang batas delta yang ditentukan. Mampu mereduksi lebih dari 50% volume pengiriman data statis.",
+    "notes": "Beri ilustrasi suhu ruangan yang berada di kisaran 25 C selama berjam-jam tidak perlu dikirim tiap detik jika perubahannya kurang dari 0.5 C."
+  },
+  {
+    "title": "Tumbling vs Sliding Window",
+    "body": "Tumbling Window membagi waktu dalam blok terpisah tanpa tumpang tindih. Sliding Window memperbarui subset data setiap sampel baru masuk (moving average).",
+    "notes": "Diskusikan kebutuhan memori RAM yang sedikit lebih tinggi pada sliding window dibanding tumbling window yang langsung mengosongkan akumulator."
+  },
+  {
+    "title": "Kalkulasi Statistik Jendela Waktu",
+    "body": "Menghitung mean, deviasi standar, nilai minimum, dan maksimum dari sampel bersih. Mengirimkan satu paket ringkasan per menit alih-alih ratusan sampel mentah.",
+    "notes": "Paparkan rumus matematis rata-rata bergerak dan varians yang dihitung langsung pada memori gateway lokal secara streaming."
+  },
+  {
+    "title": "Masalah Relay Chattering",
+    "body": "Osilasi suhu di sekitar ambang batas tunggal memicu sakelar relay berganti posisi puluhan kali per menit, yang dapat membakar kontaktor aktuator mekanis.",
+    "notes": "Gambarkan grafik osilasi sinyal ADC di sekitar 30.0 C yang menyebabkan aktuator hidup-mati dalam hitungan detik tanpa kontrol histeresis."
+  },
+  {
+    "title": "Kontrol Histeresis (Two-Threshold)",
+    "body": "Menerapkan ambang batas atas (High Threshold) untuk menyalakan aktuator, dan ambang batas bawah (Low Threshold = High - Hysteresis) untuk mematikannya.",
+    "notes": "Tunjukkan bahwa rentang pita histeresis 1.5 C memberi waktu bagi sistem termal untuk stabil sebelum aktuator diizinkan mati kembali."
+  },
+  {
+    "title": "Mesin Aturan Lokal (Rule Engine)",
+    "body": "Logika IF-THEN-ELSE deterministik yang dieksekusi secara lokal. Menjamin fungsi kontrol kritis tetap bekerja saat koneksi internet terputus (Local Fail-Safe).",
+    "notes": "Tegaskan bahwa pendingin ruang server harus tetap menyala otomatis saat suhu naik, meskipun jaringan serat optik kampus sedang down."
+  },
+  {
+    "title": "Deteksi Event & Anomali Instan",
+    "body": "Mengidentifikasi lonjakan tajam (spike) dan kehilangan sinyal perangkat (heartbeat timeout) dalam hitungan milidetik langsung di lokasi fisik instalasi.",
+    "notes": "Perlihatkan perbedaan antara telemetri lambat dan deteksi event darurat yang membutuhkan intervensi alarm lokal seketika."
+  },
+  {
+    "title": "Buffer Spooling (Store-and-Forward)",
+    "body": "Ketika uplink cloud terputus, data telemetri agregat ditampung dalam antrean memori lokal. Menerapkan kebijakan drop-oldest jika kapasitas batas terlampaui.",
+    "notes": "Jelaskan mengapa kebijakan drop-oldest lebih aman untuk menjaga kestabilan memori gateway daripada membiarkan proses crash kehabisan RAM."
+  },
+  {
+    "title": "Pengurasan Antrean Bertahap (Batch Drain)",
+    "body": "Saat koneksi internet pulih, buffer dikuras bertahap (misal 10-20 pesan per transaksi) agar tidak membebani buffer soket TCP atau kuota broker.",
+    "notes": "Ingatkan bahaya banjir transmisi (thundering herd) yang dapat memicu broker menolak koneksi jika seluruh antrean offline ditumpahkan sekaligus."
+  },
+  {
+    "title": "Kompensasi Time Drift saat Offline",
+    "body": "Semua data yang tertampung di buffer spooling tetap mempertahankan stempel waktu penangkapan (t_capture) asli berbasis jam RTC lokal gateway.",
+    "notes": "Diskusikan pentingnya modul hardware RTC (seperti DS3231) pada Raspberry Pi yang beroperasi di lingkungan terisolasi tanpa server NTP."
+  },
+  {
+    "title": "Evaluasi Performa & Benchmark",
+    "body": "Pemrosesan edge berhasil memotong lonjakan derau, meredam 50% transmisi statis, dan memangkas waktu respons kontrol dari 300 ms menjadi di bawah 2 ms.",
+    "notes": "Tinjau kembali hasil eksekusi terminal dari skrip edge_engine.py dan bahas implikasi penghematan biaya bandwidth tahunan."
+  },
+  {
+    "title": "Langkah Menuju Integrasi Node-RED",
+    "body": "Dengan logika edge yang solid, kita siap menghubungkan pipeline ini dengan alur integrasi visual berbasis event (Node-RED) pada Chapter 24.",
+    "notes": "Arahkan peserta untuk menyelesaikan latihan pemfilteran sebelum masuk ke arsitektur flow Node-RED di bab berikutnya."
+  }
+]

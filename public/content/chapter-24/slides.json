@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Paradigma Flow-Based Programming",
+    "body": "Node-RED mengabstraksikan aplikasi IoT sebagai jaringan simpul (nodes) yang saling terhubung melalui kawat (wires), dieksekusi di atas event loop Node.js.",
+    "notes": "Jelaskan mengapa pendekatan low-code visual programming sangat mempercepat siklus pembuatan prototipe dan integrasi sistem industri."
+  },
+  {
+    "title": "Anatomi Objek Pesan (msg)",
+    "body": "Setiap data yang mengalir dibungkus dalam objek JavaScript standar bernama msg. Properti utama adalah msg.payload, disertai msg.topic dan msg._msgid.",
+    "notes": "Tekankan bahwa simpul di hilir dapat membaca, mengubah, atau menambahkan properti kustom pada objek msg yang sedang berjalan."
+  },
+  {
+    "title": "Ingestion dengan Simpul MQTT In",
+    "body": "Simpul mqtt in berlangganan ke broker lokal pada topik ber-wildcard (iot/lab/+/telemetry). Otomatis mengurai payload string menjadi objek JSON.",
+    "notes": "Bahas kelebihan penguraian otomatis tipe data JSON di dalam simpul mqtt in sehingga tidak perlu memanggil JSON.parse secara manual."
+  },
+  {
+    "title": "Hirarki Penyimpanan Konteks",
+    "body": "Menjaga memori status sistem: context (lokal simpul), flow (berbagi dalam satu lembar kerja tab), dan global (berbagi ke seluruh flow runtime).",
+    "notes": "Paparkan contoh kasus penggunaan masing-masing cakupan konteks untuk membedakan variabel sementara dengan status persisten perangkat."
+  },
+  {
+    "title": "Simpul Change & Twin Synchronization",
+    "body": "Simpul change memperbarui variabel global (global.set) setiap kali data telemetri baru tiba, menciptakan replika status terkini (Digital Twin).",
+    "notes": "Tunjukkan bahwa simpul change dapat melakukan operasi set, change, move, atau delete properti tanpa memerlukan satu baris kode script pun."
+  },
+  {
+    "title": "Penyaringan Logika (Switch Node)",
+    "body": "Mengarahkan aliran data berdasarkan evaluasi kondisi nilai: apakah suhu >= 30.0 C. Memiliki banyak port keluaran terpisah untuk memilah skenario.",
+    "notes": "Gambarkan bagaimana switch node dapat mengevaluasi ekspresi JSONata yang kompleks untuk perbandingan multi-variabel simultan."
+  },
+  {
+    "title": "Pengayaan Data (Function Node)",
+    "body": "Mengeksekusi kode JavaScript murni untuk menyusun payload peringatan baru: menambahkan ID alarm unik, tingkat keparahan, dan stempel waktu UTC.",
+    "notes": "Ingatkan peserta untuk selalu mengembalikan objek msg (return msg;) agar aliran pesan tidak terputus secara tidak sengaja."
+  },
+  {
+    "title": "Penerbitan Alarm (MQTT Out)",
+    "body": "Mengalirkan payload alarm hasil pengayaan ke topik peristiwa darurat (iot/lab/dev/event/alarm) dengan jaminan pengantaran QoS 1.",
+    "notes": "Diskusikan mengapa pesan alarm darurat memerlukan QoS 1 dengan jaminan at-least-once delivery dibanding telemetri biasa."
+  },
+  {
+    "title": "Penyediaan Endpoint REST Mikro",
+    "body": "Menggabungkan simpul http in dan http response untuk membuka antarmuka web GET /api/v1/telemetry/latest yang dapat diakses browser.",
+    "notes": "Perlihatkan betapa mudahnya menyediakan API mikro untuk dashboard mobile hanya dalam hitungan menit menggunakan Node-RED."
+  },
+  {
+    "title": "Pembacaan Konteks Global di API",
+    "body": "Saat permintaan HTTP tiba, simpul fungsi membaca variabel global.get('latest_telemetry') dan langsung mengembalikannya dengan status 200 OK.",
+    "notes": "Jelaskan bahwa pendekatan pembacaan dari cache memori RAM global ini memiliki latensi sangat rendah (< 1 ms) tanpa membebani broker MQTT."
+  },
+  {
+    "title": "Isolasi Galat dengan Catch Node",
+    "body": "Simpul catch menangkap pengecualian runtime yang tidak tertangani di seluruh flow. Mencegah seluruh canvas berhenti saat ada data korup.",
+    "notes": "Tekankan peran simpul catch sebagai benteng pertahanan terakhir yang mengisolasi bug di satu simpul agar tidak merusak alur lainnya."
+  },
+  {
+    "title": "Antrean Surat Mati (Dead-Letter Queue)",
+    "body": "Pesan yang memicu kesalahan dialihkan ke log debug atau topik dead-letter untuk diinvestigasi oleh teknisi tanpa memutus operasi sistem.",
+    "notes": "Gambarkan siklus penanganan kesalahan di industri di mana data anomali disimpan terpisah untuk analisis forensik pasca insiden."
+  },
+  {
+    "title": "Portabilitas Aliran (flows.json)",
+    "body": "Seluruh konfigurasi canvas disimpan dalam format JSON murni. Memudahkan version control (Git), deployment otomatis, dan integrasi CI/CD.",
+    "notes": "Tunjukkan bahwa seluruh arsitektur integrasi visual dapat diekspor, di-commit ke Git, dan di-deploy ke ribuan gateway edge."
+  },
+  {
+    "title": "Keamanan & Pengerasan Node-RED",
+    "body": "Mengamankan antarmuka editor admin dengan otentikasi berbasis token, enkripsi berkas kredensial, dan menonaktifkan fitur eksekusi sistem luar.",
+    "notes": "Peringatkan risiko keamanan jika port 1880 dibiarkan terbuka ke internet tanpa proteksi password dan pembatasan izin jaringan."
+  },
+  {
+    "title": "Langkah Menuju Penyimpanan Deret Waktu",
+    "body": "Data yang telah disaring dan diperkaya oleh Node-RED kini siap dialirkan ke basis data deret waktu (Time-Series Database) pada Chapter 25.",
+    "notes": "Arahkan mahasiswa untuk memverifikasi alur simulasi flows.json sebelum mempelajari struktur penyimpanan time-series di bab berikutnya."
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Peran Strategis Dashboard IoT",
+    "body": "Mentransformasi miliaran baris deret waktu menjadi kesadaran situasional (Situational Awareness) instan bagi operator dan pembuat keputusan di ruang kendali.",
+    "notes": "Tekankan prinsip 3-Second Rule di mana operator harus langsung mengenali anomali tanpa harus membaca angka-angka tabel kecil."
+  },
+  {
+    "title": "Bahaya Fenomena Alert Fatigue",
+    "body": "Alarm palsu yang terus-menerus berbunyi membuat teknisi kebal atau mematikan sirene darurat, yang berpotensi memicu bencana kegagalan sistem fatal.",
+    "notes": "Bahas studi kasus nyata kegagalan reaktor industri akibat alarm darurat yang diabaikan operator karena terbiasa berbunyi palsu tiap hari."
+  },
+  {
+    "title": "Hierarki Visualisasi Panel",
+    "body": "Baris atas: Ringkasan Stat KPI tingkat tinggi; Baris tengah: Gauge instan dan grafik tren deret waktu; Baris bawah: Tabel log audit insiden.",
+    "notes": "Jelaskan mengapa tata letak hierarki visual sangat membantu mata manusia mencerna informasi penting secara berurutan dari umum ke khusus."
+  },
+  {
+    "title": "Pemilihan Panel Visualisasi Tepat",
+    "body": "Stat Panel untuk angka tunggal agregat; Gauge untuk melihat persentase terhadap batas bahaya; Time-Series Graph untuk mengamati tren historis.",
+    "notes": "Peringatkan bahaya penggunaan panel grafik berlebih yang dapat menyebabkan browser mengalami lag komputasi render SVG/Canvas."
+  },
+  {
+    "title": "Metrik Fleet Availability",
+    "body": "Menghitung persentase node yang aktif mengirim sinyal terhadap total armada terdaftar: Availability = (Node Online / Total Node) * 100%.",
+    "notes": "Diskusikan bagaimana metrik ketersediaan armada langsung merefleksikan Service Level Agreement (SLA) kontrak pemeliharaan IoT."
+  },
+  {
+    "title": "Packet Delivery Ratio (PDR)",
+    "body": "Rasio perbandingan antara paket yang sukses tiba di server terhadap total paket yang dipancarkan: mengukur keandalan tautan jaringan nirkabel.",
+    "notes": "Tunjukkan bahwa penurunan nilai PDR secara tiba-tiba mengindikasikan adanya interferensi frekuensi radio atau baterai sensor melemah."
+  },
+  {
+    "title": "Siklus Hidup Alert State Machine",
+    "body": "Peringatan industri melalui empat status berjenjang: NORMAL -> PENDING (tunggu durasi T_for) -> FIRING (notifikasi aktif) -> RESOLVED.",
+    "notes": "Bahas mengapa deteksi kondisi bahaya tidak boleh langsung memicu sirene detik itu juga sebelum diverifikasi oleh pewaktu penahan."
+  },
+  {
+    "title": "Durasi Penahanan (T_for Evaluation)",
+    "body": "Status PENDING menahan peringatan selama durasi T_for (misal 5 detik). Jika lonjakan suhu hanya terjadi 2 detik, status kembali NORMAL tanpa alert spam.",
+    "notes": "Perlihatkan grafik peredaman transient spike yang membuktikan efektivitas durasi penahanan dalam memotong lebih dari 80% alarm palsu."
+  },
+  {
+    "title": "Status FIRING & Pengiriman Insiden",
+    "body": "Ketika anomali bertahan melebihi durasi T_for, sistem menetapkan status FIRING dan mengirimkan notifikasi resmi pertama ke operator jaga.",
+    "notes": "Jelaskan struktur pesan peringatan insiden yang harus menyertakan nama perangkat, nilai terukur, ambang batas, dan tautan langsung ke dashboard."
+  },
+  {
+    "title": "Pencegahan Alert Flapping",
+    "body": "Osilasi suhu di sekitar ambang batas memicu alarm hidup-mati puluhan kali. Dicegah dengan pita histeresis: alarm hanya pulih jika suhu turun di bawah batas aman.",
+    "notes": "Beri contoh: memicu alarm pada 30.0 C, tetapi hanya menyatakannya aman kembali jika suhu turun hingga di bawah 29.0 C (histeresis 1.0 C)."
+  },
+  {
+    "title": "Pembatasan Laju (Notification Throttling)",
+    "body": "Membatasi interval pengiriman pengingat ulang selama insiden masih FIRING. Mencegah operator dibanjiri ratusan pesan untuk satu insiden yang sama.",
+    "notes": "Tunjukkan bahwa pengingat cukup dikirimkan setiap 15 atau 30 menit sekali sebagai laporan berkala bahwa masalah belum terselesaikan."
+  },
+  {
+    "title": "Stratifikasi Saluran Notifikasi",
+    "body": "Tingkat P1 (Kritis) memicu sirene ruang kendali dan panggilan suara; P2 (Peringatan) dialirkan ke pesan grup Slack; P3 (Info) dicatat ke log internal.",
+    "notes": "Tekankan pentingnya memisahkan saluran notifikasi agar teknisi di lapangan tidak terganggu oleh pesan-pesan diagnostik berprioritas rendah."
+  },
+  {
+    "title": "Model Deklaratif Grafana Dashboard",
+    "body": "Seluruh konfigurasi panel, kueri data, dan aturan ambang batas warna diekspor dalam format JSON murni yang dapat di-deploy otomatis via Git.",
+    "notes": "Bahas integrasi Infrastructure-as-Code (IaC) yang memungkinkan pembuatan ratusan dashboard fasilitas pabrik baru hanya dalam hitungan detik."
+  },
+  {
+    "title": "Uji Verifikasi Determinik",
+    "body": "Skrip alert_state_machine.py memvalidasi seluruh 10 timeline skenario simulasi: transient spike teredam, flapping diredam, dan resolved terkirim tepat waktu.",
+    "notes": "Tinjau kembali log keluaran terminal dari pengujian skrip Python mandiri dan evaluasi transisi status pada setiap detiknya."
+  },
+  {
+    "title": "Langkah Menuju Manajemen Armada",
+    "body": "Setelah sistem visualisasi dan peringatan teruji, kita siap melangkah ke manajemen siklus hidup dan registri perangkat (Fleet Management) pada Chapter 27.",
+    "notes": "Arahkan peserta untuk mencoba skrip simulasi dan meninjau berkas grafana_dashboard_model.json sebelum melanjutkan ke materi inventaris."
+  }
+]

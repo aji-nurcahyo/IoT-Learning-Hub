@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Puncak Pembelajaran Level 3",
+    "body": "Menyatukan seluruh pilar data, gateway edge, penyimpanan time-series, dashboarding, keamanan siber, dan manajemen armada ke dalam satu platform utuh.",
+    "notes": "Jelaskan bahwa proyek Capstone ini membuktikan kesiapan mahasiswa merancang sistem IoT terdistribusi skala enterprise secara mandiri."
+  },
+  {
+    "title": "Prinsip Local-First & Simulator-First",
+    "body": "Seluruh arsitektur dibangun dapat diuji penuh di lingkungan lokal kampus tanpa kewajiban berlangganan layanan cloud berbayar yang mahal.",
+    "notes": "Tekankan keunggulan pendekatan simulator-first dalam menjamin keterulangan (reproducibility) pengujian di laboratorium akademik."
+  },
+  {
+    "title": "Tiga Zona Arsitektur Terdistribusi",
+    "body": "Zona Lapangan (Field Sensor Cluster), Zona Gerbang & Keamanan (Edge Gateway & Security Broker), serta Zona Inti Platform (Platform Core & Operations).",
+    "notes": "Gambarkan pemisahan tanggung jawab (Separation of Concerns) antar zona arsitektur pada diagram sistem."
+  },
+  {
+    "title": "Identitas & Pendaftaran (Enrollment)",
+    "body": "Mendaftarkan perangkat keras fisik unik ke dalam registri inventaris, menetapkan token otentikasi, dan memvalidasi model SoC perangkat.",
+    "notes": "Tunjukkan bahwa node-alpha dan node-beta berhasil didaftarkan dan mendapatkan status resmi di dalam sistem."
+  },
+  {
+    "title": "Isolasi Hak Akses Topik (MQTT ACL)",
+    "body": "Broker Mosquitto menegakkan aturan pola topik %u: node-alpha hanya boleh mempublikasikan ke jalurnya sendiri dan diblokir dari jalur perangkat lain.",
+    "notes": "Bahas hasil pengujian SATC-01 yang membuktikan pemblokiran mutlak terhadap upaya spionase dan pembajakan perintah lintas perangkat."
+  },
+  {
+    "title": "Validasi Skema & Kontrak Data",
+    "body": "Gerbang edge memvalidasi kepatuhan JSON Schema: memeriksa stempel waktu UTC, keabsahan rentang fisik metrik, dan kelengkapan field wajib.",
+    "notes": "Paparkan hasil pengujian SATC-02 yang menunjukkan penolakan payload korup sebelum sempat diteruskan ke basis data."
+  },
+  {
+    "title": "Deduplikasi Idempotensi & Deadband",
+    "body": "Cache memori TTL 60 detik menyaring paket retransmisi duplikat, sementara filter deadband mereduksi transmisi data statis di bawah 0.5 C.",
+    "notes": "Diskusikan bagaimana kombinasi kedua teknik ini menghemat bandwidth jaringan hingga lebih dari 60% tanpa kehilangan akurasi."
+  },
+  {
+    "title": "Penyimpanan Time-Series & Downsampling",
+    "body": "Tabel SQLite terindeks komposit (dev_id, ts) menampung data mentah dan secara kontinu menjalankan agregasi rollup ember 1 menit.",
+    "notes": "Tunjukkan hasil pengujian SATC-03 di mana 12 rekaman mentah diringkas menjadi satu jendela agregasi lengkap dengan avg, min, dan max."
+  },
+  {
+    "title": "Penegakan Retensi Data Otomatis",
+    "body": "Skrip terjadwal menghapus data mentah lawas yang melampaui batas retensi, sementara tabel ringkasan rollup tahunan tetap terlindungi utuh.",
+    "notes": "Bahas keunggulan strategi penyimpanan berjenjang dalam menjaga performa kueri tetap di bawah 15 ms sepanjang tahun."
+  },
+  {
+    "title": "Alert State Machine & Anti-Fatigue",
+    "body": "Menerapkan durasi penahanan Pending (5s) untuk meredam lonjakan sesaat, dan pita histeresis (1.0 C) untuk mencegah alert flapping pada titik kritis.",
+    "notes": "Tinjau hasil pengujian SATC-04 yang membuktikan transisi status yang mulus dari NORMAL ke PENDING, FIRING, dan RESOLVED."
+  },
+  {
+    "title": "Rekonsiliasi Digital Twin State",
+    "body": "Mendeteksi penyimpangan (configuration drift) saat operator mengubah konfigurasi di cloud, dan menghilangkannya saat perangkat mengirimkan Reported ACK.",
+    "notes": "Perlihatkan hasil pengujian SATC-05 yang memvalidasi sinkronisasi parameter sample_interval_s antara server dan perangkat."
+  },
+  {
+    "title": "Distribusi Firmware OTA Kriptografis",
+    "body": "Citra biner baru diverifikasi integritasnya melalui hash SHA-256 dan tanda tangan digital HMAC sebelum diizinkan ditulis ke flash partisi pasif.",
+    "notes": "Tekankan pentingnya perlindungan tanda tangan digital dalam mencegah instalasi firmware palsu dari pihak yang tidak berhak."
+  },
+  {
+    "title": "Pembatalan Otomatis (Automatic Rollback)",
+    "body": "Jika firmware baru mengalami bootloop atau runtime panic, bootloader mendeteksi kegagalan kuota boot dan otomatis kembali ke bank lama yang stabil.",
+    "notes": "Bahas hasil pengujian SATC-06 yang membuktikan keberhasilan pemulihan mandiri perangkat tanpa intervensi fisik teknisi."
+  },
+  {
+    "title": "Evaluasi Penuh 6 Skenario SATC",
+    "body": "Seluruh 6 kasus uji penerimaan sistem (SATC-01 sampai SATC-06) berhasil dieksekusi dengan tingkat keberhasilan 100% pada skrip capstone_platform.py.",
+    "notes": "Apresiasi pencapaian mahasiswa dalam menguasai seluruh spektrum rekayasa sistem IoT dari level perangkat hingga platform manajemen."
+  },
+  {
+    "title": "Gerbang Menuju Level 4: Intelligent Systems",
+    "body": "Dengan arsitektur data dan platform yang telah teruji prima, kita siap melangkah ke Level 4: Edge AI, TinyML, Analitik Prediktif, dan Sistem Otonom.",
+    "notes": "Berikan pandangan ke depan mengenai kurikulum Level 4 yang akan mengintegrasikan model kecerdasan buatan langsung di simpul edge."
+  }
+]

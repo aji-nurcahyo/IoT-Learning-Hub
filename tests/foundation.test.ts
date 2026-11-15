@@ -8,23 +8,23 @@ import { headings } from '../src/markdown';
 import { chapters, filterChapters } from '../src/catalog';
 import { validateAll, validateChapter } from '../scripts/validate';
 import { normalizeBase } from '../scripts/base';
-test('katalog memiliki Level 1-2 Tersedia (01-20) dan Level 3-4 Coming Soon (21-40) tanpa download semu',()=>{
+test('katalog memiliki Level 1-3 Tersedia (01-30) dan Level 4 Coming Soon (31-40) tanpa download semu',()=>{
  assert.equal(chapters.length,40);
- assert.ok(chapters.filter(c=>c.id<=20).every(c=>c.status==='published'&&c.rubric.reduce((s,r)=>s+r.points,0)===100));
- assert.ok(chapters.filter(c=>c.id>20).every(c=>c.status==='coming-soon'&&Object.values(c.resources).every(r=>r.status!=='available')));
+ assert.ok(chapters.filter(c=>c.id<=30).every(c=>c.status==='published'&&c.rubric.reduce((s,r)=>s+r.points,0)===100));
+ assert.ok(chapters.filter(c=>c.id>30).every(c=>c.status==='coming-soon'&&Object.values(c.resources).every(r=>r.status!=='available')));
  assert.deepEqual(validateAll(),[]);
 });
 test('TOC mengabaikan code fence, mengenali heading setext dan heading duplikat',()=>{const h=headings('# Judul\n\n```md\n# Bukan heading\n```\n\n## Judul\n\nBagian\n------');assert.deepEqual(h.map(x=>x.text),['Judul','Judul','Bagian']);assert.equal(new Set(h.map(x=>x.id)).size,3);});
-test('search menggabungkan kata, nomor, level, dan ketersediaan',()=>{assert.equal(filterChapters(chapters,'mqtt qos','2','all')[0].id,15);assert.equal(filterChapters(chapters,'01','all','all')[0].id,1);assert.equal(filterChapters(chapters,'mqtt','1','all').length,0);assert.equal(filterChapters(chapters,'','all','available').length,20);assert.equal(filterChapters(chapters,'','all','published').length,20);});
+test('search menggabungkan kata, nomor, level, dan ketersediaan',()=>{assert.equal(filterChapters(chapters,'mqtt qos','2','all')[0].id,15);assert.equal(filterChapters(chapters,'01','all','all')[0].id,1);assert.equal(filterChapters(chapters,'mqtt','1','all').length,0);assert.equal(filterChapters(chapters,'','all','available').length,30);assert.equal(filterChapters(chapters,'','all','published').length,30);});
 test('base menerima root dan subpath, menolak URL atau traversal',()=>{assert.equal(normalizeBase(),'/iot-learning-hub/');assert.equal(normalizeBase('/'),'/');assert.equal(normalizeBase('/kelas/iot'),'/kelas/iot/');for(const value of ['../x','https://host/','/../x/','//host/'])assert.throws(()=>normalizeBase(value));});
-test('guard menolak resource hilang, traversal, dan tanpa alasan',()=>{const c=structuredClone(chapters[20]);c.resources.reading={status:'available',path:'content/missing.md'};assert.match(validateChapter(c).join(),/tidak ada/);c.resources.reading={status:'available',path:'../secret.md'};assert.ok(validateChapter(c).length);c.resources.reading={status:'not-applicable',path:null,reason:''};assert.ok(validateChapter(c).length);});
-test('boolean reviewed tidak dapat menerbitkan chapter',()=>{const c={...structuredClone(chapters[20]),status:'published',reviewed:true};const e=validateChapter(c).join();assert.match(e,/rubrik/);assert.match(e,/review/);assert.match(e,/wajib tersedia/);});
-test('label hardware tidak boleh didukung oleh log compile saja',()=>{const c=structuredClone(chapters[20]);c.verification.status='hardware-verified';assert.match(validateChapter(c).join(),/bukti uji/);});
+test('guard menolak resource hilang, traversal, dan tanpa alasan',()=>{const c=structuredClone(chapters[30]);c.resources.reading={status:'available',path:'content/missing.md'};assert.match(validateChapter(c).join(),/tidak ada/);c.resources.reading={status:'available',path:'../secret.md'};assert.ok(validateChapter(c).length);c.resources.reading={status:'not-applicable',path:null,reason:''};assert.ok(validateChapter(c).length);});
+test('boolean reviewed tidak dapat menerbitkan chapter',()=>{const c={...structuredClone(chapters[30]),status:'published',reviewed:true};const e=validateChapter(c).join();assert.match(e,/rubrik/);assert.match(e,/review/);assert.match(e,/wajib tersedia/);});
+test('label hardware tidak boleh didukung oleh log compile saja',()=>{const c=structuredClone(chapters[30]);c.verification.status='hardware-verified';assert.match(validateChapter(c).join(),/bukti uji/);});
 test('publikasi lengkap, notebook opsional, rubrik 100 dan integritas bukti',()=>{
  const dir=mkdtempSync(join(tmpdir(),'iot-guard-'));
  try{
   mkdirSync(join(dir,'content'));
-  const c=structuredClone(chapters[20]);c.status='published';
+  const c=structuredClone(chapters[30]);c.status='published';
   for(const key of Object.keys(c.resources) as (keyof typeof c.resources)[]) c.resources[key]={status:'not-applicable',path:null,reason:'Tidak diperlukan pada contoh konseptual ini.'};
   const reading=['Tujuan pembelajaran','Prasyarat','Konsep dan teori','Latihan','Tugas','Ringkasan','Referensi'].map(s=>`## ${s}\nMateri contoh untuk pengujian guard, bukan chapter publik.`).join('\n');
   const files:Record<string,string>={'reading.md':reading,'slides.json':JSON.stringify([{title:'Konsep pengujian',body:'Materi contoh yang hanya dipakai pada unit test.',notes:'Jelaskan bahwa ini fixture pengujian internal.'}]),'exercises.md':'Latihan dasar, menengah, dan lanjut.','assignment.md':'Tugas dengan rubrik metadata.','review.md':'Reviewer memeriksa materi dan sumber primer.'};

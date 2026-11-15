@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Tantangan Pengelolaan Skala Besar",
+    "body": "Mengelola ribuan simpul sensor yang tersebar di lapangan menuntut sistem otomasi terpusat: Device Registry, Digital Twin, dan pemantauan detak kesehatan.",
+    "notes": "Tekankan bahwa konfigurasi manual dengan kabel USB satu per satu tidak mungkin dilakukan pada instalasi ribuan perangkat."
+  },
+  {
+    "title": "Basis Data Registri Inventaris",
+    "body": "Menyimpan identitas fisik unik (Device ID, MAC address, model SoC, tipe sensor) dan status operasional resmi setiap perangkat yang diizinkan terhubung.",
+    "notes": "Jelaskan bahwa broker atau gateway akan menolak koneksi dari perangkat yang tidak terdaftar di dalam tabel inventaris resmi."
+  },
+  {
+    "title": "Konsep Digital Twin State",
+    "body": "Memisahkan antara Desired State (konfigurasi yang diinginkan operator) dan Reported State (kondisi aktual yang berhasil diterapkan oleh mikrokontroler).",
+    "notes": "Bahas konsep Device Shadow AWS atau Device Twin Azure sebagai standar de facto arsitektur state synchronization industri."
+  },
+  {
+    "title": "Deteksi Configuration Drift",
+    "body": "Terjadi ketika Desired State tidak sama dengan Reported State. Menjadi pemicu otomatis bagi gateway untuk memancarkan paket pembaruan delta.",
+    "notes": "Tunjukkan bahwa bendera drift memberi peringatan kepada operator mengenai perangkat mana saja yang belum menyinkronkan konfigurasinya."
+  },
+  {
+    "title": "Penomoran Versi Konfigurasi",
+    "body": "Setiap perubahan konfigurasi menaikkan nomor versi integer (version 1 -> 2). Mencegah penerapan konfigurasi lama secara tidak sengaja (stale updates).",
+    "notes": "Jelaskan bagaimana mikrokontroler menolak paket konfigurasi yang nomor versinya lebih kecil dari versi yang sedang aktif di memori flash NVS."
+  },
+  {
+    "title": "Rekonsiliasi Delta & Konfirmasi (ACK)",
+    "body": "Perangkat menerima paket delta konfigurasi, menulis parameter baru ke memori non-volatil, lalu mengirim balik pesan konfirmasi Reported ACK.",
+    "notes": "Gambarkan alur pertukaran pesan MQTT antara topik /config/desired dan /config/reported hingga status drift kembali false."
+  },
+  {
+    "title": "Tantangan Konektivitas Terputus-Putus",
+    "body": "Perangkat lapangan sering mengalami mati listrik atau gangguan sinyal. Pola Digital Twin menyimpan konfigurasi pending hingga perangkat kembali online.",
+    "notes": "Tekankan bahwa operator tidak perlu menunggu perangkat online untuk menyetel konfigurasi baru; sistem akan mengantarkannya saat perangkat aktif."
+  },
+  {
+    "title": "Pemantauan Denyut Jantung (Heartbeat)",
+    "body": "Perangkat mengirimkan sinyal denyut periodik (misal tiap 10 detik). Menjadi indikator utama bahwa sistem catu daya dan stack jaringan bekerja normal.",
+    "notes": "Bedakan antara paket data telemetri yang mungkin dikirim jarang dengan paket denyut heartbeat yang berfungsi sebagai penjaga detak koneksi."
+  },
+  {
+    "title": "Klasifikasi Status Armada",
+    "body": "Evaluator waktu membagi kesehatan armada: ONLINE (waktu tunggu normal), DEGRADED (paket mulai hilang), dan OFFLINE (timeout batas terlampaui).",
+    "notes": "Perlihatkan pentingnya status transisi DEGRADED untuk memberi peringatan dini sebelum perangkat benar-benar padam total."
+  },
+  {
+    "title": "Deteksi Node Mati (Dead Node Detection)",
+    "body": "Jika selisih waktu melebihi ambang batas timeout (misal 30 detik), sistem secara otomatis menandai simpul sebagai OFFLINE dan memicu tiket servis.",
+    "notes": "Bahas integrasi sistem deteksi node mati dengan alur kerja pemeliharaan teknisi lapangan di gedung pintar."
+  },
+  {
+    "title": "Optimasi Konsumsi Daya Heartbeat",
+    "body": "Pada sensor baterai kancing, paket denyut dapat ditumpangkan (piggybacked) pada paket telemetri berkala untuk menghemat konsumsi energi radio.",
+    "notes": "Perlihatkan kalkulasi penghematan daya baterai jika mikrokontroler tidak perlu menyalakan modul RF hanya untuk mengirimkan ping kosong."
+  },
+  {
+    "title": "Siklus Pemensiunan (Decommissioning)",
+    "body": "Menghapus perangkat dari operasi aktif: mencabut token kredensial, memutus subskripsi MQTT, dan menandai status akhir DECOMMISSIONED.",
+    "notes": "Peringatkan bahaya membiarkan perangkat terbengkalai tetap memiliki kredensial aktif yang dapat disalahgunakan oleh pihak ketiga."
+  },
+  {
+    "title": "Pembersihan Kriptografis (Crypto-Erase)",
+    "body": "Mengirimkan perintah penghapusan kunci enkripsi dan kredensial Wi-Fi dari memori flash NVS sebelum perangkat dilepas secara fisik dari lapangan.",
+    "notes": "Bahas kepatuhan standar keamanan data industri yang mewajibkan sanitasi memori flash pada perangkat yang dipensiunkan."
+  },
+  {
+    "title": "Evaluasi & Pengujian Fleet Manager",
+    "body": "Skrip fleet_manager.py memvalidasi seluruh alur: pendaftaran inventaris, deteksi drift, transisi heartbeat bertahap, dan penolakan node pensiun.",
+    "notes": "Tinjau hasil eksekusi terminal dari skrip verifikasi Python dan amati transisi status armada dari PROVISIONED hingga DECOMMISSIONED."
+  },
+  {
+    "title": "Langkah Menuju Keamanan IoT & TLS",
+    "body": "Setelah armada terkelola dengan baik, kita akan memperkuat pertahanan kriptografisnya menggunakan sertifikat TLS dan ACL pada Chapter 28.",
+    "notes": "Arahkan peserta untuk memahami konsep identitas perangkat sebelum masuk ke materi enkripsi transport dan manajemen sertifikat X.509."
+  }
+]

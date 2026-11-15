@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b0f19; }
+      .zone-field { fill: #132438; stroke: #2563eb; stroke-width: 2; rx: 8; }
+      .zone-edge { fill: #1f2937; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .zone-core { fill: #221c35; stroke: #8b5cf6; stroke-width: 2; rx: 8; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.5; rx: 6; }
+      .title { font-family: 'DM Sans', system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .label { font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; fill: #f1f5f9; }
+      .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: #38bdf8; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; marker-end: url(#arr); }
+      .arrow-purple { stroke: #a855f7; stroke-width: 2; marker-end: url(#arr-purp); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-purp" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" />
+
+  <text x="40" y="45" class="title">Level 3 Capstone Architecture: Scalable Environmental IoT Platform</text>
+  <text x="40" y="68" class="subtitle">Platform Pemantauan Lingkungan Terintegrasi: Edge Ingestion, Storage, Alerting, Fleet Twin &amp; OTA</text>
+
+  <!-- Zone 1: Field Devices (Left) -->
+  <g transform="translate(40, 105)">
+    <rect width="250" height="395" class="zone-field" />
+    <text x="20" y="32" class="label" fill="#60a5fa">Field Sensor Cluster</text>
+    <text x="20" y="52" class="subtitle">Multi-Node Hardware Layer</text>
+
+    <!-- Node Alpha -->
+    <rect x="20" y="75" width="210" height="85" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12">node-alpha (ESP32)</text>
+    <text x="30" y="118" class="mono">Sensors: BME280 / SHT31</text>
+    <text x="30" y="136" class="mono">mTLS X.509 Client Cert</text>
+    <text x="30" y="152" class="mono" fill="#34d399">Dual-Bank A/B Flash</text>
+
+    <!-- Node Beta -->
+    <rect x="20" y="175" width="210" height="85" class="subbox" />
+    <text x="30" y="198" class="label" font-size="12">node-beta (ESP32-S3)</text>
+    <text x="30" y="218" class="mono">Sensors: CO2 + VOC Air</text>
+    <text x="30" y="236" class="mono">Secure Boot v2 Enabled</text>
+    <text x="30" y="252" class="mono" fill="#34d399">Dual-Bank A/B Flash</text>
+
+    <!-- Local Features -->
+    <rect x="20" y="275" width="210" height="95" class="subbox" />
+    <text x="30" y="298" class="label" font-size="12">Karakteristik Lapangan</text>
+    <text x="30" y="318" class="mono">• Heartbeat Ping (10s)</text>
+    <text x="30" y="336" class="mono">• Local Hysteresis Fail-Safe</text>
+    <text x="30" y="354" class="mono">• Spool Offline Ring Buffer</text>
+  </g>
+
+  <!-- Zone 2: Edge Gateway & Security Broker (Center) -->
+  <g transform="translate(320, 105)">
+    <rect width="280" height="395" class="zone-edge" />
+    <text x="20" y="32" class="label" fill="#34d399">Edge Gateway &amp; Broker</text>
+    <text x="20" y="52" class="subtitle">Security, Ingestion &amp; Filtration</text>
+
+    <!-- MQTT Broker with ACL -->
+    <rect x="20" y="75" width="240" height="80" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12" fill="#86efac">Mosquitto MQTT (mTLS 8883)</text>
+    <text x="30" y="118" class="mono">ACL Pattern: iot/campus/%u/#</text>
+    <text x="30" y="136" class="mono" fill="#fca5a5">Strict Tenant Isolation</text>
+
+    <!-- Gateway Processor -->
+    <rect x="20" y="165" width="240" height="110" class="subbox" />
+    <text x="30" y="188" class="label" font-size="12" fill="#86efac">Edge Processing Pipeline</text>
+    <text x="30" y="208" class="mono">1. JSON Schema Contract Check</text>
+    <text x="30" y="226" class="mono">2. Idempotency Dedup (TTL 60s)</text>
+    <text x="30" y="244" class="mono">3. Deadband Filter (&gt;= 0.5 C)</text>
+    <text x="30" y="262" class="mono">4. Outlier Filter (IQR)</text>
+
+    <!-- Local Node-RED Engine -->
+    <rect x="20" y="285" width="240" height="85" class="subbox" />
+    <text x="30" y="308" class="label" font-size="12" fill="#86efac">Node-RED Event-Driven</text>
+    <text x="30" y="328" class="mono">Global Twin State Context</text>
+    <text x="30" y="346" class="mono">Micro REST API: /api/v1/telemetry</text>
+  </g>
+
+  <!-- Zone 3: Storage, Analytics & Operations (Right) -->
+  <g transform="translate(630, 105)">
+    <rect width="290" height="395" class="zone-core" />
+    <text x="20" y="32" class="label" fill="#c084fc">Platform Core &amp; Operations</text>
+    <text x="20" y="52" class="subtitle">Storage, Alerting, Fleet &amp; OTA</text>
+
+    <!-- Time-Series Storage -->
+    <rect x="20" y="75" width="250" height="75" class="subbox" />
+    <text x="30" y="98" class="label" font-size="12" fill="#d8b4fe">Time-Series DB (SQLite)</text>
+    <text x="30" y="118" class="mono">Raw 7-Days | 1m Rollup 365-Days</text>
+    <text x="30" y="134" class="mono" fill="#34d399">Continuous Downsampling Purge</text>
+
+    <!-- Alert State Machine -->
+    <rect x="20" y="160" width="250" height="75" class="subbox" />
+    <text x="30" y="183" class="label" font-size="12" fill="#d8b4fe">Alert Engine (Grafana / Alertmanager)</text>
+    <text x="30" y="203" class="mono">Pending Hold (5s) | Hysteresis (1 C)</text>
+    <text x="30" y="219" class="mono" fill="#f87171">Rate Throttle &amp; Anti-Fatigue</text>
+
+    <!-- Fleet Registry & Twin -->
+    <rect x="20" y="245" width="250" height="65" class="subbox" />
+    <text x="30" y="268" class="label" font-size="12" fill="#d8b4fe">Fleet Twin &amp; Heartbeat Monitor</text>
+    <text x="30" y="288" class="mono">Desired vs Reported State Drift</text>
+
+    <!-- OTA Deployment Manager -->
+    <rect x="20" y="320" width="250" height="65" class="subbox" />
+    <text x="30" y="343" class="label" font-size="12" fill="#d8b4fe">Cryptographic OTA Manager</text>
+    <text x="30" y="363" class="mono">Signature Check &amp; Auto-Rollback</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="290" y1="210" x2="320" y2="210" class="arrow" />
+  <line x1="600" y1="210" x2="630" y2="210" class="arrow-purple" />
+</svg>

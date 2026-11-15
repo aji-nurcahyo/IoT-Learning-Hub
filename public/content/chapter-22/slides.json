@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Arsitektur IoT Edge Gateway",
+    "body": "Papan komputasi Raspberry Pi Linux bertindak sebagai jembatan strategis antara bus serial perangkat lapangan (field network) dan jaringan backbone berbasis IP.",
+    "notes": "Jelaskan peran gerbang edge dalam memisahkan mikrokontroler berdaya rendah dari eksposur langsung terhadap internet terbuka."
+  },
+  {
+    "title": "Karakteristik Field Network",
+    "body": "Banyak sensor industri beroperasi menggunakan UART, RS-485 Modbus, atau BLE yang tidak memiliki stack jaringan TCP/IP mandiri.",
+    "notes": "Uraikan mengapa sensor berdaya baterai kancing atau energi surya lebih memilih antarmuka serial fisik daripada modul Wi-Fi yang rakus daya."
+  },
+  {
+    "title": "Linux Character Devices (TTY)",
+    "body": "Pada Linux kernel, antarmuka serial direpresentasikan sebagai berkas khusus di /dev/ (seperti /dev/ttyUSB0 atau /dev/ttyAMA0).",
+    "notes": "Diskusikan bagaimana subsistem termios mengatur baudrate, bit data (8), paritas (None), dan bit stop (1) pada driver kernel."
+  },
+  {
+    "title": "Manajemen Hak Akses Grup",
+    "body": "Menjalankan aplikasi gateway di bawah akun non-root (iotgateway) yang tergabung dalam grup dialout untuk mengakses file device serial secara aman.",
+    "notes": "Peringatkan bahaya memberikan hak akses root penuh (sudo) atau chmod 777 yang dapat membuka celah keamanan sistem operasi."
+  },
+  {
+    "title": "Protokol Framing Data Serial",
+    "body": "Stream karakter serial mentah wajib dibungkus dengan pembatas eksplisit: start delimiter $, pemisah token koma, dan penutup baris CRLF.",
+    "notes": "Gambarkan bagaimana buffer sirkular pada aplikasi mengumpulkan byte hingga menemukan karakter penutup sebelum memproses pesan."
+  },
+  {
+    "title": "Verifikasi Integritas Checksum",
+    "body": "Menggunakan algoritma Longitudinal Redundancy Check (LRC) 8-bit untuk memvalidasi bahwa transmisi kabel bebas dari derau elektromagnetik.",
+    "notes": "Tunjukkan bahwa frame yang rusak akibat fluktuasi voltase atau kabel longgar langsung dibuang sebelum dipublikasikan ke broker."
+  },
+  {
+    "title": "Isolasi Lingkungan Python (venv)",
+    "body": "Menggunakan Python Virtual Environment untuk mengisolasi paket pustaka gateway tanpa mencemari sistem pustaka global Linux bawaan.",
+    "notes": "Jelaskan konsep PEP 668 pada distribusi Linux modern (Debian 12/Bookworm) yang melarang eksekusi pip install secara global."
+  },
+  {
+    "title": "Arsitektur Daemon Background",
+    "body": "Program gateway dirancang berjalan terus-menerus di latar belakang tanpa jendela terminal interaktif (headless daemon).",
+    "notes": "Bahas siklus hidup proses daemon: inisialisasi, loop pembacaan non-blocking, dan pelepasan sumber daya saat dihentikan."
+  },
+  {
+    "title": "Penanganan Sinyal POSIX",
+    "body": "Mendaftarkan signal handler untuk SIGINT dan SIGTERM agar daemon melakukan pembersihan buffer dan penutupan port sebelum proses mati.",
+    "notes": "Jelaskan bahaya crash tidak bersih yang dapat menyebabkan deskriptor file serial terkunci dan menolak koneksi baru."
+  },
+  {
+    "title": "Supervisi Layanan dengan systemd",
+    "body": "File unit systemd (iot-gateway.service) bertindak sebagai supervisor proses: auto-start saat boot dan auto-restart saat terjadi crash.",
+    "notes": "Uraikan fungsi direktif Restart=always dan RestartSec=5s dalam mencegah server mengalami CPU thrashing saat kabel serial tercabut."
+  },
+  {
+    "title": "Sandboxing & Security Hardening",
+    "body": "Menerapkan parameter keamanan systemd seperti ProtectSystem=full, ProtectHome=true, dan NoNewPrivileges=true.",
+    "notes": "Tekankan prinsip least privilege: jika proses gateway berhasil dieksploitasi, penyerang tetap tidak bisa mengubah file konfigurasi sistem."
+  },
+  {
+    "title": "Logging Tersentralisasi (journald)",
+    "body": "Mengalirkan output standar (stdout/stderr) ke sistem logging Linux journald. Dapat dipantau secara real-time via journalctl -u iot-gateway -f.",
+    "notes": "Perlihatkan kemudahan pelacakan riwayat kesalahan menggunakan filter waktu dan tingkat keparahan pada perintah journalctl."
+  },
+  {
+    "title": "Spooling & Offline Caching",
+    "body": "Ketika koneksi internet uplink terputus, gateway menyimpan telemetri sementara ke basis data lokal (SQLite) hingga jaringan pulih kembali.",
+    "notes": "Perkenalkan konsep Store-and-Forward yang memastikan keutuhan data pengukuran deret waktu meskipun internet mati berjam-jam."
+  },
+  {
+    "title": "Metrik Diagnostik Gateway",
+    "body": "Memantau performa kesehatan gateway secara berkala: beban CPU, sisa RAM, kapasitas disk SD card, dan temperatur SoC Raspberry Pi.",
+    "notes": "Bahas pentingnya memantau keausan memori flash SD Card akibat penulisan log yang terlalu agresif di lingkungan industri."
+  },
+  {
+    "title": "Kesimpulan & Langkah Selanjutnya",
+    "body": "Dengan berjalannya gateway serial-ke-MQTT yang tangguh, sistem siap menerima pemrosesan logika lokal (Edge Processing) pada Chapter 23.",
+    "notes": "Arahkan peserta untuk menguji simulasi gateway lokal dan memverifikasi keluaran log sebelum melanjutkan ke algoritma edge."
+  }
+]
