@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .box-phys { fill: #1e293b; stroke: #f59e0b; stroke-width: 2; rx: 8; }
+      .box-twin { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .box-whatif { fill: #1e293b; stroke: #a855f7; stroke-width: 2; rx: 8; }
+      .title { fill: #f8fafc; font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+      .label { fill: #cbd5e1; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; text-anchor: middle; }
+      .label-mono { fill: #38bdf8; font-family: ui-monospace, monospace; font-size: 12px; text-anchor: middle; }
+      .arrow-sync { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrowhead-sync); }
+      .arrow-phys { stroke: #f59e0b; stroke-width: 2; fill: none; marker-end: url(#arrowhead-phys); }
+      .line-curve { stroke: #38bdf8; stroke-width: 2; fill: none; }
+      .line-pred { stroke: #a855f7; stroke-width: 2; stroke-dasharray: 4 4; fill: none; }
+    </style>
+    <marker id="arrowhead-sync" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrowhead-phys" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Header -->
+  <text x="400" y="35" class="title">Arsitektur Digital Twin Termal &amp; Simulasi Prediktif What-If</text>
+  <text x="400" y="58" class="label">Sinkronisasi State Dua-Arah Berbasis Fisika Dinamika Pendinginan Newton</text>
+
+  <!-- Physical Asset vs Digital Twin Columns -->
+  <g transform="translate(40, 90)">
+    <!-- Physical Twin -->
+    <rect x="0" y="0" width="340" height="150" class="box-phys" />
+    <text x="170" y="25" class="title" fill="#f59e0b">Physical Asset (Dunia Riil)</text>
+    <text x="170" y="45" class="label">Hardware Sensor &amp; Elemen Pemanas</text>
+    <rect x="20" y="60" width="140" height="32" rx="4" fill="#334155" />
+    <text x="90" y="81" class="label-mono">T_measured (28.0 C)</text>
+    <rect x="180" y="60" width="140" height="32" rx="4" fill="#334155" />
+    <text x="250" y="81" class="label-mono">Heater (100 W)</text>
+    <rect x="20" y="102" width="300" height="32" rx="4" fill="#334155" />
+    <text x="170" y="123" class="label-mono">Sampling ADC &amp; Transmisi Telemetri</text>
+
+    <!-- Digital Twin -->
+    <rect x="380" y="0" width="340" height="150" class="box-twin" />
+    <text x="550" y="25" class="title" fill="#10b981">Digital Twin (Model Virtual)</text>
+    <text x="550" y="45" class="label">Simulasi Dinamika Termal Orde-1</text>
+    <rect x="400" y="60" width="140" height="32" rx="4" fill="#334155" />
+    <text x="470" y="81" class="label-mono">T_estimated (27.9 C)</text>
+    <rect x="560" y="60" width="140" height="32" rx="4" fill="#334155" />
+    <text x="630" y="81" class="label-mono">Residual (0.08 C)</text>
+    <rect x="400" y="102" width="300" height="32" rx="4" fill="#334155" />
+    <text x="550" y="123" class="label-mono">C_th=300 J/K | R_th=0.1 K/W (OK)</text>
+  </g>
+
+  <!-- Bi-Directional Arrows -->
+  <path d="M 380 150 L 415 150" class="arrow-phys" />
+  <text x="398" y="142" class="label-mono" fill="#f59e0b">Data</text>
+
+  <!-- Prediction Graph & What-If Sandbox -->
+  <g transform="translate(40, 265)">
+    <rect x="0" y="0" width="720" height="185" class="box" />
+    <text x="360" y="25" class="title">Visualisasi Penelusuran Residu &amp; Proyeksi Prediktif What-If (250 Watt)</text>
+
+    <!-- Graph Axes -->
+    <g transform="translate(60, 40)">
+      <!-- Y-Axis -->
+      <line x1="0" y1="0" x2="0" y2="110" stroke="#94a3b8" stroke-width="2" />
+      <text x="-10" y="15" class="label" text-anchor="end">50 C</text>
+      <text x="-10" y="65" class="label" text-anchor="end">35 C</text>
+      <text x="-10" y="110" class="label" text-anchor="end">25 C</text>
+
+      <!-- X-Axis -->
+      <line x1="0" y1="110" x2="580" y2="110" stroke="#94a3b8" stroke-width="2" />
+      <text x="580" y="125" class="label">Waktu (s)</text>
+
+      <!-- Real-Time Sync Phase (0-10s) -->
+      <path d="M 0 110 L 40 105 L 80 97 L 120 90 L 160 84" class="line-curve" />
+      <!-- Physical Points -->
+      <circle cx="0" cy="110" r="4" fill="#f59e0b" />
+      <circle cx="40" cy="105" r="4" fill="#f59e0b" />
+      <circle cx="80" cy="97" r="4" fill="#f59e0b" />
+      <circle cx="120" cy="90" r="4" fill="#f59e0b" />
+      <circle cx="160" cy="84" r="4" fill="#f59e0b" />
+
+      <!-- What-If Extrapolation Phase (10s - 70s) -->
+      <path d="M 160 84 Q 300 25 500 15" class="line-pred" />
+
+      <!-- Annotations -->
+      <text x="80" y="70" class="label-mono" fill="#10b981">Live Sync (100W)</text>
+      <text x="350" y="35" class="label-mono" fill="#a855f7">Proyeksi What-If: 250W &#x2192; 47.11 C</text>
+      <line x1="160" y1="10" x2="160" y2="110" stroke="#f43f5e" stroke-width="1" stroke-dasharray="2 2" />
+      <text x="165" y="105" class="label" fill="#f43f5e" font-size="10">Titik Uji What-If</text>
+    </g>
+  </g>
+</svg>

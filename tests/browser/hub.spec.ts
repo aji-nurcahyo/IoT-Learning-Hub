@@ -9,9 +9,9 @@ test('beranda, theme, navigasi, pencarian, filter, dan chapter',async({page},inf
  await page.getByLabel('Tema tampilan').selectOption('light');await page.screenshot({path:`test-results/${info.project.name}-home-light.png`,fullPage:true});
  await page.getByLabel('Tema tampilan').selectOption('system');await page.emulateMedia({colorScheme:'dark'});expect(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(17, 27, 24)');
  await page.getByRole('link',{name:'Jelajahi kurikulum'}).click();await expect(page.locator('.chapter-row')).toHaveCount(40);
- await page.getByRole('searchbox').fill('MQTT');await expect(page.locator('.chapter-row')).toHaveCount(3);
+ await page.getByRole('searchbox').fill('MQTT');await expect(page.locator('.chapter-row')).toHaveCount(4);
  await page.getByRole('combobox',{name:'Level',exact:true}).selectOption('1');await expect(page.getByRole('heading',{name:'Belum ada chapter yang sesuai'})).toBeVisible();await page.getByRole('button',{name:'Reset filter'}).click();
- await page.getByRole('combobox',{name:'Ketersediaan',exact:true}).selectOption('available');await expect(page.locator('.chapter-row')).toHaveCount(30);await page.getByRole('combobox',{name:'Ketersediaan',exact:true}).selectOption('all');
+ await page.getByRole('combobox',{name:'Ketersediaan',exact:true}).selectOption('available');await expect(page.locator('.chapter-row')).toHaveCount(40);await page.getByRole('combobox',{name:'Ketersediaan',exact:true}).selectOption('all');
  await page.getByRole('searchbox').fill('21');await page.locator('.chapter-row').click();await expect(page.getByRole('heading',{name:'IoT Data Models, Telemetry & Event Design'})).toBeVisible();await expect(page.locator('.resource-card a[download]')).toHaveCount(8);
  await page.locator('.chapter-nav a').last().click();await expect(page.getByRole('heading',{name:'Raspberry Pi, Linux & IoT Gateways'})).toBeVisible();
  await page.goBack();await expect(page.getByRole('heading',{name:'IoT Data Models, Telemetry & Event Design'})).toBeVisible();await page.reload();await expect(page.getByRole('heading',{name:'IoT Data Models, Telemetry & Event Design'})).toBeVisible();expect(errors).toEqual([]);
@@ -36,7 +36,7 @@ test('tracks, batas chapter, dan halaman tidak ditemukan',async({page})=>{
  await page.goto('./#/chapter/1');await expect(page.locator('.chapter-nav a')).toHaveCount(1);await page.goto('./#/chapter/40');await expect(page.locator('.chapter-nav a')).toHaveCount(1);
  await page.goto('./#/chapter/1/reading');await expect(page.locator('.prose h1')).toContainText('Chapter 01');await page.locator('.prose img').scrollIntoViewIfNeeded();await expect(page.locator('.prose img')).toBeVisible();
  await page.goto('./#/chapter/10/slides');await expect(page.locator('.reveal')).toHaveClass(/ready/);await expect(page.locator('.reveal section.present h2')).toContainText('Capstone');
- await page.goto('./#/chapter/30/slides');await expect(page.locator('.reveal')).toHaveClass(/ready/);await expect(page.locator('.reveal section.present h2')).toContainText('Puncak Pembelajaran');
+ await page.goto('./#/chapter/40/slides');await expect(page.locator('.reveal')).toHaveClass(/ready/);await expect(page.locator('.reveal section.present h2')).toContainText('Capstone');
  await page.goto('./#/chapter/10/exercises');await expect(page.locator('.prose h1')).toContainText('Latihan Bertingkat');
- await page.goto('./#/chapter/31/reading');await expect(page.getByRole('heading',{name:'Materi belum tersedia'})).toBeVisible();await page.goto('./#/unknown');await expect(page.getByRole('heading',{name:'Halaman tidak ditemukan.'})).toBeVisible();
+ await page.goto('./#/chapter/41');await expect(page.getByRole('heading',{name:'Halaman tidak ditemukan.'})).toBeVisible();await page.goto('./#/unknown');await expect(page.getByRole('heading',{name:'Halaman tidak ditemukan.'})).toBeVisible();
 });

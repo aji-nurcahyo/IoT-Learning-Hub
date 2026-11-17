@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Advanced IoT Systems Capstone Architecture",
+    "body": "Puncak kurikulum Level 4: sintesis komprehensif sistem IoT cerdas, aman, dan berketahanan tinggi.\n\nIntegrasi multidisiplin: mikrokontroler hemat daya, FreeRTOS, protokol industri, TinyML, dan Digital Twin.\n\nTujuan rekayasa: membuktikan kelayakan implementasi end-to-end melalui verifikasi sistem teruji.",
+    "notes": "Pengenalan proyek puncak kurikulum Level 4 IoT Learning Hub."
+  },
+  {
+    "title": "Arsitektur Platform Sistem Terpadu",
+    "body": "Device Layer: ESP32 dengan siklus tugas low-power dan penjadwalan preemptive FreeRTOS.\n\nIndustrial Fieldbus: komunikasi serial Modbus RTU terlindungi checksum CRC-16.\n\nIntelligence Layer: inferensi lokal model TinyML INT8 untuk deteksi anomali getaran mesin.\n\nDigital Twin Engine: model fisik termal 1-orde dan simulasi proyeksi skenario What-If.\n\nSecurity & Governance: arsitektur pertahanan berlapis, buffer retensi offline, dan sanitasi privasi.",
+    "notes": "Membedah integrasi enam pilar utama rekayasa sistem ke dalam satu kesatuan arsitektur."
+  },
+  {
+    "title": "SATC-01: Low-Power Budgeting",
+    "body": "Parameter pengujian: aktif 1.0 detik (100 mA), tidur 599.0 detik (10 uA).\n\nKapasitas nominal: baterai 2500 mAh dengan faktor derating konservatif 0.85.\n\nHasil komputasi: arus rata-rata 0.1767 mA menghasilkan masa hidup lebih dari 1.3 tahun.\n\nStatus verifikasi: Lulus 100% kriteria operasional multi-tahun bertenaga baterai.",
+    "notes": "Ulasan hasil verifikasi kasus uji penerimaan sistem pertama (Power Budget)."
+  },
+  {
+    "title": "SATC-02: Determinisme RTOS & Preemption",
+    "body": "Hierarki prioritas: TelemetryTx (Pri 1), SensorSampling (Pri 2), SafetyWatchdog (Pri 3).\n\nPenyitaan CPU seketika: SafetyWatchdog merebut kendali pada Tick 2 tanpa penundaan waktu.\n\nPola Producer-Consumer: pertukaran data terlindungi antrean thread-safe bebas race condition.\n\nStatus verifikasi: Lulus 100% kriteria penjadwalan deterministik real-time.",
+    "notes": "Ulasan hasil verifikasi kasus uji penerimaan sistem kedua (RTOS Preemption)."
+  },
+  {
+    "title": "SATC-03: Protokol Industri Modbus RTU",
+    "body": "Integrasi OT: akuisisi parameter register dari pengendali logika terprogram (PLC).\n\nValidasi CRC-16: memastikan keutuhan bit frame serial melintasi derau kabel RS-485 industri.\n\nEkstraksi data: decoding holding register menghasilkan pembacaan temperatur presisi 25.5 C.\n\nStatus verifikasi: Lulus 100% kriteria integritas protokol industri.",
+    "notes": "Ulasan hasil verifikasi kasus uji penerimaan sistem ketiga (Modbus RTU)."
+  },
+  {
+    "title": "SATC-04: Inferensi Edge AI TinyML",
+    "body": "Deteksi getaran: ekstraksi fitur domain waktu RMS dan Peak-to-Peak dari sinyal akselerometer.\n\nKuantisasi INT8: komputasi dot product fixed-point berkecepatan tinggi pada mikrokontroler.\n\nKlasifikasi kondisi: akurat memprediksi label BEARING_FAULT saat impak transien terdeteksi.\n\nStatus verifikasi: Lulus 100% kriteria kecerdasan buatan lokal terdistribusi.",
+    "notes": "Ulasan hasil verifikasi kasus uji penerimaan sistem keempat (TinyML Anomaly)."
+  },
+  {
+    "title": "SATC-05: Digital Twin & Simulasi What-If",
+    "body": "Model termal dinamis: Hukum Pendinginan Newton dan pemanasan Joule mengestimasi suhu ruang.\n\nSinkronisasi real-time: estimasi model virtual mengikuti data sensor fisik dengan residu minimal.\n\nSimulasi What-If: proyeksi kenaikan daya ke 250W memprediksi lonjakan suhu > 45 C secara instan.\n\nStatus verifikasi: Lulus 100% kriteria pengujian prediktif bebas risiko.",
+    "notes": "Ulasan hasil verifikasi kasus uji penerimaan sistem kelima (Digital Twin)."
+  },
+  {
+    "title": "SATC-06: Ketahanan & Tata Kelola Privasi",
+    "body": "Penyuntikan putus jaringan: data telemetri tertahan aman pada buffer lokal offline.\n\nPemulihan otonom: seluruh buffer terkuras utuh ke backend begitu koneksi kembali tersambung.\n\nSanitasi privasi: atribut PII berbahaya (nama, email, GPS) dibuang bersih sebelum transmisi.\n\nStatus verifikasi: Lulus 100% kriteria ketahanan gangguan dan kepatuhan regulasi data.",
+    "notes": "Ulasan hasil verifikasi kasus uji penerimaan sistem keenam (Resilience & Privacy)."
+  },
+  {
+    "title": "Hasil Audit Matriks SATC Lengkap",
+    "body": "SATC-01 (Power): PASS (Lifetime > 1.3 Tahun).\n\nSATC-02 (RTOS): PASS (Watchdog Preemption Verified).\n\nSATC-03 (Modbus): PASS (Reg 25.5 C & CRC Verified).\n\nSATC-04 (TinyML): PASS (Bearing Fault INT8 Verified).\n\nSATC-05 (Twin): PASS (Thermal & What-If Verified).\n\nSATC-06 (Resilience): PASS (Buffer Drain & Privacy Clean).",
+    "notes": "Rangkuman menyeluruh keberhasilan eksekusi seluruh 6 kasus uji penerimaan."
+  },
+  {
+    "title": "Jalur Implementasi Hardware Fisik (Opsional)",
+    "body": "Board mikrokontroler: ESP32-WROOM-32 atau ESP32-S3 dengan radio Wi-Fi/BLE terpasang.\n\nSensor getaran: modul IMU MPU-6050 / ADXL345 terhubung pada bus I2C.\n\nAntarmuka industri: modul konverter UART to RS-485 (MAX485) dengan resistor terminasi 120 ohm.\n\nBeban daya: MOSFET switch untuk kendali power gating peripheral eksternal.",
+    "notes": "Pedoman perakitan perangkat keras nyata bagi mahasiswa dan praktisi laboratorium."
+  },
+  {
+    "title": "Metodologi Pengujian Bersih & Anti-Slop",
+    "body": "Bebas klaim palsu: tidak mengklaim hardware-verified tanpa pengujian fisik laboratorium nyata.\n\nBukti deterministik: log hasil outputs.md dihitung menggunakan checksum SHA-256 canonical LF.\n\nVerifikasi lintas platform: seluruh test suite tervalidasi identik pada Windows 11 dan Linux Ubuntu.\n\nReproduksibilitas mutlak: skrip Python mandiri dapat diuji ulang kapan saja tanpa paket proprietary.",
+    "notes": "Menegaskan kepatuhan terhadap kebijakan Permanent Anti-Slop dan integritas akademik."
+  },
+  {
+    "title": "Rekomendasi Jalur Spesialisasi Lanjutan",
+    "body": "Track 1 (Embedded Firmware): pendalaman RTOS SMP tingkat lanjut dan optimasi bare-metal register.\n\nTrack 2 (Industrial IoT): integrasi SCADA Ignition, PROFINET, dan standardisasi OPC UA Companion.\n\nTrack 3 (Edge AI): kuantisasi CNN mikro untuk audio keyword spotting dan deteksi citra embedded.\n\nTrack 4 (Security & Compliance): implementasi TPM 2.0, eFuse secure boot, dan audit sertifikasi PSA.\n\nTrack 5 (Cloud Architecture): arsitektur Kafka terdistribusi, kueri time-series raksasa, dan serverless.",
+    "notes": "Panduan transisi bagi lulusan modul menuju 5 jalur spesialisasi profesional."
+  },
+  {
+    "title": "Dampak Rekayasa & Standar Industri",
+    "body": "Efisiensi energi: menekan konsumsi daya hingga memungkinkan pengoperasian tanpa colokan listrik.\n\nKetangguhan operasional: sistem mampu menahan gangguan ekstrem dan memulihkan diri secara mandiri.\n\nKeamanan menyeluruh: perlindungan dari level fisik PCB hingga transmisi data awan.\n\nKesiapan enterprise: siap diintegrasikan dengan platform analitik industri modern.",
+    "notes": "Tinjauan manfaat praktis platform capstone bagi industri manufaktur dan pemantauan pintar."
+  },
+  {
+    "title": "Evaluasi & Kriteria Kelulusan Proyek",
+    "body": "Arsitektur terpadu: seluruh subsistem bekerja secara kohesif tanpa benturan sumber daya.\n\nVerifikasi 100%: tidak boleh ada satu pun kasus uji penerimaan sistem yang gagal.\n\nDokumentasi lengkap: laporan teknis menyajikan analisis data empiris dan grafik arsitektur jelas.",
+    "notes": "Standar evaluasi akademik dan profesional untuk penyelesaian modul Capstone."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 40",
+    "body": "Capstone Level 4 membuktikan keandalan sistem IoT cerdas melalui pengujian SATC terpadu.\n\nPondasi teori dan praktik kurikulum telah tuntas dari Chapter 01 hingga Chapter 40 secara utuh.\n\nPlatform siap diadopsi sebagai modul pembelajaran perguruan tinggi dan standar proyek rekayasa riil.",
+    "notes": "Kesimpulan akhir modul Capstone dan penutup kurikulum inti IoT Learning Hub."
+  }
+]

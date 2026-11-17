@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Privacy, Threat Modeling & IoT Governance",
+    "body": "Sensitivitas data IoT: sensor memantau ruang privat, aktivitas manusia, dan infrastruktur kritis nasional.\n\nPrinsip Privacy by Design: privasi dan keamanan dirancang sejak arsitektur awal, bukan tambalan belakangan.\n\nKepatuhan regulasi: UU PDP No. 27/2022 (Indonesia), GDPR (Eropa), dan standar keamanan ISO/IEC 27402.",
+    "notes": "Pengenalan pentingnya tata kelola data, privasi, dan kepatuhan hukum dalam ekosistem IoT."
+  },
+  {
+    "title": "Prinsip Utama Perlindungan Data Pribadi",
+    "body": "Data Minimization: hanya mengumpulkan data yang mutlak diperlukan untuk fungsionalitas teknis perangkat.\n\nPurpose Limitation: melarang penggunaan data sensor untuk tujuan profiling komersial tanpa izin.\n\nStorage Limitation: memusnahkan data historis secara otomatis setelah masa retensi operasional berakhir.\n\nConfidentiality & Integrity: proteksi kriptografi ujung-ke-ujung (end-to-end encryption).",
+    "notes": "Membedah pilar-pilar regulasi perlindungan data yang mengikat pengembang sistem IoT."
+  },
+  {
+    "title": "Metodologi Pemodelan Ancaman STRIDE",
+    "body": "Kerangka kerja Microsoft: identifikasi ancaman sistematis melintasi batas kepercayaan (*Trust Boundaries*).\n\nS - Spoofing: pemalsuan identitas perangkat atau pengguna palsu.\n\nT - Tampering: manipulasi firmware atau modifikasi isi paket data transit.\n\nR - Repudiation: penolakan telah melakukan tindakan kontrol atau konfigurasi tertentu.",
+    "notes": "Penjelasan tiga kategori pertama taksonomi ancaman STRIDE."
+  },
+  {
+    "title": "STRIDE: Ancaman Lanjutan",
+    "body": "I - Information Disclosure: kebocoran data sensitif atau kunci privat dari chip memori flash.\n\nD - Denial of Service: serangan banjir paket yang melumpuhkan ketersediaan gateway atau server.\n\nE - Elevation of Privilege: penyerang memperoleh hak akses root melalui eksploitasi port debug UART/JTAG.\n\nPemberian mitigasi: setiap ancaman wajib dipetakan terhadap kontrol rekayasa yang teruji.",
+    "notes": "Penjelasan tiga kategori lanjutan taksonomi ancaman STRIDE."
+  },
+  {
+    "title": "Kuantifikasi Risiko: Skema DREAD",
+    "body": "Damage (Dampak): potensi keparahan kerugian fisik, finansial, atau keselamatan.\n\nReproducibility (Kemudahan replikasi): seberapa mudah serangan dapat diulang kembali.\n\nExploitability (Kemudahan teknis): apakah serangan membutuhkan alat laboratorium mahal atau skrip sederhana.\n\nAffected Users (Pengguna terdampak): proporsi populasi node yang rentan terhadap celah keamanan.\n\nDiscoverability (Kemudahan penemuan): seberapa cepat celah dapat ditemukan penyerang luar.",
+    "notes": "Metodologi kuantifikasi risiko DREAD dalam skala 1 hingga 10."
+  },
+  {
+    "title": "Kalkulasi Skor Risiko & Matriks Prioritas",
+    "body": "Formula matematis: Risk Score = (Damage + Repro + Exploit + Affected + Discover) / 5.\n\nKlasifikasi tingkat risiko: CRITICAL (>= 8.0), HIGH (6.0 - 7.9), MEDIUM / LOW (< 6.0).\n\nAlokasi sumber daya: celah CRITICAL wajib diselesaikan sebelum produk firmware dirilis.\n\nRisk Register: dokumen pelacak risiko resmi yang diaudit secara berkala selama siklus hidup proyek.",
+    "notes": "Menjelaskan formula penghitungan skor risiko kuantitatif dan penentuan tingkat keparahan."
+  },
+  {
+    "title": "Penyaringan Privasi (Data Minimization)",
+    "body": "Praktik buruk: mencantumkan nama pemilik, nomor telepon, atau email di payload telemetri suhu.\n\nRisiko kebocoran: penyerang di broker publik dapat melacak identitas dan pola keberadaan penghuni rumah.\n\nEdge Sanitization: filter whitelist membuang atribut PII sebelum paket diserahkan ke stack radio.\n\nPseudonimisasi: mengganti identitas personal dengan pengidentifikasi perangkat anonim acak (UUID).",
+    "notes": "Teknik penyaringan data sensitif pada level edge untuk menjamin kepatuhan privasi."
+  },
+  {
+    "title": "Keamanan Fisik Papan Sirkuit (PCB)",
+    "body": "Ancaman akses fisik: pembacaan memori SPI Flash menggunakan klip test pogo-pin atau penganalisis logika.\n\nMematikan port debug: pembakaran eFuse mikrokontroler untuk menonaktifkan JTAG dan UART bootloader.\n\nEnkripsi Flash: mengaktifkan AES Flash Encryption berbasis perangkat keras pada ESP32.\n\nAnti-tamper casing: saklar pendeteksi pembongkaran penutup kotak yang menghapus memori kunci rahasia.",
+    "notes": "Membahas pengamanan perangkat keras fisik terhadap ancaman penyerang di lapangan."
+  },
+  {
+    "title": "Siklus Hidup Pengembangan Aman (SSDLC)",
+    "body": "Security by Default: seluruh port jaringan tidak terpakai ditutup rapat secara default.\n\nStatic Analysis Security Testing (SAST): pemindaian otomatis kelemahan kode sumber pada pipeline CI/CD.\n\nDependency Auditing: pemantauan celah CVE pada pustaka pihak ketiga (misalnya mbedTLS, cJSON).\n\nPenetration Testing: uji penetrasi berkala sebelum sertifikasi keamanan industri.",
+    "notes": "Integrasi disiplin keamanan siber ke dalam alur kerja rekayasa perangkat lunak sistem tertanam."
+  },
+  {
+    "title": "Kerangka Regulasi UU PDP No. 27/2022",
+    "body": "Payung hukum nasional: mengatur kewajiban pengendali dan pemroses data pribadi di Indonesia.\n\nHak pemilik data: hak mengakses, memperbaiki, menghapus, dan menarik persetujuan pemrosesan.\n\nKewajiban keamanan: wajib menerapkan enkripsi dan langkah teknis pencegahan kegagalan pelindungan data.\n\nSanksi hukum: denda administratif hingga miliaran rupiah dan sanksi pidana atas kelalaian keamanan.",
+    "notes": "Tinjauan aspek yuridis kepatuhan hukum teknologi informasi di wilayah Republik Indonesia."
+  },
+  {
+    "title": "Verifikasi Simulasi Governance Python",
+    "body": "ThreatModelRegistry: registrasi ancaman Spoofing (DREAD 8.0 - CRITICAL) dan Flash Leak (DREAD 6.0 - HIGH).\n\nPrivacyDataMinimizer: membersihkan payload mentah berbahaya dari atribut nama, email, dan koordinat GPS.\n\nHasil pengujian: payload keluaran terbukti 100% higienis dan hanya memuat data telemetri teknis.\n\nValidasi deterministik: seluruh assert lulus tanpa kegagalan pada pengujian otomatis.",
+    "notes": "Membahas output simulasi Python yang memvalidasi konsep mitigasi ancaman dan sanitasi data."
+  },
+  {
+    "title": "Audit Trail & Akuntabilitas Sistem",
+    "body": "Prinsip Non-Repudiasi: setiap perintah aktuasi mesin (misal: Buka Katup Gas) wajib dicatat berstempel waktu.\n\nCryptographic Signing: tanda tangan digital HMAC/ECDSA membuktikan keaslian identitas operator.\n\nImmutable Storage: log audit disimpan pada penyimpanan append-only yang tidak dapat dimanipulasi.\n\nForensik digital: memudahkan penyelidikan investigasi akar masalah ketika terjadi insiden keamanan.",
+    "notes": "Pentingnya audit trail kriptografis untuk menjamin akuntabilitas operasional sistem IoT."
+  },
+  {
+    "title": "Informed Consent & Transparansi Pengguna",
+    "body": "Transparansi telemetri: pengguna berhak mengetahui data apa saja yang dikumpulkan oleh perangkat sensor.\n\nOpt-in vs Opt-out: persetujuan pemrosesan data diagnostik tambahan harus bersifat sukarela.\n\nTampilan indikator fisik: LED penanda menyala saat kamera atau mikrofon sedang aktif merekam.\n\nZero Hidden Surveillance: melarang keras pintu belakang (backdoor) pengawasan rahasia.",
+    "notes": "Prinsip etika desain antarmuka dan interaksi manusia terhadap privasi sensor cerdas."
+  },
+  {
+    "title": "Kriteria Evaluasi Tata Kelola Keamanan",
+    "body": "Zero Critical Vulnerabilities: tidak ada celah ber-skor DREAD >= 8.0 yang belum termitigasi saat rilis.\n\nFull Data Sanitization: tidak ada PII mentah yang lolos melintasi batas kepercayaan jaringan publik.\n\nLegal Compliance: memenuhi persyaratan audit regulasi privasi data nasional dan internasional.",
+    "notes": "Standar kelulusan audit keamanan dan tata kelola sistem IoT modern."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 39",
+    "body": "Tata kelola privasi dan keamanan siber adalah syarat mutlak keberlangsungan ekosistem IoT.\n\nModel STRIDE dan skoring DREAD memberikan kerangka sistematis mitigasi ancaman berbasis risiko.\n\nMinimisasi data di level edge melindungi privasi pengguna sekaligus mematuhi regulasi perundang-undangan.",
+    "notes": "Rangkuman menyeluruh modul tata kelola data, privasi, dan pemodelan ancaman IoT."
+  }
+]

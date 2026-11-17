@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .box-task1 { fill: #1e293b; stroke: #94a3b8; stroke-width: 2; rx: 6; }
+      .box-task2 { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 6; }
+      .box-task3 { fill: #1e293b; stroke: #f43f5e; stroke-width: 2; rx: 6; }
+      .box-queue { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 6; }
+      .box-mutex { fill: #1e293b; stroke: #eab308; stroke-width: 2; rx: 6; }
+      .title { fill: #f8fafc; font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+      .label { fill: #cbd5e1; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; text-anchor: middle; }
+      .label-mono { fill: #38bdf8; font-family: ui-monospace, monospace; font-size: 12px; text-anchor: middle; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .arrow-q { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrowhead-q); }
+      .arrow-m { stroke: #eab308; stroke-width: 2; fill: none; marker-end: url(#arrowhead-m); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowhead-q" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrowhead-m" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#eab308" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Header -->
+  <text x="400" y="35" class="title">Arsitektur Penjadwalan Preemptive &amp; Komunikasi FreeRTOS</text>
+  <text x="400" y="58" class="label">Mekanisme Preemption Berbasis Prioritas, Queue Thread-Safe &amp; Proteksi Mutex</text>
+
+  <!-- Subsystem Tasks -->
+  <g transform="translate(60, 80)">
+    <!-- Task High: Safety Watchdog -->
+    <rect x="0" y="0" width="180" height="90" class="box-task3" />
+    <text x="90" y="25" class="title" fill="#f43f5e">SafetyWatchdog</text>
+    <text x="90" y="45" class="label-mono">Priority: 3 (Tertinggi)</text>
+    <text x="90" y="70" class="label">Preemption Langsung</text>
+
+    <!-- Task Medium: Sensor Sampling -->
+    <rect x="250" y="0" width="180" height="90" class="box-task2" />
+    <text x="340" y="25" class="title" fill="#38bdf8">SensorSampling</text>
+    <text x="340" y="45" class="label-mono">Priority: 2 (Sedang)</text>
+    <text x="340" y="70" class="label">Producer Queue</text>
+
+    <!-- Task Low: Telemetry Transmitter -->
+    <rect x="500" y="0" width="180" height="90" class="box-task1" />
+    <text x="590" y="25" class="title" fill="#cbd5e1">TelemetryTx</text>
+    <text x="590" y="45" class="label-mono">Priority: 1 (Rendah)</text>
+    <text x="590" y="70" class="label">Consumer Queue</text>
+  </g>
+
+  <!-- Communication Primitives (Queue & Mutex) -->
+  <g transform="translate(180, 200)">
+    <!-- FreeRTOS Queue -->
+    <rect x="0" y="0" width="200" height="65" class="box-queue" />
+    <text x="100" y="25" class="title" fill="#10b981">FreeRTOS Queue</text>
+    <text x="100" y="48" class="label-mono">Capacity: 5 Items (FIFO)</text>
+
+    <!-- Mutex -->
+    <rect x="250" y="0" width="180" height="65" class="box-mutex" />
+    <text x="340" y="25" class="title" fill="#eab308">Serial Mutex</text>
+    <text x="340" y="48" class="label-mono">Priority Inheritance</text>
+  </g>
+
+  <!-- Connection Arrows -->
+  <path d="M 400 170 L 400 185 L 280 185 L 280 200" class="arrow-q" />
+  <path d="M 280 265 L 280 280 L 650 280 L 650 170" class="arrow-q" />
+
+  <!-- Timeline Gantt Chart of Preemption -->
+  <g transform="translate(60, 310)">
+    <text x="340" y="15" class="title">Diagram Gantt Eksekusi Preemptive (Tick Timeline)</text>
+    
+    <!-- Timeline Blocks -->
+    <!-- T0-T1: Tx -->
+    <rect x="50" y="35" width="80" height="35" fill="#475569" stroke="#94a3b8" />
+    <text x="90" y="58" class="label-mono" fill="#f8fafc">Tx (Pri 1)</text>
+
+    <!-- T2: Sensor -->
+    <rect x="130" y="35" width="40" height="35" fill="#0284c7" stroke="#38bdf8" />
+    <text x="150" y="58" class="label-mono" fill="#f8fafc">Sens</text>
+
+    <!-- T3: Watchdog (Preemption!) -->
+    <rect x="170" y="35" width="40" height="35" fill="#e11d48" stroke="#f43f5e" />
+    <text x="190" y="58" class="label-mono" fill="#f8fafc">WDT</text>
+
+    <!-- T4: Sensor Selesai -->
+    <rect x="210" y="35" width="40" height="35" fill="#0284c7" stroke="#38bdf8" />
+    <text x="230" y="58" class="label-mono" fill="#f8fafc">Sens</text>
+
+    <!-- T5-T6: Tx Lanjut Selesai -->
+    <rect x="250" y="35" width="80" height="35" fill="#475569" stroke="#94a3b8" />
+    <text x="290" y="58" class="label-mono" fill="#f8fafc">Tx (Pri 1)</text>
+
+    <!-- T7: Idle -->
+    <rect x="330" y="35" width="40" height="35" fill="#1e293b" stroke="#64748b" />
+    <text x="350" y="58" class="label-mono" fill="#94a3b8">IDLE</text>
+
+    <!-- Ticks Axis Labels -->
+    <text x="50" y="90" class="label-mono">T0</text>
+    <text x="130" y="90" class="label-mono">T2</text>
+    <text x="170" y="90" class="label-mono" fill="#f43f5e">T3 (Preempt)</text>
+    <text x="210" y="90" class="label-mono">T4</text>
+    <text x="250" y="90" class="label-mono">T5</text>
+    <text x="330" y="90" class="label-mono">T7</text>
+
+    <!-- Annotations -->
+    <text x="540" y="55" class="label" text-anchor="start" fill="#f43f5e">&#x2190; Watchdog (Pri 3) merebut CPU seketika</text>
+    <text x="540" y="75" class="label" text-anchor="start" fill="#38bdf8">&#x2190; TaskSensor melanjutkan sisa burst</text>
+  </g>
+</svg>

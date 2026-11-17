@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .box-threat { fill: #1e293b; stroke: #f43f5e; stroke-width: 2; rx: 8; }
+      .box-filter { fill: #1e293b; stroke: #f59e0b; stroke-width: 2; rx: 8; }
+      .box-clean { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .title { fill: #f8fafc; font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+      .label { fill: #cbd5e1; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; text-anchor: middle; }
+      .label-mono { fill: #38bdf8; font-family: ui-monospace, monospace; font-size: 12px; text-anchor: middle; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .arrow-clean { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrowhead-clean); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowhead-clean" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Header -->
+  <text x="400" y="35" class="title">Arsitektur Tata Kelola Privasi &amp; Pemodelan Ancaman STRIDE</text>
+  <text x="400" y="58" class="label">Kuantifikasi Risiko DREAD &amp; Penyaringan Data Pribadi (Privacy by Design)</text>
+
+  <!-- Left: Threat Modeling STRIDE / DREAD -->
+  <g transform="translate(40, 95)">
+    <rect x="0" y="0" width="340" height="175" class="box-threat" />
+    <text x="170" y="25" class="title" fill="#f43f5e">STRIDE Threat Registry</text>
+    <text x="170" y="45" class="label">Analisis &amp; Skoring Risiko DREAD</text>
+
+    <!-- Threat 1 -->
+    <rect x="15" y="60" width="310" height="45" rx="4" fill="#334155" stroke="#f43f5e" />
+    <text x="25" y="78" class="label-mono" text-anchor="start" fill="#f43f5e">THREAT-01 [Spoofing]</text>
+    <text x="25" y="95" class="label" text-anchor="start" font-size="11">Skor DREAD: 8.0 (CRITICAL) | Solusi: Mutual TLS X.509</text>
+
+    <!-- Threat 2 -->
+    <rect x="15" y="115" width="310" height="45" rx="4" fill="#334155" stroke="#f59e0b" />
+    <text x="25" y="133" class="label-mono" text-anchor="start" fill="#f59e0b">THREAT-02 [Info Disclosure]</text>
+    <text x="25" y="150" class="label" text-anchor="start" font-size="11">Skor DREAD: 6.0 (HIGH) | Solusi: Flash Encryption eFuse</text>
+  </g>
+
+  <!-- Right: Data Minimization Filter Flow -->
+  <g transform="translate(420, 95)">
+    <rect x="0" y="0" width="340" height="175" class="box-clean" />
+    <text x="170" y="25" class="title" fill="#10b981">Privacy by Design Pipeline</text>
+    <text x="170" y="45" class="label">Kepatuhan UU PDP No. 27/2022 &amp; GDPR</text>
+
+    <rect x="15" y="60" width="140" height="95" rx="4" fill="#334155" stroke="#f43f5e" />
+    <text x="85" y="78" class="title" fill="#f43f5e" font-size="12">Raw Payload (PII)</text>
+    <text x="25" y="98" class="label" text-anchor="start" font-size="10">&#x2717; occupant_name</text>
+    <text x="25" y="115" class="label" text-anchor="start" font-size="10">&#x2717; occupant_email</text>
+    <text x="25" y="132" class="label" text-anchor="start" font-size="10">&#x2717; gps_exact_home</text>
+
+    <!-- Arrow Filter -->
+    <path d="M 160 110 L 180 110" class="arrow" />
+
+    <rect x="185" y="60" width="140" height="95" rx="4" fill="#334155" stroke="#10b981" />
+    <text x="255" y="78" class="title" fill="#10b981" font-size="12">Clean Telemetry</text>
+    <text x="195" y="98" class="label-mono" text-anchor="start" font-size="10">&#x2714; device_id</text>
+    <text x="195" y="115" class="label-mono" text-anchor="start" font-size="10">&#x2714; temperature</text>
+    <text x="195" y="132" class="label-mono" text-anchor="start" font-size="10">&#x2714; humidity</text>
+  </g>
+
+  <!-- Connecting Arrow between Columns -->
+  <path d="M 380 180 L 420 180" class="arrow" />
+
+  <!-- Bottom Panel: Governance Matrix -->
+  <g transform="translate(40, 295)">
+    <rect x="0" y="0" width="720" height="155" class="box" />
+    <text x="360" y="25" class="title">Matriks Kepatuhan Tata Kelola &amp; Pertahanan Berlapis (Defense-in-Depth)</text>
+
+    <g transform="translate(30, 45)">
+      <!-- Col 1 -->
+      <rect x="0" y="0" width="200" height="90" rx="6" fill="#334155" />
+      <text x="100" y="25" class="title" fill="#38bdf8" font-size="13">Edge Hardening</text>
+      <text x="100" y="50" class="label" font-size="11">Secure Boot &amp; Flash Crypt</text>
+      <text x="100" y="70" class="label-mono" font-size="11">eFuse UART Disable</text>
+
+      <!-- Col 2 -->
+      <rect x="230" y="0" width="200" height="90" rx="6" fill="#334155" />
+      <text x="330" y="25" class="title" fill="#f59e0b" font-size="13">Transport Security</text>
+      <text x="330" y="50" class="label" font-size="11">TLS 1.3 Mutual Auth</text>
+      <text x="330" y="70" class="label-mono" font-size="11">MQTT ACL Strict Matrix</text>
+
+      <!-- Col 3 -->
+      <rect x="460" y="0" width="200" height="90" rx="6" fill="#334155" />
+      <text x="560" y="25" class="title" fill="#10b981" font-size="13">Data Governance</text>
+      <text x="560" y="50" class="label" font-size="11">Minimisasi PII Zero Leak</text>
+      <text x="560" y="70" class="label-mono" font-size="11">Retensi Data &lt; 90 Hari</text>
+    </g>
+  </g>
+</svg>

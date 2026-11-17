@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Interoperability, Matter & Thread Architecture",
+    "body": "Fragmentasi pasar smart home: perang protokol tertutup Zigbee, Z-Wave, BLE, dan proprietary bridges.\n\nSolusi pemersatu industri: Matter (lapisan aplikasi terpadu) dan Thread (jaringan mesh IPv6 berdaya rendah).\n\nKemitraan aliansi global: Connectivity Standards Alliance didukung Apple, Google, Amazon, dan ribuan pabrikan.",
+    "notes": "Pengenalan krisis fragmentasi IoT dan evolusi menuju standar terbuka Matter & Thread."
+  },
+  {
+    "title": "Mengapa Berbasis Internet Protocol (IP)?",
+    "body": "Ketiadaan translasi protokol: perangkat berkomunikasi langsung end-to-end tanpa proprietary cloud gateways.\n\nSkalabilitas alamat masif: IPv6 menyediakan ruang pengalamatan 128-bit untuk triliunan node.\n\nKompatibilitas infrastruktur: dapat melintasi router Wi-Fi dan Ethernet rumah tangga yang sudah ada.\n\nKeamanan internet standar: memanfaatkan TLS/DTLS dan kriptografi kurva eliptik mutakhir.",
+    "notes": "Menjelaskan keuntungan strategis mengadopsi native IPv6 untuk node sensor cerdas."
+  },
+  {
+    "title": "Anatomi Jaringan Nirkabel Thread",
+    "body": "Lapisan Fisik & Link: IEEE 802.15.4 pada frekuensi 2.4 GHz global (kecepatan 250 kbps).\n\nLapisan Adaptasi: 6LoWPAN mengompresi header 40-byte IPv6 menjadi beberapa byte hemat memori.\n\nTopologi Mesh Murni: routing dinamis multihop dengan kemampuan penyembuhan mandiri (self-healing).\n\nBebas Single Point of Failure: hilangnya satu node tidak akan merusak konektivitas node lainnya.",
+    "notes": "Rincian spesifikasi lapisan jaringan nirkabel Thread Group."
+  },
+  {
+    "title": "Peran Node dalam Jaringan Thread",
+    "body": "Thread Leader: koordinator utama alokasi ID RLOC16 dan pembagian tabel routing mesh.\n\nThread Router: node terhubung listrik konstan yang meneruskan paket antar cabang topologi.\n\nEnd Device / Sleepy End Device (SED): node sensor baterai yang tidur dan dilayani oleh router induk.\n\nThread Border Router (OTBR): gerbang penghubung mesh 802.15.4 dengan Wi-Fi/Ethernet LAN.",
+    "notes": "Klasifikasi fungsi dan peran hierarkis perangkat di dalam Thread network."
+  },
+  {
+    "title": "Mekanisme Self-Healing & Leader Election",
+    "body": "Deteksi kegagalan: pemantauan transmisi frame heartbeat MLE (Mesh Link Establishment).\n\nPemilihan otonom: jika Leader offline, para Router melakukan voting tanpa intervensi pengguna.\n\nPromosi dinamis: End Device dapat dipromosikan menjadi Router jika cakupan sinyal mesh menurun.\n\nWaktu pemulihan cepat: pembentukan rute alternatif berlangsung dalam skala beberapa detik.",
+    "notes": "Membedah ketangguhan operasional jaringan Thread saat terjadi gangguan fisik."
+  },
+  {
+    "title": "Pengenalan Standar Aplikasi Matter",
+    "body": "Project CHIP (Connected Home over IP): standardisasi lapisan aplikasi level tinggi.\n\nKontrol lokal tanpa ketergantungan internet: perangkat tetap beroperasi saat ISP terputus.\n\nMulti-Admin / Multi-Fabric: kendali simultan dari aplikasi Apple Home, Google Home, dan Home Assistant.\n\nBebas lock-in vendor: lampu pabrikan A dapat dipasangkan langsung dengan saklar pabrikan B.",
+    "notes": "Membahas tujuan utama Matter dalam menghadirkan pengalaman pengguna yang mulus."
+  },
+  {
+    "title": "Model Data Matter (Data Model)",
+    "body": "Hierarki pemodelan: Node -> Endpoint -> Cluster -> Attributes & Commands.\n\nNode: perangkat fisik tunggal ber-alamat IP.\n\nEndpoint: representasi fungsional (misal: Endpoint 1 = Relai Kiri, Endpoint 2 = Relai Kanan).\n\nCluster: koleksi logika standar industri (On/Off Cluster, Color Control, Temperature Measurement).",
+    "notes": "Penjelasan struktur data berorientasi objek dalam model aplikasi Matter."
+  },
+  {
+    "title": "Proses Commissioning Matter: PASE",
+    "body": "Penyandingan awal: pemindaian kode QR atau input Setup PIN Code pada kemasan perangkat.\n\nProtokol SPAKE2+: Password-Authenticated Session Establishment dengan pertukaran kunci kurva eliptik.\n\nProteksi terhadap penyadapan: PIN rahasia tidak pernah dikirimkan melintasi sinyal radio.\n\nTujuan PASE: membangun saluran aman pertama kali untuk transfer kredensial jaringan Wi-Fi/Thread.",
+    "notes": "Membedah mekanisme keamanan kriptografi pada fase pairing awal."
+  },
+  {
+    "title": "Penerbitan Kredensial Fabric & CASE",
+    "body": "Penerbitan Sertifikat: Komisioner menerbitkan Node Operational Certificate (NOC) X.509.\n\nFabric ID: identitas unik ekosistem rumah pengguna yang disimpan dalam memori aman perangkat.\n\nFase CASE: Certificate-Authenticated Session Establishment untuk pertukaran data operasional sehari-hari.\n\nMutual Authentication: setiap saklar dan lampu saling memvalidasi sertifikat sebelum menerima perintah.",
+    "notes": "Penjelasan transisi dari otentikasi berbasis PIN (PASE) ke sertifikat digital (CASE)."
+  },
+  {
+    "title": "Dukungan Multi-Fabric (Multi-Admin)",
+    "body": "Isolasi Kriptografi: setiap fabric memiliki kunci enkripsi dan Certificate Authority independen.\n\nToleransi coexist: Apple Home dan Google Home dapat mengendalikan endpoint yang sama secara berdampingan.\n\nAudit hak akses: pemilik rumah dapat mencabut akses fabric pihak ketiga kapan saja.\n\nPrivasi total: data telemetri lokal tidak dibocorkan ke cloud luar jika tidak diizinkan.",
+    "notes": "Fitur unggulan Matter yang membebaskan pengguna dari keterikatan pada satu ekosistem vendor."
+  },
+  {
+    "title": "OpenThread: Open-Source Thread Implementation",
+    "body": "Inisiatif Google/Nest: implementasi C++ standar industri yang diadopsi secara luas di mikrokontroler.\n\nDukungan SoC: ESP32-H2, ESP32-C6, Nordic nRF52840, Silicon Labs EFR32.\n\nOpenThread Border Router (OTBR): stack Linux untuk Raspberry Pi sebagai border router terjangkau.\n\nTesting tools: Thread CLI dan WPAN toolset untuk inspeksi topologi jaringan.",
+    "notes": "Meninjau ekosistem perangkat lunak sumber terbuka yang mempercepat adopsi Thread."
+  },
+  {
+    "title": "Simulasi Topologi & Commissioning Python",
+    "body": "ThreadMeshSimulator: pemodelan graf topologi multihop dan pencarian rute terpendek (BFS).\n\nUji Multihop: paket mengalir dari End Device -> Router -> Leader -> Border Router -> Sensor.\n\nMatterCommissioningSimulator: validasi PIN PASE dan penerbitan Fabric ID/NOC.\n\nVerifikasi deterministik: seluruh assert lulus 100% pada eksekusi skrip mandiri.",
+    "notes": "Penjelasan implementasi modul pengujian perangkat lunak simulasi Python."
+  },
+  {
+    "title": "Pertimbangan Perancangan Hardware Matter",
+    "body": "Kebutuhan Memori: stack Matter membutuhkan minimum 512 KB RAM dan 2-4 MB Flash.\n\nRadio Multi-Protocol: kombinasi BLE (untuk commissioning) dan 802.15.4/Wi-Fi (untuk data operasional).\n\nHardware Crypto Engine: akselerasi perangkat keras untuk ECC P-256 dan AES-CCM demi penghematan baterai.\n\nSertifikasi CSA: pengujian interoperabilitas resmi di laboratorium uji terakreditasi.",
+    "notes": "Panduan pemilihan komponen keras untuk insinyur perancang perangkat Matter."
+  },
+  {
+    "title": "Evaluasi & Kriteria Interoperabilitas",
+    "body": "Latensi transmisi mesh: paket multihop harus mencapai tujuan < 100 ms di dalam rumah.\n\nKetahanan baterai SED: sinkronisasi polling periodik harus dioptimasi agar baterai koin bertahan bertahun-tahun.\n\nKesesuaian Data Model: atribut cluster wajib mematuhi skema standar agar kompatibel lintas platform.",
+    "notes": "Standar evaluasi kualitas dan performa sistem berbasis Matter dan Thread."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 34",
+    "body": "Matter dan Thread menghadirkan standar terbuka berbasis IP yang mengakhiri era walled-gardens.\n\nThread mesh menyediakan infrastruktur nirkabel berdaya rendah yang tangguh dan self-healing.\n\nKeamanan berlapis (PASE, CASE, Multi-Fabric) menjamin interoperabilitas aman dan privasi pengguna.",
+    "notes": "Rangkuman menyeluruh modul interoperabilitas standar IoT modern."
+  }
+]

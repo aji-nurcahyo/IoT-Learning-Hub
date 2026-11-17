@@ -1,0 +1,77 @@
+[
+  {
+    "title": "RTOS, Concurrency & Scheduling Architecture",
+    "body": "Keterbatasan model bare-metal superloop: ketiadaan temporal isolation saat operasi I/O memblokir.\n\nArsitektur RTOS: abstraksi prosesor menjadi kumpulan task konkuren berprioritas.\n\nSysTick timer & kernel tick: detak clock periodik (biasanya 1 ms) pengendali perpindahan konteks.",
+    "notes": "Membahas alasan transisi dari pemrograman superloop tradisional menuju arsitektur RTOS."
+  },
+  {
+    "title": "Status Task pada FreeRTOS",
+    "body": "Running: task yang saat ini sedang aktif dieksekusi oleh core prosesor.\n\nReady: task yang siap dieksekusi namun menunggu giliran alokasi waktu CPU.\n\nBlocked: task yang tertunda menunggu event eksternal, timeout, atau ketersediaan queue.\n\nSuspended: task yang dinonaktifkan secara eksplisit dari penjadwalan.",
+    "notes": "Menjelaskan siklus hidup task dan diagram transisi status FreeRTOS."
+  },
+  {
+    "title": "Preemptive Fixed-Priority Scheduling",
+    "body": "Aturan mutlak: task Ready dengan prioritas numerik tertinggi selalu memegang kendali CPU.\n\nPreemption: task berprioritas lebih tinggi merebut CPU seketika dari task berprioritas lebih rendah.\n\nRound-robin: pembagian kuantum waktu seimbang untuk task dengan prioritas yang identik.\n\nStarvation risk: task prioritas rendah dapat mengalami kelaparan jika task prioritas tinggi tidak pernah yield.",
+    "notes": "Membedah mekanisme penjadwalan deterministik yang menjadi inti keandalan RTOS."
+  },
+  {
+    "title": "Komunikasi Antar-Task: FreeRTOS Queues",
+    "body": "Thread-safe FIFO: pertukaran data antar-task tanpa risiko data corruption atau race condition.\n\nPass-by-value vs pass-by-reference: pengiriman data kecil via copy nilai struct atau pointer buffer besar.\n\nZero-CPU blocking: task konsumen tertidur 100% tanpa menyita CPU hingga elemen data tiba.\n\nPenanganan timeout: konfigurasi batas waktu tunggu pengiriman saat buffer kapasitas penuh.",
+    "notes": "Penjelasan implementasi queue sebagai tulang punggung arsitektur event-driven."
+  },
+  {
+    "title": "Sinkronisasi: Semaphore & Mutex",
+    "body": "Binary Semaphore: sinyal sinkronisasi searah dari interupsi ISR ke task pengguna.\n\nCounting Semaphore: pelacakan ketersediaan sejumlah sumber daya terbatas (resource counting).\n\nMutex (Mutual Exclusion): token kepemilikan eksklusif untuk melindungi periferal bersama (UART, I2C, SPI).\n\nOwnership invariant: hanya task yang berhasil mengambil mutex yang berhak melepaskannya kembali.",
+    "notes": "Perbedaan fundamental antara semaphore pensinyalan dan mutex kepemilikan."
+  },
+  {
+    "title": "Bahaya Konkurensi: Race Condition & Deadlock",
+    "body": "Race Condition: inkonsistensi data akibat operasi read-modify-write simultan tanpa proteksi.\n\nDeadlock (Kunci Melingkar): kondisi saat Task A memegang Mutex 1 menunggu Mutex 2, sementara Task B sebaliknya.\n\nKondisi Coffman: mutual exclusion, hold and wait, no preemption, dan circular wait.\n\nPencegahan disiplin: selalu ambil beberapa mutex dalam urutan hierarki yang seragam di seluruh kode.",
+    "notes": "Membahas anomali konkurensi klasik yang sering melumpuhkan sistem tertanam skala industri."
+  },
+  {
+    "title": "Anomali Priority Inversion",
+    "body": "Skenario bahaya: Task Rendah (TL) memegang mutex, Task Tinggi (TH) terblokir menunggu TL.\n\nIntervensi Task Sedang (TM): TM yang tidak membutuhkan mutex berjalan dan menunda eksekusi TL.\n\nDampak fatal: TH tertahan lebih lama dari batas waktu amannya karena terhalang oleh TM.\n\nKasus bersejarah: insiden Mars Pathfinder (1997) diakibatkan oleh priority inversion tanpa proteksi.",
+    "notes": "Menganalisis fenomena priority inversion yang mampu memicu kegagalan misi antariksa."
+  },
+  {
+    "title": "Solusi: Priority Inheritance",
+    "body": "Mekanisme adaptif: prioritas TL dinaikkan sementara menyamai prioritas TH yang sedang menunggu.\n\nBlokir Task Sedang: TM tidak dapat lagi merebut CPU dari TL karena prioritas TL saat ini lebih tinggi.\n\nPelepasan normal: segera setelah TL melepaskan mutex, prioritasnya diturunkan kembali ke level semula.\n\nFreeRTOS Mutex default: secara otomatis mengaktifkan fitur priority inheritance.",
+    "notes": "Penjelasan teknis bagaimana kernel FreeRTOS memulihkan determinisme penjadwalan."
+  },
+  {
+    "title": "FreeRTOS pada ESP32 Dual-Core (SMP)",
+    "body": "Core Pinning: fungsi xTaskCreatePinnedToCore() menempatkan task pada Core 0 (Pro CPU) atau Core 1 (App CPU).\n\nPemisahan beban kerja: Core 0 menangani protokol stack Wi-Fi/Bluetooth, Core 1 memproses aplikasi pengguna.\n\nSpinlocks: proteksi konkurensi lintas-core pada tingkat register perangkat keras.\n\nInter-core messaging: sinkronisasi antrian tetap transparan melintasi batas core prosesor.",
+    "notes": "Pemanfaatan arsitektur symmetric multiprocessing (SMP) pada mikrokontroler ESP32."
+  },
+  {
+    "title": "Alokasi Stack & Deteksi Overflow",
+    "body": "Ukuran stack per task: dialokasikan dalam satuan Word (4 byte pada arsitektur 32-bit).\n\nStack Overflow: terjadi ketika variabel lokal atau rekursi melebihi batas alokasi memori stack.\n\nWatermark Monitoring: fungsi uxTaskGetStackHighWaterMark() melacak batas minimum sisa stack yang tersisa.\n\nFreeRTOS Hook: vApplicationStackOverflowHook() menangkap pelanggaran memori sebelum korupsi meluas.",
+    "notes": "Praktik pencegahan kebocoran dan kehabisan memori stack pada firmware produksi."
+  },
+  {
+    "title": "Watchdog Timers (WDT) & Real-Time Deadlines",
+    "body": "Interrupt WDT (IWDT): mendeteksi jika interupsi ISR gagal keluar dalam jangka waktu kritis.\n\nTask WDT (TWDT): memantau apakah task prioritas tinggi secara rutin mereset timer (kicking the dog).\n\nReset deterministik: sistem melakukan reboot otomatis jika terjadi loop macet atau starvation tak terduga.\n\nDeadlines audit: setiap task waktu nyata harus memiliki batas atas eksekusi terburuk (WCET).",
+    "notes": "Membedah mekanisme pengawas perangkat keras untuk menjamin keandalan sistem jangka panjang."
+  },
+  {
+    "title": "Model Penjadwal & Simulator Python",
+    "body": "Simulasi diskrit: memodelkan arrival time, burst time, dan preemption berbasis tick waktu.\n\nVerifikasi urutan eksekusi: membuktikan task berprioritas lebih tinggi merebut kontrol seketika.\n\nUji ketahanan antrian: memverifikasi penolakan data secara aman saat batas antrian terlampaui.\n\nDeterministik 100%: output pengujian menghasilkan trace eksekusi yang dapat diverifikasi.",
+    "notes": "Membahas arsitektur modul pengujian simulasi Python yang memvalidasi konsep penjadwalan."
+  },
+  {
+    "title": "Firmware ESP32 Praktik: Producer-Consumer",
+    "body": "TaskSensor (Producer): membaca sampel acak dan menyuntikkannya ke dalam sensorQueue tiap 500 ms.\n\nTaskTelemetry (Consumer): menunggu data queue dan mencetak telemetri berstempel waktu secara serial.\n\nProteksi Mutex: printMutex melindungi akses bersama ke peripheral Serial UART.\n\nPenanganan Queue Full: mendeteksi overflow dan memberikan peringatan tanpa membuat sistem macet.",
+    "notes": "Ulasan kode C++ ESP32 nyata yang mengintegrasikan seluruh konsep konkurensi modul."
+  },
+  {
+    "title": "Evaluasi & Kriteria Rekayasa",
+    "body": "Akurasi prioritas: tidak boleh ada inversi tak termitigasi pada jalur data keselamatan.\n\nEfisiensi memori: optimasi alokasi stack task agar tidak memboroskan SRAM mikrokontroler.\n\nIsolasi kesalahan: kegagalan transmisi jaringan tidak boleh mengganggu akuisisi sensor lokal.",
+    "notes": "Standar evaluasi ketat untuk menilai rancangan konkurensi perangkat lunak tertanam."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 32",
+    "body": "RTOS menghadirkan determinisme waktu melalui preemptive fixed-priority scheduling.\n\nQueue dan Mutex menjamin pertukaran data yang aman bebas race conditions.\n\nPenerapan Watchdog Timer dan Priority Inheritance merupakan syarat mutlak sistem mission-critical.",
+    "notes": "Kesimpulan akhir modul arsitektur RTOS dan penjadwalan sistem tertanam."
+  }
+]

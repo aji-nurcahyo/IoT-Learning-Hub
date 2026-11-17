@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Edge AI, TinyML & Sensor Inference Architecture",
+    "body": "Transformasi komputasi edge: menjalankan model kecerdasan buatan pada mikrokontroler berdaya miliwatt.\n\nKelemahan Cloud AI sentral: biaya bandwidth raksasa, latensi ratusan milidetik, dan risiko privasi.\n\nTarget TinyML: prosesor ARM Cortex-M, Xtensa ESP32, dan RISC-V dengan memori SRAM < 512 KB.",
+    "notes": "Pengenalan arsitektur dan motivasi pergeseran inferensi AI menuju node edge tertanam."
+  },
+  {
+    "title": "Alur Kerja Rekayasa TinyML",
+    "body": "Pengumpulan data sensor: akuisisi sinyal frekuensi tinggi (IMU getaran, audio, sensor arus).\n\nPrapemrosesan & ekstraksi fitur: pemotongan jendela geser dan reduksi dimensi.\n\nPelatihan model: melatih arsitektur jaringan kompak (Dense, 1D-CNN) di workstation/cloud.\n\nOptimasi & kuantisasi: kompresi bobot float32 menjadi fixed-point integer INT8.\n\nPenerapan embedded: eksekusi langsung menggunakan framework seperti TensorFlow Lite Micro.",
+    "notes": "Menjelaskan siklus hidup rekayasa lengkap model pembelajaran mesin pada mikrokontroler."
+  },
+  {
+    "title": "Ekstraksi Fitur Domain Waktu",
+    "body": "Reduksi dimensi data: mengubah 500 sampel mentah menjadi vektor 4 fitur ringkas.\n\nMean & Offset: mendeteksi pergeseran gravitasi atau bias DC sensor.\n\nRoot Mean Square (RMS): metrik energi getaran standar industri (ISO 10816 untuk vibrasi mesin).\n\nPeak-to-Peak (P2P): mendeteksi lonjakan impak keausan bantalan bola secara seketika.\n\nZero Crossing Rate (ZCR): estimasi kasar frekuensi osilasi tanpa beban komputasi FFT.",
+    "notes": "Membedah formulasi matematis ekstraksi fitur statistik berdaya komputasi ringan."
+  },
+  {
+    "title": "Prinsip Kuantisasi Model (Quantization)",
+    "body": "Masalah floating-point: representasi FP32 membutuhkan 4 byte dan instruksi FPU khusus.\n\nKuantisasi INT8: pemetaan nilai bobot dan aktivasi ke dalam rentang integer bertanda [-128, 127].\n\nPersamaan kuantisasi: q = round(x / Scale) + ZeroPoint.\n\nKeuntungan masif: reduksi memori flash/RAM hingga 75% dan akselerasi integer SIMD.",
+    "notes": "Penjelasan teknis konversi presisi bobot deep learning menuju arsitektur integer."
+  },
+  {
+    "title": "TensorFlow Lite for Microcontrollers (TFLM)",
+    "body": "Desain minimalis: interpreter C++ murni tanpa alokasi memori dinamis (heap-free).\n\nTensor Arena: satu blok memori statis SRAM yang ditentukan di awal untuk seluruh aktivasi layer.\n\nPortabilitas luas: kompatibel dengan ESP-IDF, Arduino Core, Mbed OS, dan bare-metal C++.\n\nCMSIS-NN library: akselerasi assembly ARM untuk perkalian matriks integer fixed-point.",
+    "notes": "Meninjau arsitektur perangkat lunak interpreter machine learning untuk sistem mikrokontroler."
+  },
+  {
+    "title": "Studi Kasus: Predictive Maintenance Motor",
+    "body": "Masalah industri: kerusakan bantalan motor induksi memicu henti produksi (*downtime*) tak terduga.\n\nPemasangan sensor: akselerometer 3-sumbu terpasang langsung pada rumahan bantalan (*bearing housing*).\n\nPola getaran normal: gelombang sinus harmonik mulus beramplitudo rendah.\n\nPola bantalan rusak: lonjakan tajam transien impak berenergi tinggi.",
+    "notes": "Aplikasi nyata deteksi kerusakan mekanis menggunakan inferensi cerdas lokal."
+  },
+  {
+    "title": "Matematika Layer Terkuantisasi INT8",
+    "body": "Operasi Feedforward: Output = (Input_q * Weight_q) + Bias_q.\n\nAkumulator 32-bit: perkalian INT8 x INT8 ditampung pada register INT32 untuk mencegah overflow.\n\nRescaling output: perkalian integer digeser kembali menggunakan fixed-point multiplier.\n\nAktivasi ReLU: pemotongan nilai negatif dapat dilakukan secara instan dengan operasi perbandingan integer.",
+    "notes": "Penjelasan komputasi aritmatika fixed-point yang mendasari inferensi deep learning terkuantisasi."
+  },
+  {
+    "title": "Memory Constraints & Profiling",
+    "body": "Batas ketat RAM: mikrokontroler hanya memiliki 32 KB hingga 520 KB SRAM.\n\nBatas Flash: alokasi penyimpanan model bersaing dengan firmware sistem dan file web server.\n\nStatic Allocation: ketiadaan malloc() menjamin sistem tidak akan pernah crash akibat memory fragmentation.\n\nProfiling memori: memantau ukuran tensor arena dan stack usage pada setiap fase eksekusi.",
+    "notes": "Teknik manajemen memori ketat agar model AI dapat berjalan stabil tanpa crash."
+  },
+  {
+    "title": "Latensi Inferensi & Energy Budget",
+    "body": "Waktu eksekusi: inferensi model neural network kecil berlangsung dalam rentang 1-10 ms.\n\nKalkulasi energi: Energi = Tegangan x Arus x Waktu Inferensi.\n\nEfisiensi energi: menjalankan AI lokal 5 ms jauh lebih hemat daya daripada menyalakan Wi-Fi selama 2 detik.\n\nKombinasi low-power: mikrokontroler dapat langsung kembali ke deep sleep setelah inferensi selesai.",
+    "notes": "Menjelaskan mengapa inferensi lokal terbukti lebih hemat energi daripada transmisi radio awan."
+  },
+  {
+    "title": "Model Pelatihan & Transfer Learning",
+    "body": "Framework pelatihan: TensorFlow, PyTorch, atau Scikit-Learn pada lingkungan workstation/Python.\n\nDataset sintetis & augmentasi: penambahan derau Gaussian untuk meningkatkan ketahanan model.\n\nEvaluasi matriks konfusi: menjaga presisi dan recall agar tidak memicu alarm palsu (*false positives*).\n\nEkspor model: konversi model menjadi array heksadesimal C (`model_data.h`).",
+    "notes": "Alur penyiapan dan pelatihan model sebelum dikonversi menjadi representasi biner tertanam."
+  },
+  {
+    "title": "Verifikasi Simulasi Python Chapter 35",
+    "body": "Ekstraksi fitur nyata: menghitung Mean, RMS, P2P, dan ZCR dari jendela sinyal getaran.\n\nModel terkuantisasi: bobot INT8 mendeteksi kondisi normal vs anomali impak aus secara presisi.\n\nValidasi kuantisasi: penskalaan input kontinu menjadi integer INT8 terbukti bekerja mulus.\n\nHasil eksekusi: skenario normal dan anomali diverifikasi lulus assert matematis 100%.",
+    "notes": "Membahas output simulasi Python mandiri yang memverifikasi pipeline TinyML."
+  },
+  {
+    "title": "Edge Anomaly Detection: Autoencoder",
+    "body": "Keterbatasan data rusak: di pabrik riil, data kerusakan mesin sangat jarang ditemukan.\n\nPendekatan Unsupervised: latih Autoencoder hanya menggunakan data operasional normal.\n\nReconstruction Error: jika sinyal getaran rusak, Autoencoder gagal merekonstruksi sinyal dengan baik.\n\nPemberian skor anomali: jika error melebihi threshold batas atas, tandai sebagai anomali.",
+    "notes": "Membahas strategi deteksi anomali tanpa memerlukan data kerusakan berlabel."
+  },
+  {
+    "title": "Tantangan Drift Model & Pemeliharaan",
+    "body": "Perubahan lingkungan: pergantian musim atau penuaan mesin alami mengubah baseline getaran normal.\n\nConcept Drift: akurasi model dapat terdegradasi seiring waktu jika tidak diperbarui.\n\nOn-Device Learning vs OTA: mikrokontroler biasanya hanya menjalankan inferensi, pelatihan ulang via OTA.\n\nTelemetri metrik: node hanya mengirimkan skor anomali berkala ke dashboard pengawas.",
+    "notes": "Tantangan pemeliharaan jangka panjang model cerdas yang terpasang di lapangan."
+  },
+  {
+    "title": "Kriteria Keberhasilan Rekayasa TinyML",
+    "body": "Akurasi deteksi: minimal 95% sensitivitas terhadap pola impak kerusakan mekanis.\n\nZero False Alarms: meminimalkan alarm palsu yang dapat menghentikan lini produksi pabrik.\n\nEfisiensi komputasi: eksekusi inferensi tidak boleh menyebabkan starvation pada task RTOS lain.",
+    "notes": "Standar penilaian performa model kecerdasan buatan sistem tertanam."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 35",
+    "body": "TinyML menghadirkan kecerdasan otonom langsung pada sensor tanpa ketergantungan koneksi awan.\n\nEkstraksi fitur statistik domain waktu adalah teknik reduksi data yang cepat dan ampuh.\n\nKuantisasi INT8 adalah standar emas kompresi model deep learning untuk mikrokontroler.",
+    "notes": "Rangkuman menyeluruh materi Edge AI dan inferensi TinyML sistem tertanam."
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Industrial IoT, Modbus & OPC UA Architecture",
+    "body": "Revolusi Industri 4.0: interkoneksi mesin fisik lantai pabrik dengan platform analitik komputasi awan.\n\nPiramida Otomasi ISA-95: hierarki dari sensor field (Level 0) hingga level enterprise ERP (Level 4).\n\nTantangan konvergensi OT vs IT: perbedaan mendasar filosofi availability vs data confidentiality.",
+    "notes": "Pengenalan arsitektur otomasi industri dan evolusi menuju IIoT modern."
+  },
+  {
+    "title": "Karakteristik Domain OT vs IT",
+    "body": "Operational Technology (OT): kontrol mesin deterministik, latensi rendah (<10 ms), siklus hidup 15-20 tahun.\n\nInformation Technology (IT): skalabilitas data, throughput tinggi, siklus pembaruan perangkat lunak cepat.\n\nRisiko kegagalan: kegagalan OT dapat mengancam keselamatan fisik operator manusia dan merusak mesin.\n\nZona demiliterisasi (DMZ): isolasi jaringan kontrol pabrik dari internet menggunakan industrial gateway.",
+    "notes": "Membedah friksi teknis dan operasional antara tim engineering pabrik dan tim IT korporat."
+  },
+  {
+    "title": "Anatomi Protokol Modbus",
+    "body": "Standar industri tertua (1979): protokol Master-Slave tanpa enkripsi bawaan.\n\nModbus RTU: transmisi serial biner kompak berbasis bus diferensial RS-485 (dua kawat A/B).\n\nModbus TCP: enkapsulasi PDU Modbus ke dalam paket standar TCP/IP pada port default 502.\n\nKeterbatasan semantik: data hanya berupa deretan angka mentah tanpa unit pengukuran atau konteks.",
+    "notes": "Penjelasan sejarah, varian implementasi, dan popularitas abadi protokol Modbus."
+  },
+  {
+    "title": "Model Memori Data Modbus",
+    "body": "Discrete Inputs (10001-19999): status biner saklar/limit switch (Read-Only).\n\nCoils (00001-09999): relay atau kontaktor kendali motor biner (Read/Write).\n\nInput Registers (30001-39999): nilai analog 16-bit sensor arus/tegangan (Read-Only).\n\nHolding Registers (40001-49999): nilai parameter kontrol dan setpoint 16-bit (Read/Write).",
+    "notes": "Klasifikasi empat tabel memori register standar dalam spesifikasi Modbus."
+  },
+  {
+    "title": "Function Codes Modbus Kritis",
+    "body": "FC 01 (Read Coils) & FC 02 (Read Discrete Inputs): pembacaan status bit digital.\n\nFC 03 (Read Holding Registers): pengambilan multi-register parameter operasional.\n\nFC 04 (Read Input Registers): pembacaan nilai telemetri sensor analog.\n\nFC 05 & FC 06: penulisan tunggal coil atau holding register.\n\nFC 16 (Write Multiple Registers): konfigurasi massal parameter proses.",
+    "notes": "Rincian fungsi kode utama yang digunakan dalam instruksi komunikasi PLC."
+  },
+  {
+    "title": "Struktur Frame RTU & Algoritma CRC-16",
+    "body": "Anatomi frame: Slave ID (1B) + Function Code (1B) + Offset/Data (NB) + CRC-16 (2B).\n\nDeteksi galat transmisi: CRC-16 dengan polinomial 0xA001 dan inisialisasi 0xFFFF.\n\nLittle-Endian Checksum: byte rendah (LSB) ditransmisikan sebelum byte tinggi (MSB).\n\nInter-frame silence: jeda minimum 3.5 karakter waktu (t3.5) penanda awal dan akhir paket.",
+    "notes": "Membedah struktur biner paket dan komputasi matematis integritas frame serial."
+  },
+  {
+    "title": "Tantangan Representasi Nilai 32-Bit Float",
+    "body": "Register 16-bit: angka desimal float IEEE 754 memerlukan 2 holding register berturutan.\n\nEndianness mismatch: perbedaan urutan byte (Big-Endian vs Little-Endian).\n\nWord Swapping: register urutan [Reg0, Reg1] (AB CD) vs [Reg1, Reg0] (CD AB).\n\nStandardisasi mapping: dokumentasi register map pabrikan wajib diteliti sebelum decoding data.",
+    "notes": "Teknik pembacaan angka presisi ganda melintasi arsitektur register 16-bit."
+  },
+  {
+    "title": "Pengenalan OPC Unified Architecture",
+    "body": "Standar terbuka IEC 62541: interoperabilitas multi-vendor dari sensor hingga sistem enterprise.\n\nIndependensi platform: berjalan di Linux, Windows, macOS, hingga mikrokontroler embedded.\n\nModel data semantik: informasi diperkaya metadata lengkap, bukan sekadar indeks register buta.\n\nTransport layer: komunikasi biner efisien opc.tcp:// dan arsitektur pub-sub di atas MQTT/UDP.",
+    "notes": "Memperkenalkan paradigma baru OPC UA sebagai tulang punggung arsitektur manufaktur cerdas."
+  },
+  {
+    "title": "OPC UA Information Model: Node Tree",
+    "body": "Node Classes: Objects (folder/mesin), Variables (nilai data), Methods (perintah kendali).\n\nAtribut Variabel: Value, DataType, Timestamp (waktu sumber), dan Quality (Good/Bad/Uncertain).\n\nStruktur NodeId: kombinasi Namespace Index (ns) dan Identifier (s/i/g) yang unik global.\n\nBrowsing hierarki: klien dapat menavigasi pohon node secara dinamis tanpa register manual.",
+    "notes": "Penjelasan struktur data graf berarah berorientasi objek dalam spesifikasi OPC UA."
+  },
+  {
+    "title": "Keamanan Siber Bawaan pada OPC UA",
+    "body": "Otentikasi sertifikat X.509: validasi identitas aplikasi klien dan server secara timbal-balik.\n\nEnkripsi saluran: proteksi kerahasiaan payload menggunakan AES-128 atau AES-256.\n\nPenandatanganan digital: jaminan integritas data bebas manipulasi serangan Man-in-the-Middle.\n\nRole-Based Access Control (RBAC): pembatasan hak akses baca, tulis, dan eksekusi per user.",
+    "notes": "Arsitektur keamanan bawaan OPC UA yang memenuhi standar regulasi industri modern."
+  },
+  {
+    "title": "Peran Industrial Edge Gateway",
+    "body": "Protokol Translation: konversi frame Modbus RTU/TCP lokal menjadi variabel OPC UA atau topik MQTT.\n\nPenyangga data lokal: buffer penyimpanan sementara saat koneksi cloud terputus.\n\nEdge Filtering & Preprocessing: eliminasi derau dan kalkulasi nilai rata-rata sebelum uplink.\n\nIsolasi fisik OT: gateway bertindak sebagai jembatan dua kartu jaringan independen (Dual NIC).",
+    "notes": "Membahas peran krusial gateway industri dalam modernisasi mesin pabrik warisan lama."
+  },
+  {
+    "title": "Verifikasi Simulasi Protokol Industri",
+    "body": "ModbusSlaveSimulator: parsing permintaan FC 03, evaluasi CRC, dan pembuatan respon otomatis.\n\nValidasi CRC RTU: memastikan integritas biner sesuai standar Modbus Association.\n\nOpcUaNodeTreeSimulator: pembacaan variabel ber-metadata (nilai, satuan teknik, dan status mutu).\n\nEksekusi deterministik: pengujian Python mandiri membuktikan akurasi decoding 100%.",
+    "notes": "Menjelaskan implementasi modul pengujian perangkat lunak simulasi Python."
+  },
+  {
+    "title": "Kasus Nyata: Monitoring Motor Induksi 3 Fasa",
+    "body": "Akuisisi data: Power meter membaca arus (A), tegangan (V), dan faktor daya (cos phi) via RS-485.\n\nPemetaan Modbus: Arus motor dipetakan pada holding register 40101-40102 (32-bit float).\n\nPublikasi OPC UA: data ditransformasikan ke Node Machine1.Drive.Current dengan unit Amperes.\n\nDeteksi anomali: kenaikan suhu bantalan memicu alarm prediktif sebelum motor terbakar.",
+    "notes": "Contoh implementasi riil end-to-end pemantauan kondisi mesin di industri manufaktur."
+  },
+  {
+    "title": "Kriteria Keandalan Komunikasi Pabrik",
+    "body": "Timeout handling: penanganan kegagalan slave yang tidak merespon dalam batas waktu terdefinisi.\n\nBus termination: resistor penutup 120 ohm wajib dipasang di kedua ujung kabel RS-485.\n\nGalvanic isolation: optocoupler isolasi melindungi rangkaian mikrokontroler dari surge tegangan.\n\nZero-trust security: hindari menyambungkan jalur Modbus TCP langsung ke jaringan kantor.",
+    "notes": "Pedoman instalasi fisik dan keamanan jaringan komunikasi industri."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 33",
+    "body": "Konvergensi OT/IT membutuhkan jembatan protokol antara dunia serial mesin dan internet.\n\nModbus tetap dominan karena kesederhanaannya, namun membutuhkan gateway untuk pengamanan.\n\nOPC UA menetapkan standar industri masa depan dengan semantik kaya dan kriptografi tangguh.",
+    "notes": "Rangkuman menyeluruh materi protokol dan arsitektur Industrial IoT."
+  }
+]

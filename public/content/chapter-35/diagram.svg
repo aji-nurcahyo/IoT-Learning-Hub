@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .box-sensor { fill: #1e293b; stroke: #f59e0b; stroke-width: 2; rx: 8; }
+      .box-feat { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .box-quant { fill: #1e293b; stroke: #a855f7; stroke-width: 2; rx: 8; }
+      .box-infer { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .title { fill: #f8fafc; font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+      .label { fill: #cbd5e1; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; text-anchor: middle; }
+      .label-mono { fill: #38bdf8; font-family: ui-monospace, monospace; font-size: 12px; text-anchor: middle; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .wave-norm { stroke: #10b981; stroke-width: 2; fill: none; }
+      .wave-anom { stroke: #f43f5e; stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Header -->
+  <text x="400" y="35" class="title">Arsitektur Pipeline Ekstraksi Fitur &amp; Inferensi TinyML INT8</text>
+  <text x="400" y="58" class="label">Klasifikasi Anomali Getaran Mesin Langsung pada Mikrokontroler Edge</text>
+
+  <!-- Pipeline Stages -->
+  <g transform="translate(30, 90)">
+    <!-- Stage 1: Sinyal Sensor -->
+    <rect x="0" y="0" width="160" height="150" class="box-sensor" />
+    <text x="80" y="25" class="title" fill="#f59e0b" font-size="14">1. Sensor IMU</text>
+    <text x="80" y="45" class="label" font-size="11">Sampling 100-1000 Hz</text>
+    <rect x="15" y="60" width="130" height="30" rx="4" fill="#334155" />
+    <text x="80" y="80" class="label-mono">Raw Waveform</text>
+    <rect x="15" y="100" width="130" height="30" rx="4" fill="#334155" />
+    <text x="80" y="120" class="label-mono">Sliding Window</text>
+
+    <!-- Stage 2: Ekstraksi Fitur -->
+    <rect x="195" y="0" width="160" height="150" class="box-feat" />
+    <text x="275" y="25" class="title" fill="#38bdf8" font-size="14">2. Feature Extraction</text>
+    <text x="275" y="45" class="label" font-size="11">Domain Waktu Ringkas</text>
+    <rect x="210" y="60" width="130" height="30" rx="4" fill="#334155" />
+    <text x="275" y="80" class="label-mono">RMS &amp; P2P</text>
+    <rect x="210" y="100" width="130" height="30" rx="4" fill="#334155" />
+    <text x="275" y="120" class="label-mono">Mean &amp; ZCR</text>
+
+    <!-- Stage 3: Kuantisasi INT8 -->
+    <rect x="390" y="0" width="160" height="150" class="box-quant" />
+    <text x="470" y="25" class="title" fill="#a855f7" font-size="14">3. INT8 Quantization</text>
+    <text x="470" y="45" class="label" font-size="11">FP32 ke Fixed-Point</text>
+    <rect x="405" y="60" width="130" height="30" rx="4" fill="#334155" />
+    <text x="470" y="80" class="label-mono">q = (x/S) + Z</text>
+    <rect x="405" y="100" width="130" height="30" rx="4" fill="#334155" />
+    <text x="470" y="120" class="label-mono">Memori 75% Hemat</text>
+
+    <!-- Stage 4: Inferensi Mikrokontroler -->
+    <rect x="585" y="0" width="160" height="150" class="box-infer" />
+    <text x="665" y="25" class="title" fill="#10b981" font-size="14">4. Dense Inference</text>
+    <text x="665" y="45" class="label" font-size="11">Mikrodetik Execution</text>
+    <rect x="600" y="60" width="130" height="30" rx="4" fill="#334155" />
+    <text x="665" y="80" class="label-mono">Dot Product SIMD</text>
+    <rect x="600" y="100" width="130" height="30" rx="4" fill="#334155" />
+    <text x="665" y="120" class="label-mono">NORMAL / FAULT</text>
+
+    <!-- Connecting Arrows -->
+    <path d="M 160 75 L 195 75" class="arrow" />
+    <path d="M 355 75 L 390 75" class="arrow" />
+    <path d="M 550 75 L 585 75" class="arrow" />
+  </g>
+
+  <!-- Waveform Comparison Panel -->
+  <g transform="translate(40, 270)">
+    <rect x="0" y="0" width="720" height="180" class="box" />
+    <text x="360" y="25" class="title">Visualisasi Profil Gelombang Sinyal Vibrasi Mesin</text>
+
+    <!-- Normal Waveform (Green) -->
+    <g transform="translate(40, 45)">
+      <text x="0" y="20" class="label-mono" fill="#10b981">Pola Normal (Harmonik Halus): RMS = 0.188 | P2P = 0.55</text>
+      <line x1="0" y1="45" x2="300" y2="45" stroke="#475569" stroke-width="1" />
+      <path d="M 0 45 Q 25 25 50 45 T 100 45 T 150 45 T 200 45 T 250 45 T 300 45" class="wave-norm" />
+      <text x="150" y="75" class="label" fill="#10b981" font-size="11">&#x2714; Skor Normal: 255 (Prediksi: NORMAL)</text>
+    </g>
+
+    <!-- Anomaly Waveform (Red) -->
+    <g transform="translate(380, 45)">
+      <text x="0" y="20" class="label-mono" fill="#f43f5e">Pola Kerusakan Bantalan: RMS = 1.903 | P2P = 5.90</text>
+      <line x1="0" y1="45" x2="300" y2="45" stroke="#475569" stroke-width="1" />
+      <path d="M 0 45 L 20 40 L 40 10 L 60 75 L 80 45 L 120 45 L 140 5 L 160 85 L 180 45 L 300 45" class="wave-anom" />
+      <text x="150" y="75" class="label" fill="#f43f5e" font-size="11">&#x26A0; Skor Anomali: 3110 (Prediksi: BEARING FAULT)</text>
+    </g>
+
+    <text x="360" y="155" class="label" fill="#cbd5e1">Pengurangan Dimensi: 80 Sampel Sensor Sinyal Mentah &#x2192; 2 Fitur INT8 Terkuantisasi (Waktu Inferensi &lt; 50 &mu;s)</text>
+  </g>
+</svg>

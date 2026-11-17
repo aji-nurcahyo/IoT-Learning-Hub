@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Scalable IoT Architecture & Deployment",
+    "body": "Skala masif IoT: transisi dari puluhan node uji laboratorium menuju jutaan perangkat terhubung.\n\nTantangan fisik: keterbatasan soket TCP sistem operasi, throughput pesan, dan bandwidth jaringan.\n\nTarget arsitektur: ketersediaan 99.999% (High Availability) tanpa Single Point of Failure.",
+    "notes": "Pengenalan prinsip perancangan arsitektur IoT terdistribusi skala perusahaan."
+  },
+  {
+    "title": "Skalabilitas Vertikal vs Horizontal",
+    "body": "Vertical Scaling (Scale Up): menambah kapasitas CPU, RAM, dan NVMe pada satu server tunggal.\n\nBatas Scale Up: biaya perangkat keras eksponensial dan tetap memiliki titik kegagalan tunggal.\n\nHorizontal Scaling (Scale Out): menambah node server komoditas dalam sebuah kluster terkoordinasi.\n\nPrinsip Cloud Native: sistem dirancang untuk elastis, dapat tumbuh dan menyusut secara dinamis.",
+    "notes": "Membandingkan kelebihan dan batasan antara pendekatan scaling up dan scaling out."
+  },
+  {
+    "title": "Arsitektur Kluster Broker MQTT",
+    "body": "Broker tunggal: mentok pada batasan file descriptor (ulimit -n) dan saturasi CPU.\n\nKluster EMQX / VerneMQ: node broker saling terhubung melalui protokol Erlang distribution / Raft.\n\nRouting global: pesan dipublikasikan pada Node A dapat dikonsumsi oleh pelanggan di Node C secara transparan.\n\nSession State Replication: sesi klien disimpan terdistribusi untuk pemulihan cepat saat failover.",
+    "notes": "Menjelaskan bagaimana broker MQTT modern bekerja bersama dalam satu kluster terpadu."
+  },
+  {
+    "title": "Layer-4 vs Layer-7 Load Balancing",
+    "body": "Layer-4 (TCP Proxy): HAProxy atau AWS NLB meneruskan aliran paket TCP murni dengan overhead minimal.\n\nLayer-7 (Application Proxy): NGINX atau Envoy mampu membaca header HTTP/WebSocket dan routing berbasis path.\n\nMetode pembagian beban: Round-Robin, Least Connections, dan IP-Hash.\n\nTLS Termination: pemusatan proses dekripsi sertifikat di load balancer untuk meringankan beban broker.",
+    "notes": "Pemilihan jenis load balancer yang tepat untuk menangani jutaan koneksi soket persisten."
+  },
+  {
+    "title": "Partisi Data & Consistent Hashing",
+    "body": "Konsep Sharding: memecah aliran data raksasa menjadi N partisi antrean independen.\n\nKunci partisi (Device ID): Partition = Hash(Device_ID) % N_Partitions.\n\nIn-order Delivery: menjamin pembacaan telemetri dari satu perangkat tertentu selalu diproses berurutan.\n\nBeban seimbang: fungsi hash seragam (MD5/MurmurHash) menghasilkan sebaran beban merata 25% per partisi.",
+    "notes": "Penjelasan formulasi matematika partisi antrean terdistribusi."
+  },
+  {
+    "title": "Shared Subscriptions pada MQTT 5.0",
+    "body": "Standar MQTT v5: fitur $share/group_name/topic mengakhiri kebutuhan proxy kustom.\n\nDistribusi pesan konsumen: pesan dari topik yang sama dibagi secara bergantian ke pool worker.\n\nSkalabilitas konsumen: menambah jumlah worker pemroses secara instan saat antrean menumpuk.\n\nRedundansi otomatis: jika satu worker mati, broker mengalihkan aliran pesan ke worker lain.",
+    "notes": "Membedah fitur native MQTT 5.0 yang mendukung pemrosesan paralel skala besar."
+  },
+  {
+    "title": "Fenomena & Mitigasi Backpressure",
+    "body": "Penyebab backpressure: laju kedatangan pesan (Ingestion Rate) melebihi kapasitas tulis database.\n\nBahaya fatal: antrean RAM membengkak tanpa kendali hingga memicu crash Out-Of-Memory (OOM).\n\nKebijakan Drop: strategi membuang pesan usang (Drop Oldest) pada data telemetri berkala.\n\nPushback / Rate Limiting: instruksi pelambatan pengiriman kepada node sensor edge.",
+    "notes": "Teknik rekayasa keandalan untuk melindungi sistem backend dari keruntuhan kaskade."
+  },
+  {
+    "title": "Peran Message Bus Terdistribusi (Kafka)",
+    "body": "Log persisten terdistribusi: Apache Kafka / Redpanda bertindak sebagai penyangga utama beban puncak.\n\nDurable storage: pesan tersimpan di disk NVMe, memungkinkan replay data saat database down.\n\nConsumer Groups: abstraksi worker paralel yang membaca partisi data secara independen.\n\nPemisahan lapisan (Decoupling): lapisan penerima pesan tidak terpengaruh oleh kelambatan lapisan analitik.",
+    "notes": "Integrasi sistem perantara pesan terdistribusi sebagai buffer keselamatan sistem."
+  },
+  {
+    "title": "Orkestrasi Kontainer: Docker & Kubernetes",
+    "body": "Kontainerisasi: mengemas gateway, worker, dan broker ke dalam citra Docker yang reproducible.\n\nKubernetes (K8s): platform orkestrasi otomatis untuk deployment, scaling, dan manajemen kontainer.\n\nHorizontal Pod Autoscaler (HPA): menambah jumlah replika worker otomatis berdasarkan metrik CPU/Queue.\n\nSelf-healing pods: pod yang mengalami crash langsung di-restart secara otonom oleh Kubernetes.",
+    "notes": "Membahas standardisasi operasional deployment modern menggunakan kontainer."
+  },
+  {
+    "title": "Optimasi Kernel Linux untuk IoT Server",
+    "body": "Meningkatkan limit file descriptor: konfigurasi fs.file-max dan nofile hingga 1.000.000.\n\nTuning TCP Stack: memperbesar ukuran buffer somaxconn, tcp_max_syn_backlog, dan tcp_rmem/wmem.\n\nPort ephemeral: memperluas rentang ip_local_port_range untuk outgoing connection.\n\nTCP Keepalive: mendeteksi koneksi mati (zombie sockets) lebih cepat guna membebaskan RAM.",
+    "notes": "Konfigurasi tingkat rendah kernel Linux untuk membuka kapasitas throughput maksimal."
+  },
+  {
+    "title": "Verifikasi Simulasi Kluster Python",
+    "body": "PartitionedBrokerCluster: simulasi pembagian 4 partisi deterministik dari 100 perangkat IoT.\n\nDistribusi seimbang: terbukti menghasilkan sebaran [25, 24, 23, 28] tanpa ada partisi kosong.\n\nUji batas backpressure: kapasitas partisi 50 pesan menolak 5 pesan berlebih secara aman.\n\nBatch consumption: worker berhasil menguras 20 pesan batch secara paralel dan efisien.",
+    "notes": "Ulasan hasil eksekusi pengujian skrip simulasi Python yang membuktikan konsep arsitektur."
+  },
+  {
+    "title": "Observabilitas Sistem Skala Besar",
+    "body": "Metrik Ingestion: memantau laju Messages/Sec, Connected Clients, dan Network In/Out.\n\nPrometheus & Grafana: visualisasi metrik latensi antrean dan utilisasi CPU/Memory cluster.\n\nDistributed Tracing: pelacakan perjalanan paket telemetri dari edge ke cloud menggunakan OpenTelemetry.\n\nAlerting threshold: notifikasi instan ketika kedalaman antrean partisi melebihi 80% batas aman.",
+    "notes": "Pentingnya visibilitas menyeluruh terhadap kesehatan infrastruktur berskala masif."
+  },
+  {
+    "title": "Strategi Multi-Region & Edge Distribution",
+    "body": "Geo-distributed deployment: menempatkan titik penerima (Point of Presence) dekat dengan lokasi perangkat.\n\nAnycast DNS / BGP Routing: mengarahkan koneksi perangkat secara otomatis ke data center terdekat.\n\nReplikasi asinkron: sinkronisasi data antar-region tanpa mengorbankan latensi koneksi lokal.\n\nResiliensi bencana: kegagalan total satu data center di-failover ke wilayah cadangan.",
+    "notes": "Arsitektur global multi-region untuk layanan IoT dengan cakupan benua."
+  },
+  {
+    "title": "Kriteria Evaluasi Kinerja Arsitektur",
+    "body": "P99 Ingestion Latency: 99% pesan harus terserap dan terdistribusi ke partisi dalam waktu < 20 ms.\n\nLinear Scalability: penambahan 2x node server harus meningkatkan kapasitas throughput mendekati 2x lipat.\n\nZero Message Loss: telemetri penting (QoS 1) tidak boleh hilang selama proses failover server.",
+    "notes": "Metrik tolak ukur keberhasilan rekayasa skalabilitas platform IoT."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 37",
+    "body": "Skalabilitas IoT masif dicapai melalui kluster horizontal dan partisi data berbasis hash deterministik.\n\nKontrol backpressure adalah mekanisme pertahanan esensial terhadap lonjakan trafik data sensor.\n\nOrkestrasi kontainer dan tuning kernel Linux menjadi fondasi operasional infrastruktur modern.",
+    "notes": "Rangkuman menyeluruh modul skalabilitas arsitektur dan deployment sistem IoT."
+  }
+]

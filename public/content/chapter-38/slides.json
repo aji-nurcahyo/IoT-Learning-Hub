@@ -1,0 +1,72 @@
+[
+  {
+    "title": "IoT Testing, Fault Injection & Reliability",
+    "body": "Realitas lingkungan IoT: interferensi radio, fluktuasi catu daya, dan keausan mekanis perangkat keras.\n\nPrinsip Chaos Engineering: sengaja merusak sistem dalam kondisi terkontrol untuk menguji ketahanannya.\n\nTujuan rekayasa: kegagalan anggun (graceful degradation) dan pemulihan mandiri (autonomous self-healing).",
+    "notes": "Pengenalan filosofi pengujian keandalan dan rekayasa ketahanan sistem IoT."
+  },
+  {
+    "title": "Piramida Pengujian Sistem IoT",
+    "body": "Unit Tests: verifikasi logika parsing data models, algoritma filter, dan kalkulasi matematis driver.\n\nIntegration Tests: pengujian protokol komunikasi jaringan (MQTT broker, TLS handshake, database).\n\nHardware-in-the-Loop (HIL): menghubungkan mikrokontroler fisik ke instrumen simulator lingkungan nyata.\n\nSystem Acceptance Tests (SAT): validasi alur kerja operasional end-to-end dari sensor hingga aplikasi cloud.",
+    "notes": "Menjelaskan tingkatan pengujian sistem tertanam dari unit terkecil hingga sistem terpadu."
+  },
+  {
+    "title": "Konsep Fault Injection Testing",
+    "body": "Penyuntikan kesalahan aktif: memanipulasi sinyal listrik atau aliran paket data secara sengaja.\n\nDomain jaringan: packet drop, korupsi bit, duplikasi pesan, dan latensi jitter ekstrem.\n\nDomain daya: fluktuasi tegangan (brownout), pemutusan listrik mendadak, dan lonjakan transient.\n\nDomain sensor: menyuntikkan nilai di luar jangkauan (out-of-bounds) dan kehilangan sinyal ADC.",
+    "notes": "Klasifikasi ragam teknik penyuntikan kesalahan perangkat lunak dan perangkat keras."
+  },
+  {
+    "title": "Bahaya Fenomena Power Brownout",
+    "body": "Bukan sekadar mati lampu: tegangan turun di bawah ambang batas minimum logika (misal 3.3V turun ke 2.2V).\n\nDampak fatal: CPU crash, register acak (undefined state), dan korupsi fatal pada memori flash SPI.\n\nPenyebab umum: lonjakan arus sesaat radio transmisi (Wi-Fi/Cellular burst) pada baterai yang menua.\n\nSolusi sirkuit: Brownout Detector (BOD) internal yang menahan CPU dalam status RESET perangkat keras.",
+    "notes": "Membedah ancaman brownout terhadap integritas data dan kestabilan mikrokontroler."
+  },
+  {
+    "title": "Pola Arsitektur Store-and-Forward",
+    "body": "Ketahanan jaringan nirkabel: node sensor harus siap menghadapi kondisi offline selama berjam-jam.\n\nRing-Buffer Lokal: menyimpan paket telemetri di memori SRAM RTC atau partisi Flash LittleFS.\n\nJaminan data utuh: pesan yang tertahan dikuras secara berurutan segera setelah koneksi pulih.\n\nKebijakan batas antrean: strategi penanganan overflow (Drop Oldest vs Reject) saat buffer penuh.",
+    "notes": "Penjelasan pola penyimpanan sementara untuk menjamin nol kehilangan data operasional."
+  },
+  {
+    "title": "Analisis FMEA (Failure Mode and Effects)",
+    "body": "Metodologi rekayasa proaktif: membedah seluruh potensi titik kegagalan sebelum produksi massal.\n\nKomponen evaluasi: Severity (S), Occurrence (O), dan Detection (D) dalam skala 1 hingga 10.\n\nRisk Priority Number: RPN = S x O x D.\n\nTindakan korektif: subsistem dengan skor RPN tertinggi wajib mendapatkan prioritas mitigasi desain.",
+    "notes": "Penerapan matriks FMEA untuk audit keandalan perangkat keras dan lunak IoT."
+  },
+  {
+    "title": "Metrik Keandalan: MTBF & MTTR",
+    "body": "Mean Time Between Failures (MTBF): rata-rata jam operasional normal di antara dua insiden kerusakan.\n\nFormula MTBF: (Total Waktu Operasi - Total Waktu Perbaikan) / Jumlah Kejadian Rusak.\n\nMean Time To Repair (MTTR): rata-rata waktu yang dibutuhkan untuk mendiagnosis dan memulihkan sistem.\n\nFormula MTTR: Total Waktu Perbaikan / Jumlah Kejadian Rusak.",
+    "notes": "Definisi matematis indikator keandalan waktu operasional sistem industri."
+  },
+  {
+    "title": "Kalkulasi Ketersediaan Sistem (Availability)",
+    "body": "Rasio ketersediaan: Availability A = MTBF / (MTBF + MTTR).\n\nStandar Five Nines: 99.999% ketersediaan hanya mengizinkan downtime 5.26 menit per tahun.\n\nDampak MTTR: mempercepat deteksi dan pemulihan otomatis (self-healing) mendongkrak ketersediaan secara drastis.\n\nSLA Compliance: kepatuhan terhadap Service Level Agreement berbasis bukti log pengujian terverifikasi.",
+    "notes": "Penjelasan korelasi langsung antara percepatan pemulihan (MTTR) dan tingkat ketersediaan."
+  },
+  {
+    "title": "Simulasi Fault Injection Python",
+    "body": "ResilientDeviceClient: pemodelan klien tangguh dengan kapasitas buffer offline terintegrasi.\n\nUji Packet Drop: penyuntikan kegagalan jaringan 3 siklus berhasil ditahan dan dikuras tuntas.\n\nUji Brownout: mendeteksi status reboot otonom dan pemulihan state operasional tanpa crash.\n\nHasil eksekusi: sistem mencapai MTBF 2187 jam dan ketersediaan 99.863% secara deterministik.",
+    "notes": "Membahas output simulasi Python mandiri yang memverifikasi seluruh skenario pengujian."
+  },
+  {
+    "title": "Hardware Watchdog & Recovery",
+    "body": "Hardware Watchdog Timer: penghitung waktu mundur independen yang mereset CPU jika macet.\n\nWindowed Watchdog: mendeteksi jika task dieksekusi terlalu cepat atau terlalu lambat dari toleransi waktu.\n\nBoot Count Tracking: menghitung frekuensi reboot beruntun untuk mendeteksi bootloop firmware.\n\nSafe Mode Fallback: masuk ke firmware darurat minimalis jika terjadi kegagalan berulang 3 kali.",
+    "notes": "Peran watchdog perangkat keras dalam menjamin sistem tidak pernah membeku di lapangan."
+  },
+  {
+    "title": "Verifikasi Regresi & Automated Test Pipeline",
+    "body": "Continuous Integration (CI): setiap commit kode wajib memicu eksekusi seluruh rangkaian pengujian.\n\nSimulasi virtual: pengujian skrip Python memvalidasi algoritma sebelum flashing perangkat keras.\n\nIntegritas bukti: pencatatan SHA-256 pada log outputs.md menjamin keaslian hasil pengujian.\n\nZero Flakiness: pengujian dirancang deterministik dan bebas dependensi acak yang tidak terkontrol.",
+    "notes": "Best practices otomasi pengujian keandalan dalam pipeline pengembangan rekayasa."
+  },
+  {
+    "title": "Uji Lingkungan Fisik (Environmental Stress)",
+    "body": "Thermal Chamber: pengujian operasional pada rentang suhu ekstrem industri (-40 C hingga +85 C).\n\nVibration Table: simulasi getaran mesin atau transportasi kargo untuk menguji sambungan solder PCB.\n\nElectrostatic Discharge (ESD): penyuntikan lonjakan tegangan statis hingga 8 kV pada casing.\n\nIngress Protection (IP): sertifikasi ketahanan debu dan air (misalnya rating IP67 / IP68).",
+    "notes": "Meninjau pengujian stres fisik laboratorium perangkat keras sebelum sertifikasi edar."
+  },
+  {
+    "title": "Evaluasi & Kriteria Keandalan Sistem",
+    "body": "Zero Data Corruption: tidak ada data rusak yang diteruskan ke database akibat interferensi fisik.\n\nAutonomous Reconnection: jaringan yang putus wajib terhubung kembali otomatis tanpa intervensi manusia.\n\nAvailability Compliance: memenuhi target ketersediaan minimal 99.8% pada uji stres beban.",
+    "notes": "Standar kelulusan evaluasi keandalan dan ketahanan sistem IoT."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 38",
+    "body": "Penyuntikan kesalahan (fault injection) adalah metode ilmiah membuktikan ketahanan sistem IoT.\n\nStore-and-forward offline buffer dan brownout reset adalah pilar firmware tahan banting.\n\nMetrik MTBF, MTTR, dan Availability mengkuantifikasi mutu operasional platform secara objektif.",
+    "notes": "Rangkuman menyeluruh modul pengujian, injeksi gangguan, dan rekayasa keandalan."
+  }
+]

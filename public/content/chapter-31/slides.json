@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Low-Power Design & Energy Architecture",
+    "body": "Paradigma hemat energi: mayoritas node IoT berada pada kondisi idle > 95% masa hidupnya.\n\nKomponen kritis: mikrokontroler, transceiver radio, sensor eksternal, dan efisiensi konverter LDO/buck.\n\nMetrik fundamental: muatan listrik total (Coulomb) per siklus operasional, bukan sekadar arus puncak.",
+    "notes": "Membahas pentingnya arsitektur hemat daya pada perangkat edge nirkabel bertenaga baterai."
+  },
+  {
+    "title": "Taksonomi Mode Daya Mikrokontroler",
+    "body": "Active Mode: seluruh core CPU, osilator kecepatan tinggi, dan periferal beroperasi (80-240 mA).\n\nModem-sleep: CPU aktif namun modem nirkabel Wi-Fi/BLE dimatikan (20-30 mA).\n\nLight-sleep: osilator utama dihentikan sementara; memori digital terjaga (< 2 mA).\n\nDeep-sleep: hanya domain RTC dan register slow-memory yang dialiri daya (< 15 uA).",
+    "notes": "Memahami pemisahan power plane internal antara subsistem komputasi berat dan timer RTC."
+  },
+  {
+    "title": "Arsitektur Power Domain ESP32",
+    "body": "Main System: Core Xtensa dual-core, SRAM 520 KB, radio Wi-Fi/BT.\n\nRTC Power Domain: RTC Controller, 8 KB Fast Memory, 8 KB Slow Memory.\n\nULP Co-processor: prosesor FSM berdaya ultra-rendah yang mampu membaca sensor I2C/ADC saat CPU tidur.\n\nInternal LDO: efisiensi regulator saat arus beban turun drastis ke level mikroampere.",
+    "notes": "Menjelaskan mekanisme power gating internal ESP32 yang mematikan tegangan ke core utama."
+  },
+  {
+    "title": "Wake-up Sources & RTC Triggers",
+    "body": "RTC Timer: pemicu periodik internal berbasis kristal 32.768 kHz atau RC oscillator.\n\nExternal Wakeup (EXT0): bangun berdasarkan perubahan logika pada satu pin GPIO RTC.\n\nExternal Wakeup (EXT1): logika kombinasi bitmask pada banyak pin GPIO RTC secara simultan.\n\nULP Trigger: dibangunkan ketika pembacaan sensor analog melebihi ambang batas tertentu.",
+    "notes": "Membahas teknik pemilihan wake-up source sesuai kebutuhan aplikasi pemantauan."
+  },
+  {
+    "title": "Matematika Muatan Listrik & Arus Rata-rata",
+    "body": "Muatan per siklus: Q = (I_active * T_active) + (I_sleep * T_sleep).\n\nArus rata-rata: I_avg = Q_cycle / T_cycle.\n\nAnalisis sensitivitas: reduksi waktu aktif 100 ms sering kali lebih berdampak daripada memangkas arus sleep 1 uA.\n\nOptimasi transfer: kompresi payload dan koneksi cepat (Wi-Fi Fast Connect / ESP-NOW).",
+    "notes": "Penjelasan formulasi integral arus terhadap waktu untuk memperoleh konsumsi muatan nyata."
+  },
+  {
+    "title": "Estimasi Masa Pakai Baterai Riil",
+    "body": "Kapasitas terpakai: C_usable = C_nominal * faktor derating (0.80 - 0.85).\n\nDampak suhu ekstrem: kapasitas baterai kimia menurun signifikan pada suhu rendah (< 0 C).\n\nSelf-discharge rate: arus bocor kimia berkisar antara 1% hingga 3% per tahun.\n\nEstimasi operasional: Lifetime = C_usable / I_avg.",
+    "notes": "Menjelaskan mengapa baterai tidak pernah bisa dikuras hingga 100% dari kapasitas teoretisnya."
+  },
+  {
+    "title": "Sensor Duty Cycling",
+    "body": "Siklus tugas: rasio waktu aktif terhadap periode siklus total (Duty Cycle = T_active / T_total).\n\nPemanasan sensor (warm-up time): sensor gas memerlukan hitungan detik, sensor suhu hanya milidetik.\n\nStrategi burst reading: kumpulkan banyak sampel dalam satu sesi aktif singkat.\n\nPengelompokan transmisi (batching): akumulasi 10 sampel di RTC RAM sebelum menyalakan radio.",
+    "notes": "Teknik penjadwalan sensor untuk menekan konsumsi energi tanpa mengorbankan resolusi temporal."
+  },
+  {
+    "title": "Peripheral Power Gating",
+    "body": "Masalah arus parasit: sensor analog/I2C sering menarik arus statis 100-500 uA saat idle.\n\nHigh-Side Switching: MOSFET P-Channel atau IC load switch memutus VDD sensor saat tidur.\n\nIsolasi bus I2C: pin pull-up harus diperhatikan agar tidak terjadi leakage melalui diode proteksi internal.\n\nWaktu stabilisasi daya: berikan penundaan beberapa milidetik setelah saklar dinyalakan sebelum membaca ADC.",
+    "notes": "Pentingnya memutus suplai daya fisik periferal eksternal menggunakan saklar semikonduktor."
+  },
+  {
+    "title": "RTC Memory & State Preservation",
+    "body": "Variabel RTC: deklarasi dengan penanda atribut RTC_DATA_ATTR tersimpan di RTC Slow Memory.\n\nMempertahankan counter boot: pencatatan indeks telemetri tanpa menulis flash berulang kali.\n\nMencegah keausan Flash (wear-out): NVS flash memiliki batas siklus tulis 100.000 kali, SRAM tidak terbatas.\n\nKecepatan pemulihan: pembacaan RTC RAM berlangsung dalam skala nanodetik tanpa inisialisasi SPI.",
+    "notes": "Memanfaatkan memori statis RTC untuk mempertahankan status aplikasi antar siklus deep sleep."
+  },
+  {
+    "title": "Profil Energi ESP-NOW vs Wi-Fi TCP",
+    "body": "Wi-Fi TCP/IP standar: waktu asosiasi, DHCP, dan handshake TLS memerlukan 2000-4000 ms.\n\nESP-NOW / 802.15.4: komunikasi layer-2 tanpa asosiasi dan DHCP memerlukan waktu < 50 ms.\n\nPenghematan daya masif: penurunan waktu aktif radio sebesar 95% memperpanjang usia baterai secara eksponensial.\n\nArsitektur gateway bertingkat: node sensor berbicara via ESP-NOW, gateway meneruskan via MQTT TLS.",
+    "notes": "Perbandingan kuantitatif energi transmisi antara protokol berbasis koneksi dan connectionless."
+  },
+  {
+    "title": "Energy Profiling & Pengukuran Nyata",
+    "body": "Shunt Resistor & Otii Arc: instrumentasi pengukuran arus beresolusi tinggi (nanoampere hingga ampere).\n\nBeban dinamis: transisi dari 10 uA ke 300 mA dalam hitungan mikrodetik membutuhkan osiloskop sampling tinggi.\n\nPerangkap pengukuran: beban multimeter standar (burden voltage) dapat mereset mikrokontroler saat transmit.\n\nLogika verifikasi: simulasi matematis harus selalu dikalibrasi dengan profil tangkapan aktual.",
+    "notes": "Metodologi pengukuran arus dinamis sistem tertanam di laboratorium rekayasa perangkat keras."
+  },
+  {
+    "title": "Latency vs Power Trade-off",
+    "body": "Respon cepat vs Daya rendah: interval sleep 1 detik merespon cepat tetapi baterai habis dalam 2 minggu.\n\nInterval adaptif: waktu tidur dinamis berbasis anomali (tidur panjang jika stabil, sampling rapat jika anomali).\n\nEdge filtering: jangan bangunkan radio jika nilai sensor tidak berubah di luar ambang deadband.\n\nSLA sistem: kesepakatan tingkat layanan menentukan batas atas interval waktu tidur yang diizinkan.",
+    "notes": "Menyeimbangkan keandalan penerimaan data real-time dengan batas kapasitas baterai fisik."
+  },
+  {
+    "title": "Implementasi Firmware Deep Sleep",
+    "body": "Fungsi esp_sleep_enable_timer_wakeup(): konfigurasi durasi tidur dalam satuan mikrodetik.\n\nPembersihan buffer: pemanggilan Serial.flush() wajib dilakukan sebelum esp_deep_sleep_start().\n\nKondisi pin mengambang: gunakan rtc_gpio_isolate() untuk mencegah kebocoran arus pada pin tidak terpakai.\n\nStruktur setup() mandiri: pada deep sleep, bangun kembali sama dengan eksekusi ulang dari baris pertama setup().",
+    "notes": "Best practices pemrograman C++ pada ESP32 Arduino Core untuk meminimalkan konsumsi statis."
+  },
+  {
+    "title": "Verifikasi & Validasi Skrip Simulasi",
+    "body": "Validasi matematis: pengujian otomatis tiga profil beban kerja (60s, 600s, 1800s).\n\nPenalti self-discharge: model memasukkan degradasi kapasitas kimia baterai tahunan.\n\nIntegritas data: kalkulasi terbukti deterministik dan kompatibel lintas platform pengujian.\n\nHasil eksekusi: skenario sensor gating berhasil membuktikan masa pakai hingga lebih dari 8 tahun.",
+    "notes": "Membahas output simulasi Python yang memverifikasi formula teoritis secara teruji."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 31",
+    "body": "Power domain modern memungkinkan pemisahan beban komputasi dan tugas pemeliharaan waktu.\n\nDuty cycling dan peripheral power gating adalah kunci utama node IoT berdaya tahan tahunan.\n\nEstimasi masa pakai baterai wajib memperhitungkan faktor derating tegangan dan degradasi kimiawi.",
+    "notes": "Rangkuman menyeluruh prinsip rekayasa sistem berdaya rendah untuk insinyur IoT."
+  }
+]

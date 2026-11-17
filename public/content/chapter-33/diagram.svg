@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .box-ot { fill: #1e293b; stroke: #f59e0b; stroke-width: 2; rx: 8; }
+      .box-gw { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 8; }
+      .box-it { fill: #1e293b; stroke: #3b82f6; stroke-width: 2; rx: 8; }
+      .title { fill: #f8fafc; font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+      .label { fill: #cbd5e1; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; text-anchor: middle; }
+      .label-mono { fill: #38bdf8; font-family: ui-monospace, monospace; font-size: 12px; text-anchor: middle; }
+      .arrow { stroke: #38bdf8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .arrow-ot { stroke: #f59e0b; stroke-width: 2; fill: none; marker-end: url(#arrowhead-ot); }
+      .arrow-it { stroke: #3b82f6; stroke-width: 2; fill: none; marker-end: url(#arrowhead-it); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowhead-ot" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+    <marker id="arrowhead-it" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3b82f6" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Header -->
+  <text x="400" y="35" class="title">Arsitektur Integrasi Protokol Industri (IIoT Bridge)</text>
+  <text x="400" y="58" class="label">Jembatan Komunikasi Modbus RTU/TCP Lantai Pabrik ke OPC UA Information Model Enterprise</text>
+
+  <!-- Industrial Field Layer (OT) -->
+  <g transform="translate(40, 90)">
+    <rect x="0" y="0" width="210" height="180" class="box-ot" />
+    <text x="105" y="25" class="title" fill="#f59e0b">Field Devices (OT)</text>
+    <text x="105" y="45" class="label">Pabrik &amp; Mesin Fisik</text>
+    
+    <rect x="15" y="60" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="80" class="label-mono">Sensors &amp; Actuators</text>
+    <rect x="15" y="100" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="120" class="label-mono">PLC (Modbus Slave ID:1)</text>
+    <rect x="15" y="140" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="160" class="label-mono">RS-485 Differential Bus</text>
+  </g>
+
+  <!-- Industrial Edge Gateway -->
+  <g transform="translate(295, 90)">
+    <rect x="0" y="0" width="210" height="180" class="box-gw" />
+    <text x="105" y="25" class="title" fill="#10b981">Edge Gateway</text>
+    <text x="105" y="45" class="label">Protocol Translator &amp; DMZ</text>
+    
+    <rect x="15" y="60" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="80" class="label-mono">Modbus Master (CRC-16)</text>
+    <rect x="15" y="100" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="120" class="label-mono">Semantic Mapper</text>
+    <rect x="15" y="140" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="160" class="label-mono">OPC UA Server (X.509)</text>
+  </g>
+
+  <!-- Enterprise & Cloud (IT) -->
+  <g transform="translate(550, 90)">
+    <rect x="0" y="0" width="210" height="180" class="box-it" />
+    <text x="105" y="25" class="title" fill="#3b82f6">Enterprise &amp; Cloud (IT)</text>
+    <text x="105" y="45" class="label">SCADA, MES &amp; Analytics</text>
+    
+    <rect x="15" y="60" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="80" class="label-mono">SCADA / HMI Screen</text>
+    <rect x="15" y="100" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="120" class="label-mono">Cloud IIoT Data Lake</text>
+    <rect x="15" y="140" width="180" height="30" rx="4" fill="#334155" />
+    <text x="105" y="160" class="label-mono">Predictive Maintenance</text>
+  </g>
+
+  <!-- Connecting Protocol Arrows -->
+  <path d="M 250 180 L 295 180" class="arrow-ot" />
+  <text x="272" y="172" class="label-mono" fill="#f59e0b">RS-485</text>
+
+  <path d="M 505 180 L 550 180" class="arrow-it" />
+  <text x="528" y="172" class="label-mono" fill="#3b82f6">opc.tcp</text>
+
+  <!-- Frame Structure & Node Tree Comparison -->
+  <g transform="translate(40, 295)">
+    <!-- Modbus Frame Breakdown -->
+    <rect x="0" y="0" width="340" height="160" class="box" />
+    <text x="170" y="25" class="title">Modbus RTU Response Frame</text>
+    
+    <rect x="15" y="45" width="40" height="30" fill="#334155" stroke="#f59e0b" />
+    <text x="35" y="65" class="label-mono">01</text>
+    <rect x="55" y="45" width="40" height="30" fill="#334155" stroke="#f59e0b" />
+    <text x="75" y="65" class="label-mono">03</text>
+    <rect x="95" y="45" width="40" height="30" fill="#334155" stroke="#f59e0b" />
+    <text x="115" y="65" class="label-mono">04</text>
+    <rect x="135" y="45" width="80" height="30" fill="#334155" stroke="#f59e0b" />
+    <text x="175" y="65" class="label-mono">00 FF</text>
+    <rect x="215" y="45" width="80" height="30" fill="#334155" stroke="#f59e0b" />
+    <text x="255" y="65" class="label-mono">02 8C</text>
+    <rect x="295" y="45" width="35" height="30" fill="#334155" stroke="#10b981" />
+    <text x="312" y="65" class="label-mono">CRC</text>
+
+    <text x="170" y="105" class="label" fill="#cbd5e1">00FF = 255 (Reg 0: Suhu 25.5 C)</text>
+    <text x="170" y="125" class="label" fill="#cbd5e1">028C = 652 (Reg 1: Kelembaban 65.2 %)</text>
+    <text x="170" y="145" class="label-mono" fill="#10b981">Integritas: CRC-16 (Polinom 0xA001)</text>
+
+    <!-- OPC UA Node Tree Breakdown -->
+    <rect x="380" y="0" width="340" height="160" class="box" />
+    <text x="550" y="25" class="title">OPC UA Information Model</text>
+
+    <text x="400" y="60" class="label-mono" text-anchor="start" fill="#38bdf8">Root.Sensors (Folder Object)</text>
+    <text x="420" y="85" class="label-mono" text-anchor="start" fill="#cbd5e1">&#x2514;&#x2500; Temperature (Variable)</text>
+    <text x="450" y="105" class="label-mono" text-anchor="start" fill="#10b981">Value: 25.5 | Units: degC | Quality: Good</text>
+    <text x="420" y="130" class="label-mono" text-anchor="start" fill="#cbd5e1">&#x2514;&#x2500; Pressure (Variable)</text>
+    <text x="450" y="150" class="label-mono" text-anchor="start" fill="#10b981">Value: 101.3 | Units: kPa | Quality: Good</text>
+  </g>
+</svg>

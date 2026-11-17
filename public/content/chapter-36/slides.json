@@ -1,0 +1,77 @@
+[
+  {
+    "title": "Digital Twins & System Modeling Architecture",
+    "body": "Definisi Digital Twin: representasi virtual hidup yang tersinkronisasi dua arah dengan aset fisik riil.\n\nBukan sekadar CAD 3D: menggabungkan data telemetri hidup dengan persamaan fisika dinamika sistem.\n\nTiga pilar utama: Physical Asset, Digital Replica, dan Data Pipeline berkecepatan tinggi.",
+    "notes": "Pengenalan konsep dasar arsitektur kembaran digital dalam konteks sistem IoT."
+  },
+  {
+    "title": "Taksonomi & Level Kematangan Twin",
+    "body": "Level 1 (Digital Model): model statis tanpa pertukaran data otomatis (CAD / manual setup).\n\nLevel 2 (Digital Shadow): aliran data satu arah dari fisik ke digital (dashboard pemantau).\n\nLevel 3 (Digital Twin Murni): aliran data dua arah penuh (telemetri masuk, perintah optimasi keluar).\n\nLevel 4 (Autonomous Twin): kembaran digital yang mampu mengambil keputusan kontrol otonom.",
+    "notes": "Klasifikasi tingkat kematangan sistem digital twin menurut standar rekayasa industri."
+  },
+  {
+    "title": "Prinsip Pemodelan Berbasis Fisika (Physics-Based)",
+    "body": "Prinsip pertama (First Principles): hukum kekekalan massa, energi, dan momentum.\n\nModel Termal Orde-Satu: dT/dt = (Q_in - (T - T_amb)/R_th) / C_th.\n\nParameter fisik: Kapasitas Termal (C_th dalam J/K) dan Resistansi Termal (R_th dalam K/W).\n\nHukum Pendinginan Newton: laju pelepasan kalor sebanding dengan selisih suhu terhadap lingkungan.",
+    "notes": "Penjelasan landasan matematis persamaan diferensial dinamika termal sistem fisik."
+  },
+  {
+    "title": "Diskritisasi Numerik & Metode Euler",
+    "body": "Transisi ke waktu diskrit: penggantian turunan kontinyu dT/dt dengan beda maju delta_T / delta_t.\n\nPersamaan update: T_(k+1) = T_k + dt * [(Q_in - (T_k - T_amb)/R_th) / C_th].\n\nPemilihan langkah waktu (dt): keseimbangan antara presisi perhitungan numerik dan beban CPU.\n\nStabilitas numerik: langkah waktu tidak boleh melebihi konstanta waktu termal sistem tau = R_th * C_th.",
+    "notes": "Metode penyelesaian persamaan diferensial secara komputasi numerik pada modul simulasi."
+  },
+  {
+    "title": "Sinkronisasi State Fisik-Digital",
+    "body": "Akuisisi telemetri: pembacaan sensor suhu fisik dan pengukuran daya pemanas masuk (Watt).\n\nLangkah estimasi: model virtual memperbarui state internal pada setiap interval sampling data.\n\nKomparasi real-time: membandingkan suhu fisik terukur vs suhu proyeksi digital.\n\nPenanganan latensi: kompensasi jeda transmisi jaringan agar status fisik dan digital tetap selaras.",
+    "notes": "Mekanisme pengikatan data aliran sensor riil terhadap variabel status virtual."
+  },
+  {
+    "title": "Analisis Residu Galat (Residual Drift)",
+    "body": "Definisi residu: Residual = |T_physical - T_estimated|.\n\nStatus SYNCHRONIZED: nilai residu berada di bawah ambang batas toleransi rekayasa (error threshold).\n\nIndikator kerusakan fisik: kenaikan residu terus-menerus menandakan kebocoran insulasi ruangan.\n\nDeteksi anomali sensor: perubahan mendadak tanpa respon model mengindikasikan sensor rusak/lepas.",
+    "notes": "Memanfaatkan selisih fisik-digital sebagai detektor anomali sistem secara presisi."
+  },
+  {
+    "title": "Kalibrasi & Parameter Re-identification",
+    "body": "Penuaan sistem: resistansi termal insulasi memburuk seiring waktu akibat degradasi material.\n\nOptimasi kuadrat terkecil (Least Squares): penyesuaian nilai R_th dan C_th berdasarkan data historis.\n\nKalibrasi adaptif: memperbarui parameter digital twin secara berkala agar tetap merefleksikan aset riil.\n\nKalman Filtering: menggabungkan estimasi model dan pengukuran sensor berderau secara optimal.",
+    "notes": "Teknik penyesuaian parameter virtual agar kembaran digital tidak kehilangan akurasi."
+  },
+  {
+    "title": "Analisis What-If & Simulasi Prediktif",
+    "body": "Ruang uji aman (Risk-free Sandbox): mengevaluasi perubahan parameter operasional secara virtual.\n\nSkenario beban puncak: prediksi suhu 60 detik ke depan jika daya dinaikkan ke 250 Watt.\n\nProyeksi ke depan: menjalankan persamaan diferensial lebih cepat dari waktu nyata (faster-than-real-time).\n\nIntervensi pencegahan: membatalkan perintah sebelum membakar komponen perangkat keras fisik.",
+    "notes": "Membahas kemampuan prediktif digital twin yang menjadi nilai tambah utama di industri."
+  },
+  {
+    "title": "Penerapan Digital Twin di Industri",
+    "body": "Manajemen Thermal Data Center: optimalisasi konsumsi energi sistem pendingin AC presisi (CRAC).\n\nTurbin Angin: pemodelan tekanan mekanis bilah turbin untuk mencegah kelelahan struktur.\n\nBaterai Kendaraan Listrik: estimasi State of Charge (SoC) dan State of Health (SoH) sel Li-ion.\n\nJaringan Distribusi Air: simulasi tekanan pipa air perkotaan untuk melacak kebocoran bawah tanah.",
+    "notes": "Contoh-contoh adopsi kembaran digital pada sektor energi, manufaktur, dan infrastruktur."
+  },
+  {
+    "title": "Digital Twin Definition Language (DTDL)",
+    "body": "Standardisasi Azure/W3C Web of Things: pemodelan semantik berbasis format JSON-LD.\n\nKomponen model: Telemetry (data sensor), Properties (konfigurasi), Commands (fungsi kendali).\n\nInteroperabilitas enterprise: memudahkan integrasi antar vendor perangkat dan platform IoT cloud.\n\nModel reusable: template model motor yang sama dapat diinstansiasi untuk ratusan unit mesin.",
+    "notes": "Mengenal standar skema pemodelan perangkat kembaran digital modern."
+  },
+  {
+    "title": "Verifikasi Simulasi Digital Twin Python",
+    "body": "ThermalSystemModel: implementasi teruji Hukum Pendinginan Newton dan pemanasan Joule.\n\nDigitalTwinSynchronizer: sinkronisasi 5 langkah data fisik dengan status SYNCHRONIZED stabil.\n\nValidasi What-If: kenaikan daya ke 250W menghasilkan proyeksi suhu 47.11 C secara deterministik.\n\nUji otomatis: seluruh assert integrasi lulus 100% tanpa komputasi mengambang tak terduga.",
+    "notes": "Menjelaskan hasil verifikasi modul skrip simulasi Python yang dibuat."
+  },
+  {
+    "title": "Kompensasi Noise Sensor & Derau Jaringan",
+    "body": "Derau pengukuran ADC: sensor fisik selalu memiliki fluktuasi statistik (noise gaussia).\n\nFilter low-pass digital: menghaluskan input telemetri sebelum dimasukkan ke model fisik.\n\nOutlier rejection: abaikan sampel telemetri yang secara fisik tidak mungkin terjadi (spike aneh).\n\nDeadband toleransi: memastikan status peringatan tidak berkedip (*flapping*) di sekitar threshold.",
+    "notes": "Best practices penanganan derau telemetri nyata dalam arsitektur digital twin."
+  },
+  {
+    "title": "Evaluasi & Kriteria Rekayasa Twin",
+    "body": "Fidelitas Model (Model Fidelity): seberapa akurat persamaan matematika merefleksikan dinamika fisik.\n\nLatensi Sinkronisasi: jeda waktu antara kejadian fisik dan pembaruan kembaran digital harus < SLA.\n\nSkalabilitas Komputasi: modul simulasi harus efisien agar dapat melayani ribuan aset simultan.",
+    "notes": "Metrik evaluasi mutu dan kinerja implementasi kembaran digital sistem IoT."
+  },
+  {
+    "title": "Tantangan Masa Depan: AI + Physics-Informed Twins",
+    "body": "Physics-Informed Neural Networks (PINN): memadukan jaringan saraf tiruan dengan hukum fisika dasar.\n\nKompensasi non-linearitas: AI mempelajari dinamika yang terlalu rumit dirumuskan secara analitis.\n\nEdge Twin: menjalankan versi ringkas kembaran digital langsung di gateway lokal industri.\n\nAutonomous Optimization: sistem mengatur setpoint operasi secara mandiri menuju efisiensi energi optimal.",
+    "notes": "Tren masa depan konvergensi kembaran digital dengan model kecerdasan buatan."
+  },
+  {
+    "title": "Ringkasan Pembelajaran Chapter 36",
+    "body": "Digital Twin menggabungkan aliran sensor hidup dengan pemodelan matematika berbasis fisika.\n\nGalat residu antara telemetri riil dan estimasi model menjadi instrumen deteksi anomali yang tangguh.\n\nSimulasi What-If membuka jalan bagi prediksi operasional dan mitigasi bahaya tanpa risiko fisik.",
+    "notes": "Rangkuman menyeluruh materi Digital Twin dan pemodelan sistem tertanam cerdas."
+  }
+]

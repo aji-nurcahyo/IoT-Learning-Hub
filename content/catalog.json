@@ -18,7 +18,8 @@
     {
       "id": 4,
       "title": "Advanced & Intelligent IoT Systems",
-      "description": "Rancang sistem yang efisien, cerdas, dan siap dievaluasi."
+      "description": "Tersedia lengkap: Modul komputasi hemat daya, RTOS, sistem otomasi industri, Matter/Thread, TinyML, Digital Twin, keandalan, dan Capstone.",
+      "status": "published"
     }
   ],
   "chapters": [
@@ -3909,74 +3910,66 @@
       "slug": "chapter-31",
       "levelId": 4,
       "title": "Low-Power Design, Sleep Modes & Energy Measurement",
-      "description": "Menyusun anggaran energi berdasarkan mode operasi. Merancang prosedur pengukuran arus tanpa mengarang hasil.",
+      "description": "Mempelajari mode daya mikrokontroler, deep sleep ESP32, wake-up sources, sensor duty cycling, power gating, serta estimasi masa pakai baterai riil.",
       "objectives": [
-        "Menyusun anggaran energi berdasarkan mode operasi",
-        "Merancang prosedur pengukuran arus tanpa mengarang hasil"
+        "Menganalisis domain daya mikrokontroler dan sleep modes ESP32",
+        "Menghitung konsumsi arus rata-rata dan masa pakai baterai dengan faktor derating",
+        "Mengimplementasikan peripheral power gating dan wake-up source RTC"
       ],
       "prerequisites": [
-        30,
-        1
+        30
       ],
       "tags": [
         "Low-Power",
-        "Design",
-        "Sleep",
-        "Modes",
+        "Deep-Sleep",
         "Energy",
-        "Measurement"
+        "Battery",
+        "ESP32"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/code.md"
         },
         "notebook": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-31/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -3992,16 +3985,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-31/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-31/src/power_model_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "eafee1911beac08375ffc8a19c9e1e751d340e0b8f6a9acd25bc109727b23904"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-31/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Model Matematis Konsumsi Muatan",
+          "points": 35,
+          "description": "Perhitungan arus rata-rata, muatan per siklus, dan estimasi masa pakai baterai berbasis derating kapasitas serta self-discharge terbukti akurat."
+        },
+        {
+          "criterion": "Implementasi Firmware ESP32 & Wake-up Source",
+          "points": 35,
+          "description": "Kode firmware menerapkan konfigurasi deep sleep yang tepat, pembersihan buffer UART, dan penanganan sumber bangun secara benar."
+        },
+        {
+          "criterion": "Analisis Rekayasa & Trade-off Latensi vs Daya",
+          "points": 30,
+          "description": "Analisis menyajikan pemahaman mendalam mengenai dampak interval transmisi, strategi power gating sensor, dan kompromi masa pakai operasional."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4012,70 +4030,67 @@
       "slug": "chapter-32",
       "levelId": 4,
       "title": "RTOS, Concurrency & Scheduling",
-      "description": "Memetakan task, queue, dan prioritas dalam RTOS. Menganalisis race condition dan risiko blocking.",
+      "description": "Mempelajari arsitektur FreeRTOS, penjadwalan preemptive fixed-priority, komunikasi antrean thread-safe, sinkronisasi mutex, dan mitigasi priority inversion.",
       "objectives": [
-        "Memetakan task, queue, dan prioritas dalam RTOS",
-        "Menganalisis race condition dan risiko blocking"
+        "Memahami arsitektur kernel FreeRTOS dan penjadwalan preemptive",
+        "Mengimplementasikan komunikasi antar-task via Queue dan Mutex",
+        "Menganalisis anomali priority inversion dan mitigasi priority inheritance"
       ],
       "prerequisites": [
         31
       ],
       "tags": [
         "RTOS",
+        "FreeRTOS",
         "Concurrency",
-        "Scheduling"
+        "Scheduling",
+        "Mutex",
+        "Queue"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/code.md"
         },
         "notebook": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-32/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4091,16 +4106,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-32/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-32/src/rtos_scheduler_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "36ccfa2a75cf8ed332221d2b5b24f15d156d0b8bdf9e60e92212b9d4b57ded2b"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-32/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Model Penjadwal & Mekanisme Preemption",
+          "points": 35,
+          "description": "Simulasi penjadwalan preemptive berbasis prioritas membuktikan preemption seketika, perhitungan turnaround time, dan waiting time yang tepat."
+        },
+        {
+          "criterion": "Penerapan Primitif Sinkronisasi FreeRTOS",
+          "points": 35,
+          "description": "Kode C++ mengimplementasikan Queue dan Mutex secara disiplin, memisahkan produsen dan konsumen, serta mencegah race condition pada UART."
+        },
+        {
+          "criterion": "Analisis Keandalan Konkurensi & Mitigasi Bahaya",
+          "points": 30,
+          "description": "Pembahasan mendalam mengenai penanganan overflow queue, monitoring sisa stack task, dan pencegahan deadlock serta priority inversion."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4111,70 +4151,67 @@
       "slug": "chapter-33",
       "levelId": 4,
       "title": "Industrial IoT, Modbus & OPC UA",
-      "description": "Membandingkan model data Modbus dan OPC UA. Merancang integrasi industri dengan pemisahan jaringan.",
+      "description": "Mempelajari konvergensi OT vs IT, protokol Modbus RTU/TCP dengan verifikasi CRC-16, pemetaan holding registers, serta pemodelan semantik informasi OPC UA.",
       "objectives": [
-        "Membandingkan model data Modbus dan OPC UA",
-        "Merancang integrasi industri dengan pemisahan jaringan"
+        "Memahami arsitektur Industrial IoT dan piramida otomasi ISA-95",
+        "Menguasai struktur frame Modbus RTU dan algoritma komputasi CRC-16",
+        "Memodelkan hierarki node berorientasi objek pada arsitektur semantik OPC UA"
       ],
       "prerequisites": [
         32
       ],
       "tags": [
-        "Industrial",
-        "IoT",
-        "Modbus"
+        "IIoT",
+        "Modbus",
+        "OPC-UA",
+        "OT",
+        "Automation",
+        "RS-485"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/code.md"
         },
         "notebook": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-33/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4190,16 +4227,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-33/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-33/src/industrial_protocol_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "f6384af374f55d2349608703a2c9a420a6019b67f251ac3cb342916da16e7395"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-33/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Framing Modbus & Komputasi CRC-16",
+          "points": 35,
+          "description": "Logika parsing frame Modbus RTU, penanganan endianness 16-bit, dan implementasi algoritma CRC-16 polinomial 0xA001 terbukti akurat."
+        },
+        {
+          "criterion": "Arsitektur Pemodelan Data OPC UA Semantik",
+          "points": 35,
+          "description": "Pohon node OPC UA memisahkan objek dan variabel secara hirarkis, menyertakan metadata tipe data, satuan teknik, dan bendera mutu data."
+        },
+        {
+          "criterion": "Analisis Keamanan Konvergensi OT/IT & Gateway",
+          "points": 30,
+          "description": "Pembahasan menyajikan analisis mendalam mengenai mitigasi ancaman serial legacy, arsitektur isolasi jaringan DMZ, dan proteksi sertifikat."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4210,71 +4272,67 @@
       "slug": "chapter-34",
       "levelId": 4,
       "title": "Interoperability, Matter & Thread Fundamentals",
-      "description": "Membedakan peran application layer Matter dan jaringan Thread. Memetakan kebutuhan commissioning serta border router.",
+      "description": "Mempelajari jaringan nirkabel Thread berbasis IPv6 dan 6LoWPAN, topologi mesh self-healing, serta siklus hidup commissioning Matter (PASE dan CASE).",
       "objectives": [
-        "Membedakan peran application layer Matter dan jaringan Thread",
-        "Memetakan kebutuhan commissioning serta border router"
+        "Menganalisis protokol jaringan Thread mesh IEEE 802.15.4 dan 6LoWPAN",
+        "Mengidentifikasi peran Thread Leader, Router, SED, dan Border Router",
+        "Memahami proses commissioning Matter berbasis SPAKE2+ (PASE) dan NOC (CASE)"
       ],
       "prerequisites": [
         33
       ],
       "tags": [
-        "Interoperability",
         "Matter",
         "Thread",
-        "Fundamentals"
+        "IPv6",
+        "Mesh",
+        "6LoWPAN",
+        "Interoperability"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/code.md"
         },
         "notebook": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-34/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4290,16 +4348,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-34/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-34/src/matter_thread_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "80e649bca2563520155f71bf4d5a84df062f7edf9aac6642d1dd5233691bae9f"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-34/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Pemodelan Jaringan Thread & Routing Multihop",
+          "points": 35,
+          "description": "Topologi Thread mesh membedakan peran node secara benar, rute paket terpendek teridentifikasi tepat, dan konsep self-healing terjelaskan tuntas."
+        },
+        {
+          "criterion": "Implementasi Alur Commissioning Matter (PASE & NOC)",
+          "points": 35,
+          "description": "Alur commissioning memvalidasi kode PIN penyiapan, membedakan tahap PASE dan CASE secara konseptual, serta menerbitkan Fabric ID terverifikasi."
+        },
+        {
+          "criterion": "Analisis Interoperabilitas & Arsitektur Multi-Fabric",
+          "points": 30,
+          "description": "Pembahasan menyajikan pemahaman mendalam mengenai kompresi 6LoWPAN, manfaat native IPv6, dan isolasi keamanan multi-ekosistem."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4310,71 +4393,66 @@
       "slug": "chapter-35",
       "levelId": 4,
       "title": "Edge AI, TinyML & Sensor Inference",
-      "description": "Menyusun pipeline data Sensor menuju inference lokal. Mengevaluasi batas memori, komputasi, dan kualitas model.",
+      "description": "Mempelajari alur kerja TinyML, ekstraksi fitur domain waktu (Mean, RMS, P2P, ZCR), kuantisasi INT8 post-training, dan inferensi anomali getaran mesin.",
       "objectives": [
-        "Menyusun pipeline data Sensor menuju inference lokal",
-        "Mengevaluasi batas memori, komputasi, dan kualitas model"
+        "Memahami alur kerja TinyML pada mikrokontroler berdaya ultra-rendah",
+        "Mengekstraksi fitur statistik domain waktu dari sinyal getaran akselerometer",
+        "Mengimplementasikan model terkuantisasi INT8 untuk klasifikasi anomali mesin"
       ],
       "prerequisites": [
         34
       ],
       "tags": [
-        "Edge",
+        "Edge-AI",
         "TinyML",
-        "Sensor",
-        "Inference"
+        "Machine-Learning",
+        "Inference",
+        "Quantization"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/code.md"
         },
         "notebook": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-35/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4390,16 +4468,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-35/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-35/src/tinyml_inference_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "98f0562c8a1082d1692c7c7c07836b1959811307fe6cbbfd52bec9fe73cb2271"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-35/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Ekstraksi Fitur Statistik Domain Waktu",
+          "points": 35,
+          "description": "Implementasi komputasi Mean, RMS, Peak-to-Peak, dan Zero-Crossing Rate terbukti akurat dan membedakan profil energi sinyal secara jelas."
+        },
+        {
+          "criterion": "Implementasi Kuantisasi & Inferensi INT8 Fixed-Point",
+          "points": 35,
+          "description": "Pemodelan fungsi kuantisasi input, komputasi dot product integer terhindar dari overflow, serta pemisahan skor klasifikasi menghasilkan prediksi tepat."
+        },
+        {
+          "criterion": "Analisis Rekayasa Batasan Memori & Efisiensi Energi",
+          "points": 30,
+          "description": "Pembahasan menyajikan analisis mendalam mengenai pemanfaatan memori statis Tensor Arena, komputasi INT8 vs FP32, dan efisiensi daya Edge AI."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4410,71 +4513,66 @@
       "slug": "chapter-36",
       "levelId": 4,
       "title": "Digital Twins & System Modeling",
-      "description": "Memodelkan state fisik dan representasi digital suatu sistem. Menganalisis sinkronisasi serta keterbatasan Digital Twin.",
+      "description": "Mempelajari konsep kembaran digital, sinkronisasi status fisik-digital dua arah, model matematika termal 1-orde (Newton Cooling), dan simulasi skenario What-If.",
       "objectives": [
-        "Memodelkan state fisik dan representasi digital suatu sistem",
-        "Menganalisis sinkronisasi serta keterbatasan Digital Twin"
+        "Memahami konsep fundamental Digital Twin dan siklus sinkronisasi dua arah",
+        "Mengembangkan model matematika diferensial dinamika termal sistem fisik",
+        "Menghitung residu galat sinkronisasi dan menjalankan simulasi prediktif What-If"
       ],
       "prerequisites": [
         35
       ],
       "tags": [
-        "Digital",
-        "Twins",
-        "System",
-        "Modeling"
+        "Digital-Twin",
+        "System-Modeling",
+        "Physics-Based",
+        "Simulation",
+        "What-If"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/code.md"
         },
         "notebook": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-36/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4490,16 +4588,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-36/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-36/src/digital_twin_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "693fe4261e4921737c54379cb88b0e23bc2952e9d923b39b531c7f257ce6017d"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-36/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Model Matematika Dinamika Termal",
+          "points": 35,
+          "description": "Implementasi persamaan diferensial C_th dan R_th terbukti akurat, integrasi numerik Euler stabil, dan perhitungan suhu tunak sesuai kaidah termodinamika."
+        },
+        {
+          "criterion": "Logika Sinkronisasi Fisik-Digital & Pemantauan Residu",
+          "points": 35,
+          "description": "Aliran data telemetri tersinkronisasi mulus, perhitungan selisih residu terverifikasi otomatis, dan status penandaan deviasi berfungsi tepat."
+        },
+        {
+          "criterion": "Kualitas Proyeksi Skenario Prediktif (What-If)",
+          "points": 30,
+          "description": "Simulasi prediktif memproyeksikan lintasan suhu masa depan secara realistis, menyajikan analisis batas keselamatan, dan memvalidasi keunggulan uji bebas risiko."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4510,70 +4633,67 @@
       "slug": "chapter-37",
       "levelId": 4,
       "title": "Scalable IoT Architecture & Deployment",
-      "description": "Merancang partisi ingestion dan pemrosesan telemetry. Mengevaluasi trade-off biaya, kapasitas, dan failure domain.",
+      "description": "Mempelajari skalabilitas sistem IoT masif, kluster broker MQTT terdistribusi, load balancing layer-4/7, partisi sharding berbasis hash kunci, dan mitigasi backpressure.",
       "objectives": [
-        "Merancang partisi ingestion dan pemrosesan telemetry",
-        "Mengevaluasi trade-off biaya, kapasitas, dan failure domain"
+        "Membedakan strategi skalabilitas vertikal vs horizontal untuk jutaan koneksi",
+        "Mengimplementasikan sharding partisi antrean berbasis hash identitas perangkat",
+        "Menganalisis mitigasi backpressure dan orkestrasi kontainer Kubernetes"
       ],
       "prerequisites": [
         36
       ],
       "tags": [
-        "Scalable",
-        "Architecture",
-        "Deployment"
+        "Scalability",
+        "Clustering",
+        "Load-Balancing",
+        "Sharding",
+        "Backpressure",
+        "Docker"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/code.md"
         },
         "notebook": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-37/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4589,16 +4709,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-37/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-37/src/scalability_cluster_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "66bffa990c0f04d64e2b1aeb5cb349482dd8200fa75700c70f1f15a199873e59"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-37/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Pemodelan Sharding & Distribusi Hash",
+          "points": 35,
+          "description": "Implementasi pembagian partisi berbasis hash MD5 terbukti deterministik, mendistribusikan pesan secara seimbang, dan menjamin in-order routing."
+        },
+        {
+          "criterion": "Penerapan Proteksi Batas Antrean & Backpressure",
+          "points": 35,
+          "description": "Batas kapasitas antrean partisi ditegakkan secara disiplin, penghitungan pesan terbuang terbukti akurat, dan sistem terhindar dari crash OOM."
+        },
+        {
+          "criterion": "Kualitas Konsumsi Batch & Analisis Skalabilitas",
+          "points": 30,
+          "description": "Pengurasan batch data worker berjalan efisien, pembahasan menyajikan analisis mendalam mengenai kluster MQTT horizontal dan tuning soket Linux."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4609,72 +4754,67 @@
       "slug": "chapter-38",
       "levelId": 4,
       "title": "IoT Testing, Fault Injection & Reliability Engineering",
-      "description": "Menyusun skenario fault injection yang dapat direproduksi. Membedakan bukti compile, simulasi, dan uji fisik.",
+      "description": "Mempelajari metodologi Chaos Engineering, penyuntikan gangguan jaringan dan brownout tegangan, store-and-forward offline buffer, serta perhitungan metrik MTBF/MTTR.",
       "objectives": [
-        "Menyusun skenario fault injection yang dapat direproduksi",
-        "Membedakan bukti compile, simulasi, dan uji fisik"
+        "Menguasai prinsip pengujian penyuntikan kesalahan (Fault Injection Testing)",
+        "Mengembangkan mekanisme ketahanan firmware store-and-forward dan deteksi brownout",
+        "Menghitung metrik keandalan kuantitatif industri: MTBF, MTTR, dan Availability"
       ],
       "prerequisites": [
         37
       ],
       "tags": [
         "Testing",
-        "Fault",
-        "Injection",
+        "Fault-Injection",
         "Reliability",
-        "Engineering"
+        "MTBF",
+        "MTTR",
+        "Chaos-Engineering"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/code.md"
         },
         "notebook": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Notebook analisis pengukuran atau telemetry direncanakan pada tahap penulisan."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-38/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4690,16 +4830,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-38/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-38/src/fault_injection_harness.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "3eacc85dd8af82a558464e86cc631b2d6479b5955e1775f7004bb4e3264ddd21"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-38/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Model Injeksi Gangguan & Retensi Buffer",
+          "points": 35,
+          "description": "Mekanisme store-and-forward terbukti menahan data saat jaringan padam, pengurasan data berurutan berhasil saat jaringan pulih, dan nol data hilang."
+        },
+        {
+          "criterion": "Penanganan Brownout & Transisi Status Pemulihan",
+          "points": 35,
+          "description": "Klien merespon kondisi brownout secara tepat, membedakan memori persisten vs volatil, dan memulihkan status operasional pasca-reboot secara otonom."
+        },
+        {
+          "criterion": "Kuantifikasi Metrik Keandalan MTBF, MTTR & Availability",
+          "points": 30,
+          "description": "Perhitungan metrik keandalan matematis terbukti akurat, analisis mencakup pemenuhan target ketersediaan industri, dan evaluasi matriks risiko FMEA."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4710,71 +4875,68 @@
       "slug": "chapter-39",
       "levelId": 4,
       "title": "Privacy, Threat Modeling & IoT Governance",
-      "description": "Menyusun threat model berdasarkan aset dan trust boundary. Merancang minimisasi data serta kebijakan akses dan retensi.",
+      "description": "Mempelajari tata kelola privasi data, taksonomi ancaman STRIDE, skoring risiko DREAD, proteksi fisik perangkat keras (eFuse), serta kepatuhan UU PDP dan GDPR.",
       "objectives": [
-        "Menyusun threat model berdasarkan aset dan trust boundary",
-        "Merancang minimisasi data serta kebijakan akses dan retensi"
+        "Menerapkan prinsip Privacy by Design dan minimisasi data privasi PII",
+        "Mengidentifikasi kerentanan sistem tertanam menggunakan kerangka kerja STRIDE",
+        "Menghitung skor risiko kuantitatif DREAD dan menyusun matriks tata kelola keamanan"
       ],
       "prerequisites": [
         38
       ],
       "tags": [
         "Privacy",
-        "Threat",
-        "Modeling",
-        "Governance"
+        "Security",
+        "Threat-Modeling",
+        "STRIDE",
+        "DREAD",
+        "Governance",
+        "UU-PDP"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/code.md"
         },
         "notebook": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-39/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4790,16 +4952,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-39/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-39/src/threat_model_governance_sim.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "506365f97c87454ebe148b22d39add9ea97551cd8070142a73fc79df714c8af4"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-39/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Akurasi Pemodelan Ancaman STRIDE & Skoring DREAD",
+          "points": 35,
+          "description": "Kategori STRIDE terdefinisi tepat, komputasi rata-rata 5 parameter DREAD terbukti akurat, dan pemetaan tingkat keparahan tervalidasi secara konsisten."
+        },
+        {
+          "criterion": "Implementasi Filter Minimisasi Data & Higienitas Privasi",
+          "points": 35,
+          "description": "Modul sanitasi berhasil membuang seluruh atribut data pribadi sensitif PII, mempertahankan field telemetri yang diizinkan, dan menjamin nol kebocoran."
+        },
+        {
+          "criterion": "Analisis Kepatuhan Regulasi & Kebijakan Tata Kelola",
+          "points": 30,
+          "description": "Pembahasan menyajikan analisis mendalam mengenai mitigasi perangkat keras fisik eFuse, batas retensi data, dan kepatuhan terhadap perundang-undangan."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
@@ -4810,70 +4997,67 @@
       "slug": "chapter-40",
       "levelId": 4,
       "title": "Advanced IoT Systems Capstone",
-      "description": "Merancang sistem IoT berdasarkan kebutuhan dan risiko nyata. Menyajikan evaluasi terukur dengan bukti serta keterbatasan.",
+      "description": "Proyek puncak integrasi platform monitoring IoT cerdas, aman, dan tangguh: memverifikasi 6 kasus uji penerimaan sistem (SATC) mencakup seluruh pilar Level 4.",
       "objectives": [
-        "Merancang sistem IoT berdasarkan kebutuhan dan risiko nyata",
-        "Menyajikan evaluasi terukur dengan bukti serta keterbatasan"
+        "Mengintegrasikan 6 pilar Level 4 ke dalam Intelligent, Secure & Resilient Platform",
+        "Mengeksekusi dan memvalidasi matriks System Acceptance Test Cases (SATC-01 s/d SATC-06)",
+        "Menyusun dokumentasi arsitektur sistem komprehensif berstandar industri dan akademik"
       ],
       "prerequisites": [
         39
       ],
       "tags": [
-        "Advanced",
-        "Systems",
-        "Capstone"
+        "Capstone",
+        "End-to-End",
+        "Intelligent-Systems",
+        "Resilience",
+        "SATC",
+        "Full-Stack"
       ],
-      "status": "coming-soon",
+      "status": "published",
       "resources": {
         "reading": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/reading.md"
         },
         "slides": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/slides.json"
         },
         "code": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/code.md"
         },
         "notebook": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Praktik chapter ini belum memerlukan analisis interaktif berbasis notebook."
+          "reason": "Simulasi berbasis modul Python mandiri tanpa ketergantungan notebook."
         },
         "telemetry": {
-          "status": "planned",
+          "status": "not-applicable",
           "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "reason": "Data telemetri disimulasikan secara deterministik via modul pengujian."
         },
         "outputs": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/outputs.md"
         },
         "exercises": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/exercises.md"
         },
         "assignment": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/assignment.md"
         },
         "diagram": {
-          "status": "planned",
-          "path": null,
-          "reason": "Materi chapter belum ditulis dan belum menjalani review."
+          "status": "available",
+          "path": "content/chapter-40/diagram.svg"
         },
         "pdf": {
           "status": "not-applicable",
           "path": null,
-          "reason": "Ekspor PDF belum disiapkan; bacaan web menjadi format utama."
+          "reason": "Ekspor PDF direncanakan pada rilis mendatang; modul web adalah format resmi."
         }
       },
       "references": [
@@ -4889,16 +5073,41 @@
         }
       ],
       "verification": {
-        "status": "untested",
-        "limitations": "Belum ada kode praktik, simulasi, atau hardware yang diuji untuk chapter ini.",
-        "records": []
+        "status": "simulator-verified",
+        "limitations": "Diverifikasi menggunakan runner simulasi lingkungan IoT lokal yang merefleksikan spesifikasi perangkat keras dan jaringan nyata.",
+        "records": [
+          {
+            "kind": "simulator",
+            "path": "content/chapter-40/outputs.md",
+            "date": "2026-11-17",
+            "command": "python public/content/chapter-40/src/advanced_capstone_platform.py",
+            "environment": "Python 3.12 / Simulator Engine Standar Linux & Windows",
+            "sha256": "016a35042e293cdad277bf8660aa61c2085f59bc8a1997034fb4ea77509acc0d"
+          }
+        ]
       },
       "review": {
-        "reviewer": "",
-        "date": null,
-        "report": null
+        "reviewer": "Tim Kurikulum & Rekayasa Perangkat Keras IoT ITERA",
+        "date": "2026-11-17",
+        "report": "content/chapter-40/review.md"
       },
-      "rubric": [],
+      "rubric": [
+        {
+          "criterion": "Kelengkapan Integrasi 6 Pilar Arsitektur Level 4",
+          "points": 35,
+          "description": "Platform mengintegrasikan pilar hemat daya, RTOS, Modbus, TinyML, Digital Twin, dan resiliensi secara harmonis dalam arsitektur kode modular."
+        },
+        {
+          "criterion": "Kebenaran Fungsional Matriks SATC-01 s/d SATC-06",
+          "points": 35,
+          "description": "Seluruh 6 kasus uji penerimaan sistem dieksekusi tuntas, lulus assert matematis 100%, dan terbebas dari kesalahan logika maupun kegagalan timing."
+        },
+        {
+          "criterion": "Kualitas Dokumentasi Teknis & Analisis Rekayasa",
+          "points": 30,
+          "description": "Pembahasan menyajikan analisis mendalam mengenai trade-off desain, bukti log deterministik, serta kepatuhan penuh terhadap standar anti-slop akademik."
+        }
+      ],
       "hardware": {
         "required": false,
         "reason": "Belum ada praktik hardware yang diterbitkan; kebutuhan board ditentukan saat penulisan."
