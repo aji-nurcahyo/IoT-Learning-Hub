@@ -74,6 +74,33 @@ Pada [`mqtt_pubsub_client.ino`](content/chapter-14/src/mqtt_pubsub_client/mqtt_p
 - Di dalam `loop()`, pemanggilan **`mqtt.loop()`** wajib berjalan rutin agar klien memproses paket masuk dan menjaga *keepalive ping* ke Broker tanpa memakai `delay()`.
 - Untuk verifikasi protokol tanpa bergantung pada broker eksternal, skrip [`mqtt_broker_sim.py`](content/chapter-14/src/mqtt_broker_sim.py) mengimplementasikan paket biner asli MQTT 3.1.1 (`CONNECT` $\rightarrow$ `CONNACK`, `SUBSCRIBE` $\rightarrow$ `SUBACK`, `PUBLISH`) di soket TCP `127.0.0.1` serta menguji fungsi `topic_matches()` (`outputs.md`: seluruh pengujian *wildcard* dan transmisi loopback **PASS**). Firmware `.ino` masih berstatus **Belum diuji** terhadap compiler/broker nyata.
 
+### 5.1 Landasan Matematis: Efisiensi Protokol MQTT & Beban Jaringan Brokering (Mathematical Foundations)
+
+Protokol MQTT (OASIS Standard) dirancang untuk meminimalkan beban komputasi dan bandwidth pada jaringan berdaya terbatas:
+
+1. **Struktur Header Paket MQTT Fixed Header**:
+   Header tetap paket MQTT hanya membutuhkan ukuran minimum 2 byte ($B_{\text{fixed}} = 2\text{ byte}$), terdiri atas:
+   - Byte 1: Tipe paket kontrol (4 bit) + Flag kontrol (4 bit, misal QoS, DUP, RETAIN).
+   - Byte 2: *Remaining Length* terenkode variabel (1 hingga 4 byte).
+   Beban transmisi paket PUBLISH tanpa variabel header identifikasi (QoS 0) dengan panjang topik $L_{\text{topic}}$ dan payload $L_{\text{data}}$ adalah:
+   $$
+   L_{\text{MQTT}} = 2 + 2 + L_{\text{topic}} + L_{\text{data}} = 4 + L_{\text{topic}} + L_{\text{data}}
+   $$
+
+2. **Perbandingan Efisiensi Bandwidth MQTT vs HTTP (Worked Example)**:
+   Sebuah stasiun pemantau cuaca mengirimkan payload JSON 30 byte setiap 10 detik ke server.
+   - Pada HTTP: Request memerlukan $\approx 185\text{ byte}$ dan Response server memerlukan $\approx 120\text{ byte}$, total $305\text{ byte}$ per transaksi. Ditambah handshake TCP ($3 \times 54 = 162\text{ byte}$), total per transaksi mencapai $467\text{ byte}$.
+   - Pada MQTT (koneksi persist tetap terbuka): Satu paket PUBLISH dengan topik `itera/farm/t1` (13 karakter) memerlukan:
+   $$
+   L_{\text{MQTT}} = 4 + 13 + 30 = 47\text{ byte}
+   $$
+   Ditambah header TCP/IP (40 byte), total paket hanya $87\text{ byte}$ tanpa perlunya response balik pada QoS 0.
+   Penghematan data per jam untuk pengiriman setiap 10 detik ($N = 360\text{ sampel/jam}$):
+   $$
+   \Delta V = 360 \times (467\text{ B} - 87\text{ B}) = 360 \times 380\text{ B} = 136.800\text{ byte} \approx 133{,}6\text{ KiB/jam}
+   $$
+   Dalam 1 bulan (720 jam), penghematan kuota data mencapai $\approx 96{,}2\text{ MiB}$ per perangkat. Pengurangan volume sebesar $81{,}3\%$ ini sangat krusial pada penerapan kartu SIM IoT seluler komersial.
+
 ### 6. Common Mistakes & Troubleshooting
 
 | Gejala Masalah | Penyebab Umum | Solusi |
@@ -111,6 +138,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Uji protokol biner MQTT 3.1.1 dan wildcard telah dieksekusi nyata via `mqtt_broker_sim.py` (`outputs.md`); kompilasi `.ino` menunggu instalasi core ESP32 selesai.
 
 ## Referensi
+- OASIS Standard, *MQTT Version 5.0 Specification*, OASIS Open, 2019.
+- OASIS Standard, *MQTT Version 3.1.1 Specification*, OASIS Open, 2014.
 
 1. OASIS Standard, *MQTT Version 3.1.1 & 5.0 Specifications*, [https://mqtt.org/mqtt-specification/](https://mqtt.org/mqtt-specification/) (diperiksa 2026-11-11).
 2. Eclipse Foundation, *Eclipse Mosquitto Documentation*, [https://mosquitto.org/documentation/](https://mosquitto.org/documentation/) (diperiksa 2026-11-11).

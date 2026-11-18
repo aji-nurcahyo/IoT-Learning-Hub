@@ -64,6 +64,29 @@ Setiap perangkat Matter dilengkapi dengan kode QR atau PIN penyiapan (*Setup PIN
 3. **CASE (Certificate-Authenticated Session Establishment)**: Setelah perangkat bergabung ke dalam Fabric, komunikasi operasional antar-perangkat Matter diautentikasi timbal-balik (*mutual TLS-like*) menggunakan sertifikat digital NOC tersebut.
 4. **Multi-Admin Support**: Satu bola lampu pintar Matter dapat dikendalikan secara bersamaan oleh Apple Home, Google Home, dan Home Assistant melalui Fabric terpisah tanpa konflik perintah.
 
+### 3.1 Landasan Matematis: Topologi Jaringan Mesh Thread & Routing Distance-Vector (Mathematical Foundations)
+
+Jaringan Thread (IEEE 802.15.4 pada $2{,}4\text{ GHz}$) menggunakan varian protokol perutean jarak jauh (*Distance Vector Routing*) untuk mengoordinasikan topologi multi-hop mesh mandiri (*self-healing mesh*):
+
+1. **Metrik Biaya Jalur (Path Cost Metric)**:
+   Biaya per tautan nirkabel $C_{ij}$ antara router $i$ dan router $j$ diturunkan dari kualitas tautan sinyal (*Link Quality Indicator* / LQI):
+   $$
+   C_{ij} = \text{Cost}(\text{LQI}_{ij}) \in \{1, 2, 4, \infty\}
+   $$
+   Total biaya perutean rute multi-hop $P = (v_1, v_2, \dots, v_k)$ adalah akumulasi biaya setiap hop:
+   $$
+   \text{Cost}(P) = \sum_{m=1}^{k-1} C_{v_m, v_{m+1}}
+   $$
+   Algoritma perutean Thread memilih jalur dengan $\min \text{Cost}(P)$ untuk meminimalkan transmisi ulang radio.
+
+2. **Perhitungan Latensi Multi-Hop Mesh (Worked Example)**:
+   Sebuah node Thread End Device (ED) mengirimkan perintah Matter ke Border Router melalui 3 hop router intermediate ($k=4$ simpul).
+   Jika latensi per hop radio rata-rata (termasuk CSMA-CA backoff dan ACK lapisan MAC) adalah $t_{\text{hop}} = 12\text{ ms}$, total latensi propagasi transmisi perintah adalah:
+   $$
+   T_{\text{mesh}} = (k - 1) \times t_{\text{hop}} = 3 \times 12\text{ ms} = 36\text{ ms}
+   $$
+   Nilai $36\text{ ms}$ berada jauh di bawah ambang batas persepsi interaksi manusia ($100\text{ ms}$), membuktikan bahwa arsitektur Thread mampu memberikan responsivitas setara koneksi langsung kabel untuk otomasi bangunan pintar.
+
 ## Latihan
 
 1. **Analisis Kompresi 6LoWPAN**: Mengapa header IPv6 standar (40 byte) dan header UDP (8 byte) tidak efisien jika ditransmisikan langsung pada frame IEEE 802.15.4? Jelaskan bagaimana mekanisme *stateless header compression* pada 6LoWPAN mengatasi batasan panjang paket (MTU 127 byte) tersebut.
@@ -83,6 +106,8 @@ Kembangkan modul simulasi Python (`matter_thread_sim.py`) yang memverifikasi:
 3. Arsitektur keamanan Matter menjamin privasi lokal total melalui algoritma SPAKE2+ (PASE), sertifikat operasional digital (CASE), dan dukungan *Multi-Fabric*.
 
 ## Referensi
+- Thread Group, *Thread 1.3.0 Specification: Mesh Networking for Smart Devices*, Thread Group Inc, 2022.
+- Connectivity Standards Alliance (CSA), *Matter Core Specification Version 1.3*, CSA, 2024.
 
 1. Connectivity Standards Alliance (CSA). *Matter Core Specification Version 1.3*. 2024.
 2. Thread Group. *Thread 1.3.0 Specification: Enhancing Matter Connectivity and IP Interoperability*. 2023.

@@ -69,6 +69,34 @@ Ketika sebuah sensor rusak permanen, hilang dicuri, atau masa kontraknya berakhi
 3. Seluruh transmisi telemetri maupun heartbeat yang masih dipancarkan oleh perangkat tersebut langsung ditolak di pintu gerbang (*access denied*).
 4. Jika perangkat masih dapat dihubungi melalui jaringan, server mengirimkan perintah *crypto-erase* / *remote factory reset* untuk menghapus kunci enkripsi dan kredensial Wi-Fi dari memori flash NVS.
 
+### 3.1 Landasan Matematis: Skalabilitas Registri & Interval Heartbeat Adaptif (Mathematical Foundations)
+
+Pengelolaan armada perangkat IoT berskala besar (*fleet management*) membutuhkan optimasi interval detak jantung (*heartbeat*) untuk menyeimbangkan deteksi kegagalan simpul dan beban jaringan:
+
+1. **Hubungan Waktu Deteksi Kegagalan vs Beban Jaringan**:
+   Jika armada terdiri atas $N$ perangkat dengan interval heartbeat seragam $T_{\text{hb}}$ detik dan ambang batas kegagalan dideklarasikan setelah $K$ heartbeat hilang berturut-turut:
+   - Waktu deteksi node mati $T_{\text{detect}}$ adalah:
+     $$
+     T_{\text{detect}} = K \cdot T_{\text{hb}}
+     $$
+   - Total volume paket heartbeat yang masuk ke platform server per detik $\Lambda_{\text{hb}}$:
+     $$
+     \Lambda_{\text{hb}} = \frac{N}{T_{\text{hb}}}
+     $$
+
+2. **Optimasi Interval Heartbeat Armada 10.000 Node (Worked Example)**:
+   Sebuah perusahaan mengelola armada $N = 10.000$ meteran pintar air.
+   - Skenario A ($T_{\text{hb}} = 10\text{ s}$, $K=3$):
+     $$
+     T_{\text{detect}} = 3 \times 10 = 30\text{ detik}, \quad \Lambda_{\text{hb}} = \frac{10.000}{10} = 1000\text{ request/detik}
+     $$
+     Beban 1.000 req/s membutuhkan kluster server basis data berkapasitas tinggi.
+   - Skenario B (Heartbeat Adaptif: $T_{\text{hb}} = 300\text{ s}$, $K=2$):
+     $$
+     T_{\text{detect}} = 2 \times 300 = 600\text{ detik } (10\text{ menit}), \quad \Lambda_{\text{hb}} = \frac{10.000}{300} \approx 33{,}33\text{ request/detik}
+     $$
+     Beban server berkurang hingga $96{,}7\%$. Untuk aset non-kritis, pemilihan $T_{\text{hb}} = 300\text{ s}$ memberikan penghematan infrastruktur komputasi yang masif dengan tetap menjamin pelacakan inventaris yang akurat.
+
 ## Latihan
 
 1. **Analisis Configuration Drift**:
@@ -109,6 +137,8 @@ Bangun sistem manajemen armada dan rekonsiliasi konfigurasi digital twin menggun
 4. **Sanitasi Siklus Hidup**: Alur decommissioning yang ketat mencegah eksploitasi perangkat usang atau terbengkalai di lingkungan produksi.
 
 ## Referensi
+- NIST Special Publication 800-146, *Cloud Computing Synopsis and Recommendations*, National Institute of Standards and Technology.
+- ISO/IEC 30141:2018, *Internet of Things (IoT) — Reference Architecture*, International Organization for Standardization.
 
 1. Amazon Web Services. *AWS IoT Core Developer Guide: Device Shadow Service Architecture*. https://docs.aws.amazon.com/iot/latest/developerguide/iot-device-shadows.html
 2. Microsoft Learn. *Azure IoT Hub: Understand and use device twins in IoT Hub*. https://learn.microsoft.com/azure/iot-hub/iot-hub-devguide-device-twins

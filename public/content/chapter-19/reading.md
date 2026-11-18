@@ -75,6 +75,33 @@ Skrip [`offline_buffer_sync.py`](content/chapter-19/src/offline_buffer_sync.py) 
 3. **Uji Idempotent Replay**:
    - Saat pulih, `seq 5` dikirim dua kali (menyimulasikan `PUBACK` yang hilang pada percobaan pertama). Percobaan ke-1 menghasilkan `STORED_ACK`, percobaan ke-2 mengembalikan **`DUPLICATE_ACK`** tanpa menduplikasi data di basis data server (`duplicates_ignored = 1`, total tersimpan bersih `7` sampel: `seq 1, 2, 5, 6, 7, 8, 9`).
 
+### 5.1 Landasan Matematis: Sinkronisasi Waktu SNTP & Kapasitas Buffer Deret Waktu (Mathematical Foundations)
+
+Keandalan simpul IoT saat jaringan terputus bergantung pada presisi pelacakan waktu lokal dan ukuran buffer penampungan:
+
+1. **Model Drift Clock Osilator Lokal & Galat Waktu Akumulatif**:
+   Osilator kristal kuarsa internal mikrokontroler memiliki toleransi kestabilan frekuensi yang dinyatakan dalam bagian per sejuta (*parts per million* / ppm), umumnya $\delta = \pm 20\text{ ppm}$ hingga $\pm 50\text{ ppm}$. Waktu drift akumulatif $\Delta t_{\text{drift}}$ setelah durasi offline $T_{\text{offline}}$ dirumuskan dengan:
+   $$
+   \Delta t_{\text{drift}} = \delta \times 10^{-6} \times T_{\text{offline}}
+   $$
+   Jika sistem terputus dari server waktu SNTP selama $T_{\text{offline}} = 7\text{ hari}$ ($604.800\text{ detik}$) dengan osilator $\delta = 30\text{ ppm}$:
+   $$
+   \Delta t_{\text{drift}} = 30 \times 10^{-6} \times 604.800 = 18{,}144\text{ detik}
+   $$
+   Penyimpangan lebih dari 18 detik dapat mengacaukan pengurutan data deret waktu dan membatalkan validitas sertifikat keamanan TLS.
+
+2. **Perhitungan Kapasitas Ring Buffer Offline (Worked Engineering Example)**:
+   Sebuah node telemetri merekam paket data berukuran $S_{\text{packet}} = 64\text{ byte}$ setiap interval $T_{\text{sample}} = 15\text{ detik}$. Sistem dirancang harus mampu mempertahankan integritas data selama gangguan jaringan maksimum $T_{\text{outage}} = 48\text{ jam}$.
+   Total paket yang dihasilkan selama durasi pemadaman jaringan $N_{\text{packets}}$ adalah:
+   $$
+   N_{\text{packets}} = \frac{T_{\text{outage}} \times 3600}{T_{\text{sample}}} = \frac{48 \times 3600}{15} = \frac{172.800}{15} = 11.520\text{ paket}
+   $$
+   Kapasitas memori penyimpanan minimum yang wajib dialokasikan $M_{\text{buffer}}$:
+   $$
+   M_{\text{buffer}} = N_{\text{packets}} \times S_{\text{packet}} = 11.520 \times 64\text{ byte} = 737.280\text{ byte} \approx 720\text{ KiB}
+   $$
+   Karena SRAM internal mikrokontroler terbatas (misal ESP32 hanya memiliki 520 KiB di mana hanya $\approx 150\text{ KiB}$ tersedia untuk heap aplikasi), buffer sebesar $720\text{ KiB}$ **tidak boleh disimpan di RAM**, melainkan wajib disimpan di partisi memori Non-Volatile (SPI Flash via LittleFS/NVS atau SD Card eksternal).
+
 ## Latihan
 
 Latihan konseptual, perhitungan *ring buffer* & *backoff*, serta modifikasi kode ESP32 tersedia pada tab **[Exercises](chapter-19#exercises)**.
@@ -90,6 +117,8 @@ Rancang dan simulasikan subsistem ketahanan konektivitas (*SNTP + Ring Buffer + 
 - Padukan **Exponential Backoff + Full Jitter** untuk mencegah *thundering herd* saat jaringan pulih, serta **Idempotent Key `(device_id, seq_id)`** di sisi penerima untuk menoleransi pengiriman ulang tanpa duplikasi.
 
 ## Referensi
+- IETF RFC 5905, *Network Time Protocol Version 4: Protocol and Algorithms Specification*, 2010.
+- Mills, D. L., *Computer Network Time Synchronization: The Network Time Protocol on Earth and in Space*, CRC Press.
 
 1. Marc Brooker, *Exponential Backoff And Jitter (AWS Architecture Blog)*, [https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/).
 2. Espressif Systems, *ESP-IDF Programming Guide: System Time & SNTP*, [https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).

@@ -88,6 +88,32 @@ Sebelum menyatakan sistem Anda siap dinilai, periksa:
 - [ ] Jalur Path B fisik memakai suplai eksternal + MOSFET driver + *flyback diode* + *common `GND`*.
 - [ ] Laporan memuat: (1) Ringkasan Sistem & Requirements, (2) BOM & Wiring Table, (3) Penjelasan Kalibrasi & Histeresis, (4) Tabel Hasil Test Case (Expected vs Actual), (5) Status Verifikasi & Keterbatasan.
 
+### 5.1 Model Matematis Estimasi Daya Sistem & Akurasi Sensor Lingkungan (Mathematical Foundations)
+
+Pada tahap integrasi sistem capstone embedded (Chapter 10), integrasi multi-sensor dan aktuator memerlukan pemodelan konsumsi energi serta propagasi galat pengukuran:
+
+1. **Kombinasi Ketidakpastian Pengukuran Multi-Sensor (Measurement Uncertainty Propagation)**:
+   Jika parameter indeks kenyamanan termal $H$ bergantung pada suhu $T$ dan kelembaban relatif $RH$ melalui fungsi analitik $H = f(T, RH)$, maka varians ketidakpastian baku gabungan $u_c(H)$ sesuai pedoman ISO/IEC Guide 98-3 (GUM) dihitung melalui:
+   $$
+   u_c^2(H) = \left( \frac{\partial f}{\partial T} \right)^2 u^2(T) + \left( \frac{\partial f}{\partial RH} \right)^2 u^2(RH) + 2 \left( \frac{\partial f}{\partial T} \right) \left( \frac{\partial f}{\partial RH} \right) u(T, RH)
+   $$
+   Untuk sensor suhu independen dengan deviasi baku $u(T) = 0{,}2\,^\circ\text{C}$ dan sensor kelembaban dengan $u(RH) = 1{,}5\%$, tanpa kovarians ($u(T, RH) = 0$), kontribusi galat terisolasi secara kuadratik.
+
+2. **Model Energi Rata-Rata Multi-Kondisi (Worked Engineering Example)**:
+   Sistem beroperasi dalam siklus periodik dengan durasi sampling $t_{\text{sample}} = 0{,}5\text{ s}$ pada arus aktif $I_{\text{active}} = 65\text{ mA}$ (CPU 160 MHz + pembacaan I2C/ADC), durasi penyalaan aktuator buzzer/LED $t_{\text{act}} = 0{,}1\text{ s}$ pada arus $I_{\text{act}} = 25\text{ mA}$, dan waktu siaga tanpa radio $t_{\text{idle}} = 4{,}4\text{ s}$ pada arus $I_{\text{idle}} = 12\text{ mA}$ dalam periode total $T_{\text{period}} = 5{,}0\text{ s}$:
+   $$
+   I_{\text{avg}} = \frac{I_{\text{active}} \cdot t_{\text{sample}} + I_{\text{act}} \cdot t_{\text{act}} + I_{\text{idle}} \cdot t_{\text{idle}}}{T_{\text{period}}}
+   $$
+   Substitusi nilai:
+   $$
+   I_{\text{avg}} = \frac{(65 \times 0{,}5) + (25 \times 0{,}1) + (12 \times 4{,}4)}{5{,}0} = \frac{32{,}5 + 2{,}5 + 52{,}8}{5{,}0} = \frac{87{,}8}{5{,}0} = 17{,}56\text{ mA}
+   $$
+   Untuk baterai Li-Ion dengan kapasitas nominal $C_{\text{bat}} = 2000\text{ mAh}$ dan faktor degradasi praktis $\eta = 0{,}85$, perkiraan masa pakai operasional kontinu $t_{\text{life}}$ adalah:
+   $$
+   t_{\text{life}} = \frac{C_{\text{bat}} \cdot \eta}{I_{\text{avg}}} = \frac{2000 \times 0{,}85}{17{,}56} \approx 96{,}8\text{ jam } (\sim 4{,}03\text{ hari})
+   $$
+   Perhitungan ini membuktikan bahwa tanpa penerapan mode sleep mendalam (*deep sleep*), perangkat tidak dapat beroperasi berbulan-bulan dengan daya baterai portabel.
+
 ### 6. Common Mistakes & Troubleshooting Capstone
 
 - **Lupa menyalin `env_config.h` ke folder/tab proyek**: Menyebabkan error `env_config.h: No such file or directory`.
@@ -125,6 +151,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Kode `.ino` dan skema Wokwi siap diuji pada komputer/simulator pembelajar (berstatus **Belum diuji** di server ini). Selanjutnya di **Level 2**, sistem lokal ini akan dihubungkan ke jaringan IP, Wi-Fi, dan protokol MQTT.
 
 ## Referensi
+- JCGM 100:2008 (GUM), *Evaluation of measurement data — Guide to the expression of uncertainty in measurement*, BIPM/ISO/IEC.
+- Espressif Systems, *ESP32 Hardware Design Guidelines*, Technical Documentation.
 
 1. Espressif Systems, *ESP32 Series Datasheet & ESP-IDF Documentation*, [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html) (diperiksa 2026-11-10).
 2. Espressif Systems, *Arduino-ESP32 API Reference (v3.x)*, [https://docs.espressif.com/projects/arduino-esp32/en/latest/](https://docs.espressif.com/projects/arduino-esp32/en/latest/) (diperiksa 2026-11-10).

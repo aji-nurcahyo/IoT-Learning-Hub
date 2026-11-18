@@ -62,6 +62,31 @@ Skrip [`capstone_connectivity_test.py`](content/chapter-20/src/capstone_connecti
 5. **`TC-05` (Replay + Idempotent Deduplication)**: Saat pulih, antrean dikuras dan percobaan kirim ulang `seq=3` (menyimulasikan *lost ACK*) ditolak duplikasinya (`stored=6 unique, duplicates_ignored=1`).
 6. **`TC-06` (Remote Command + Ungraceful LWT)**: Perintah `{"cmd":"set_threshold","temp_high_c":29.0}` diterima node, kemudian penutupan soket mendadak tanpa paket `DISCONNECT` memicu broker menyiarkan LWT `"offline"` ke *monitor subscriber*.
 
+### 4.1 Landasan Matematis: Ketersediaan Sistem (Availability) & MTBF Capstone (Mathematical Foundations)
+
+Pada perancangan sistem capstone terhubung Level 2, keandalan keseluruhan perangkat telemetri nirkabel dimodelkan dengan teori probabilitas keandalan sistem (*Reliability Engineering*):
+
+1. **Ketersediaan Sistem Jamak Seri (Series System Availability)**:
+   Sistem telemetri IoT terdiri atas rantai subsistem yang saling bergantung: Sensor node ($A_{\text{node}}$), Jaringan Wi-Fi/AP ($A_{\text{net}}$), dan Server/MQTT Broker ($A_{\text{srv}}$). Ketersediaan sistem total $A_{\text{system}}$ dirumuskan sebagai:
+   $$
+   A_{\text{system}} = A_{\text{node}} \times A_{\text{net}} \times A_{\text{srv}}
+   $$
+   Jika ketersediaan perangkat keras node adalah $99{,}5\%$, jaringan nirkabel lokal $98\%$, dan broker cloud $99{,}9\%$:
+   $$
+   A_{\text{system}} = 0{,}995 \times 0{,}980 \times 0{,}999 \approx 0{,}9741 \text{ (atau } 97{,}41\%\text{)}
+   $$
+   Meskipun server memiliki SLA tinggi, ketersediaan akhir dibatasi oleh mata rantai terlemah (jaringan Wi-Fi).
+
+2. **Perhitungan MTBF dan Waktu Henti Tahunan (Worked Example)**:
+   Waktu henti (*downtime*) tahunan $T_{\text{down}}$ dari sistem beroperasi kontinu ($8760\text{ jam/tahun}$) dengan $A_{\text{system}} = 97{,}41\%$ adalah:
+   $$
+   T_{\text{down}} = 8760 \times (1 - 0{,}9741) = 8760 \times 0{,}0259 \approx 226{,}9\text{ jam/tahun } (\sim 9{,}45\text{ hari})
+   $$
+   Dengan mengimplementasikan **arsitektur offline ring-buffer** di sisi node (sebagaimana diajarkan pada Chapter 19 & 20), data tidak hilang selama 226 jam putusnya koneksi jaringan. Begitu koneksi pulih, seluruh data terkirim kembali (*flushed*) sehingga ketersediaan data logis (*data retention availability*) meningkat menjadi:
+   $$
+   A_{\text{data}} = \frac{N_{\text{transmitted}} + N_{\text{buffered}}}{N_{\text{total}}} \approx 99{,}99\%
+   $$
+
 ### 5. Panduan Troubleshooting Capstone
 
 - **Serial mencetak `MQTT Failed rc=-2` terus-menerus**: IP `brokerHost` di NVS tidak menunjuk mesin tempat Mosquitto/server berjalan, atau *Windows Firewall* memblokir TCP port `1883`.
@@ -83,6 +108,8 @@ Selesaikan rancangan dan verifikasi proyek **Connected Environmental Monitoring 
 - Kejujuran pencatatan status verifikasi (`software`, `compile`, `simulator`, `hardware`) memisahkan mana fungsi yang telah terbukti nyata dan mana yang masih perlu diuji di papan fisik.
 
 ## Referensi
+- IEEE Std 1451.0-2007, *IEEE Standard for a Smart Transducer Interface for Sensors and Actuators*, IEEE.
+- IEC 61508, *Functional Safety of Electrical/Electronic/Programmable Electronic Safety-related Systems*, International Electrotechnical Commission.
 
 1. OASIS Standard, *MQTT Version 3.1.1 / 5.0 Specification*, [https://mqtt.org/mqtt-specification/](https://mqtt.org/mqtt-specification/).
 2. Eclipse Foundation, *Eclipse Mosquitto Open Source MQTT Broker Documentation*, [https://mosquitto.org/documentation/](https://mosquitto.org/documentation/).

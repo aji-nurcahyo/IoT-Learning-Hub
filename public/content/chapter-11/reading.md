@@ -81,6 +81,35 @@ Hasil eksekusi nyata skrip [`network_diagnostics_sim.py`](content/chapter-11/src
 3. **Analisis Probe Sintetis ([`telemetry.csv`](content/chapter-11/telemetry.csv))**:
    - Dari 10 probe (`ICMP` ke gateway & `TCP_1883` ke broker), 1 paket hilang (**10,0% packet loss**), RTT min/avg/max = $2{,}4 / 6{,}57 / 18{,}6\text{ ms}$, dan *jitter* (simpangan baku) = $5{,}16\text{ ms}$.
 
+### 5.1 Model Matematis Transmisi Sinyal & Perhitungan Throughput Efektif (Mathematical Foundations)
+
+Karakteristik jaringan IoT dibatasi oleh kapasitas kanal fisik dan rasio overhead enkapsulasi protokol:
+
+1. **Teorema Kapasitas Kanal Shannon-Hartley**:
+   Kapasitas informasi maksimum teoritis $C$ (dalam bit per detik/bps) pada kanal dengan lebar pita (bandwidth) $B$ (dalam Hz) dan rasio sinyal terhadap desah (*Signal-to-Noise Ratio* / SNR) dinyatakan oleh:
+   $$
+   C = B \log_2 \left(1 + \text{SNR}\right) = B \log_2 \left(1 + 10^{\frac{\text{SNR}_{\text{dB}}}{10}}\right)
+   $$
+   Untuk kanal nirkabel sempit dengan $B = 125\text{ kHz}$ dan $\text{SNR}_{\text{dB}} = 10\text{ dB}$ (sehingga rasio linier $\text{SNR} = 10$):
+   $$
+   C = 125 \times 10^3 \times \log_2(1 + 10) = 125 \times 10^3 \times 3{,}459 \approx 432{,}4\text{ kbps}
+   $$
+
+2. **Efisiensi Protokol & Overhead Enkapsulasi (Worked Example)**:
+   Sebuah sensor IoT mengirimkan payload data telemetri suhu dan tekanan berukuran $L_{\text{payload}} = 24\text{ byte}$. Ketika ditransmisikan melalui stack IPv4 dan UDP standar, header tambahan yang ditambahkan mencakup:
+   - Header IEEE 802.11 (Wi-Fi MAC): $L_{\text{MAC}} = 36\text{ byte}$
+   - Header IPv4: $L_{\text{IP}} = 20\text{ byte}$
+   - Header UDP: $L_{\text{UDP}} = 8\text{ byte}$
+   Total ukuran frame fisik yang dikirimkan pada lapisan tautan adalah:
+   $$
+   L_{\text{total}} = L_{\text{payload}} + L_{\text{UDP}} + L_{\text{IP}} + L_{\text{MAC}} = 24 + 8 + 20 + 36 = 88\text{ byte}
+   $$
+   Efisiensi transmisi data aplikasi $\eta_{\text{proto}}$ dirumuskan sebagai:
+   $$
+   \eta_{\text{proto}} = \frac{L_{\text{payload}}}{L_{\text{total}}} \times 100\% = \frac{24}{88} \times 100\% \approx 27{,}27\%
+   $$
+   Jika menggunakan protokol TCP ($L_{\text{TCP}} = 20\text{ byte}$), ukuran frame membengkak menjadi $100\text{ byte}$ sehingga efisiensi merosot ke $24\%$. Fakta matematis ini mendasari perlunya protokol kompresi header seperti 6LoWPAN pada jaringan berdaya rendah (*Constrained Networks*).
+
 ### 6. Alur Troubleshooting Konektivitas IoT Berlapis (Bottom-Up)
 
 Saat ESP32 gagal mengirim data ke server, periksa secara berurutan dari lapisan terbawah:
@@ -124,6 +153,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Skrip Python `network_diagnostics_sim.py` telah dieksekusi nyata untuk memvalidasi kalkulasi CIDR dan probe sintetis (`outputs.md`).
 
 ## Referensi
+- Shannon, C. E., *A Mathematical Theory of Communication*, Bell System Technical Journal, Vol. 27, 1948.
+- IETF RFC 791, *Internet Protocol (IPv4) Specification*, DARPA Internet Program Protocol Specification.
 
 1. IETF RFC 1918, *Address Allocation for Private Internets*, [https://datatracker.ietf.org/doc/html/rfc1918](https://datatracker.ietf.org/doc/html/rfc1918) (diperiksa 2026-11-11).
 2. IETF RFC 9293, *Transmission Control Protocol (TCP)*, [https://datatracker.ietf.org/doc/html/rfc9293](https://datatracker.ietf.org/doc/html/rfc9293) (diperiksa 2026-11-11).

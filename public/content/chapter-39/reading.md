@@ -73,6 +73,29 @@ $$\text{Risk Score} = \frac{D + R + E + A + D}{5}$$
 - Skor $6.0 - 7.9$: **HIGH** (Wajib dimitigasi pada sprint rekayasa berikutnya).
 - Skor $< 6.0$: **MEDIUM / LOW**.
 
+### 3.1 Landasan Matematis: Kuantifikasi Skor Risiko DREAD & Entropi Diferensial Privasi (Mathematical Foundations)
+
+Kuantifikasi risiko keamanan siber IoT dan kepatuhan privasi (*Privacy by Design*) diukur menggunakan skor numerik terstruktur DREAD dan jaminan diferensial:
+
+1. **Formulasi Indeks Risiko DREAD**:
+   Tingkat risiko kuantitatif $R_{\text{DREAD}}$ dihitung sebagai nilai rerata aritmatika dari 5 parameter bernilai 1 hingga 10: Damage potential ($D$), Reproducibility ($R$), Exploitability ($E$), Affected users ($A$), dan Discoverability ($D_v$):
+   $$
+   R_{\text{DREAD}} = \frac{D + R + E + A + D_v}{5}
+   $$
+   Tingkat keparahan risiko diklasifikasikan menjadi: Rendah ($1{,}0 - 3{,}9$), Menengah ($4{,}0 - 6{,}9$), dan Kritis/Tinggi ($7{,}0 - 10{,}0$).
+
+2. **Model Privasi Diferensial pada Agregasi Telemetri (Worked Example)**:
+   Sebuah sistem smart meter mengumpulkan data konsumsi energi rumah tangga. Untuk melindungi privasi tanpa merusak akurasi analitik agregat, mekanisme Laplace menambahkan derau acak $Y \sim \text{Laplace}(0, b)$ dengan parameter skala:
+   $$
+   b = \frac{\Delta f}{\epsilon}
+   $$
+   di mana $\Delta f$ adalah sensitivitas global kueri dan $\epsilon$ adalah anggaran privasi (*privacy budget*).
+   Jika sensitivitas pembacaan konsumsi daya per rumah adalah $\Delta f = 2{,}5\text{ kWh}$ dan dipilih parameter privasi ketat $\epsilon = 0{,}5$:
+   $$
+   b = \frac{2{,}5}{0{,}5} = 5{,}0\text{ kWh}
+   $$
+   Varians desah privasi yang ditambahkan adalah $\sigma^2 = 2 b^2 = 2 \times (5{,}0)^2 = 50\text{ kWh}^2$. Saat diagregasikan pada tingkat gardu trafo $1000$ rumah tangga, deviasi baku rata-rata per rumah tangga terdistribusi turun sebanding dengan $\frac{1}{\sqrt{1000}} \approx 0{,}0316$, sehingga analitik grid tetap sangat akurat sementara identitas individu terlindungi secara matematis.
+
 ## Latihan
 
 1. **Analisis Ancaman Fisik Port JTAG/UART**:
@@ -96,6 +119,8 @@ Kembangkan modul simulasi tata kelola privasi dan pemodelan ancaman Python (`thr
 3. Skoring DREAD memberikan dasar kuantitatif yang objektif untuk memprioritaskan alokasi sumber daya perbaikan keamanan siber.
 
 ## Referensi
+- Dwork, C., & Roth, A., *The Algorithmic Foundations of Differential Privacy*, Foundations and Trends in Theoretical Computer Science, 2014.
+- ISO/IEC 27400:2022, *Cybersecurity — IoT security and privacy — Guidelines*, International Organization for Standardization.
 
 1. Shostack, A. *Threat Modeling: Designing for Security*. John Wiley & Sons, 2014.
 2. ISO/IEC 27402:2023. *Cybersecurity and Privacy — Device Security Requirements for IoT*. International Organization for Standardization, 2023.

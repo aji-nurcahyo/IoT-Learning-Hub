@@ -92,6 +92,31 @@ Untuk membuktikan perilaku kontrak REST dan kebijakan *retry* tanpa bergantung p
 2. **Payload tidak lengkap (`400 Bad Request`)**: Server menolak dengan `400 {"error": "missing_required_fields"}`; klien **langsung berhenti tanpa mengulang**.
 3. **`GET /api/v1/devices/esp32-node-01/config`**: Server mengembalikan `200 OK` berisi JSON konfigurasi (`sample_ms: 5000`, `t_high_c: 30.0`).
 
+### 6.1 Landasan Matematis: Overhead Protokol HTTP & Analisis Latensi REST (Mathematical Foundations)
+
+Meskipun protokol HTTP/REST berbasis JSON sangat mudah diintegrasikan dengan sistem cloud web, karakteristik stateless berbasis koneksi TCP memunculkan overhead latensi dan bandwidth yang signifikan:
+
+1. **Pemodelan Waktu Respons Transaksi HTTP (RTT Modeling)**:
+   Setiap transaksi HTTP non-persistent memerlukan tahapan *3-Way Handshake* TCP sebelum data dapat dikirim. Waktu penyelesaian transaksi total $T_{\text{HTTP}}$ dengan waktu bolak-balik jaringan *Round-Trip Time* ($\text{RTT}$) dan latensi pemrosesan server $T_{\text{proc}}$ adalah:
+   $$
+   T_{\text{HTTP}} = 1{,}5 \cdot \text{RTT} + T_{\text{tx,req}} + T_{\text{proc}} + T_{\text{tx,res}} + 0{,}5 \cdot \text{RTT} = 2 \cdot \text{RTT} + T_{\text{proc}} + \frac{L_{\text{req}} + L_{\text{res}}}{R_{\text{link}}}
+   $$
+   Jika enkripsi TLS (HTTPS) diaktifkan, diperlukan tambahan $2 \cdot \text{RTT}$ untuk negosiasi kunci kriptografi (TLS 1.2), sehingga total latensi melonjak menjadi $4 \cdot \text{RTT} + T_{\text{proc}}$.
+
+2. **Perhitungan Rasio Overhead Payload JSON (Worked Numerical Example)**:
+   Sebuah node sensor mengirimkan nilai suhu $28{,}5\,^\circ\text{C}$ dan kelembaban $62\%$.
+   - Payload JSON ringkas: `{"t":28.5,"h":62}` $\rightarrow L_{\text{payload}} = 17\text{ byte}$.
+   - Header HTTP Request (`POST /api/v1/telemetry HTTP/1.1\r\nHost: iot.itera.ac.id\r\nContent-Type: application/json\r\nContent-Length: 17\r\nUser-Agent: ESP32HTTPClient\r\nConnection: close\r\n\r\n`): $L_{\text{header}} = 168\text{ byte}$.
+   Total data pada lapisan aplikasi adalah:
+   $$
+   L_{\text{app}} = L_{\text{header}} + L_{\text{payload}} = 168 + 17 = 185\text{ byte}
+   $$
+   Rasio pemborosan data akibat header HTTP dinyatakan dengan:
+   $$
+   \Omega_{\text{overhead}} = \frac{L_{\text{header}}}{L_{\text{app}}} \times 100\% = \frac{168}{185} \times 100\% \approx 90{,}81\%
+   $$
+   Lebih dari $90\%$ bandwidth terbuang hanya untuk metadata protokol HTTP. Analisis ini membuktikan secara matematis mengapa protokol berorientasi pesan seperti MQTT atau CoAP jauh lebih unggul untuk simpul telemetri periodik.
+
 ### 7. Common Mistakes & Troubleshooting
 
 | Gejala Error | Penyebab Umum | Solusi |
@@ -129,6 +154,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Pengujian *loopback* HTTP nyata telah dijalankan via `http_rest_sim.py` (`outputs.md`); kompilasi `.ino` sedang menanti selesainya instalasi core ESP32.
 
 ## Referensi
+- IETF RFC 9110, *HTTP Semantics*, Internet Engineering Task Force (IETF), 2022.
+- Fielding, R. T., *Architectural Styles and the Design of Network-based Software Architectures*, Doctoral Dissertation, University of California, Irvine, 2000.
 
 1. IETF RFC 9110, *HTTP Semantics*, [https://datatracker.ietf.org/doc/html/rfc9110](https://datatracker.ietf.org/doc/html/rfc9110) (diperiksa 2026-11-11).
 2. IETF RFC 8259, *The JavaScript Object Notation (JSON) Data Interchange Format*, [https://datatracker.ietf.org/doc/html/rfc8259](https://datatracker.ietf.org/doc/html/rfc8259) (diperiksa 2026-11-11).

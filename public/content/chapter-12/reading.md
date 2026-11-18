@@ -73,6 +73,37 @@ Memanggil `WiFi.begin()` di dalam *while-loop* yang memblokir adalah kesalahan a
 - **Simulasi Wokwi**: [`wokwi_diagram.json`](content/chapter-12/src/wokwi_diagram.json).
 - **Verifikasi Software**: [`wifi_fsm_sim.py`](content/chapter-12/src/wifi_fsm_sim.py) menguji alur NVS kosong $\rightarrow$ *provisioning* (dengan *password* ter-redaksi) $\rightarrow$ urutan *exponential backoff* $1\text{ s} \dots 60\text{ s}$ $\rightarrow$ reset backoff saat `CONNECTED` (`outputs.md`). Firmware `.ino` masih berstatus **Belum diuji** terhadap compiler/simulator/router fisik.
 
+### 6.1 Model Matematis Propagasi Radio Wi-Fi & Link Budget (Mathematical Foundations)
+
+Konektivitas Wi-Fi (IEEE 802.11 b/g/n) pada frekuensi $2{,}4\text{ GHz}$ mengalami redaman daya propagasi di ruang bebas (*Free-Space Path Loss* / FSPL) yang dirumuskan oleh persamaan Friis:
+
+1. **Redaman Ruang Bebas (Free-Space Path Loss)**:
+   $$
+   \text{FSPL}_{\text{dB}} = 20 \log_{10}(d) + 20 \log_{10}(f) - 147{,}55
+   $$
+   di mana jarak $d$ dinyatakan dalam meter (m) dan frekuensi transmisi $f$ dalam Hertz (Hz). Untuk frekuensi tengah Wi-Fi kanal 6 ($f = 2{,}437\text{ GHz} = 2{,}437 \times 10^9\text{ Hz}$):
+   $$
+   \text{FSPL}_{\text{dB}}(d) = 20 \log_{10}(d) + 20 \log_{10}(2{,}437 \times 10^9) - 147{,}55 = 20 \log_{10}(d) + 187{,}74 - 147{,}55 = 20 \log_{10}(d) + 40{,}19\text{ dB}
+   $$
+
+2. **Perhitungan Daya Terima (RSSI) & Link Margin (Worked Example)**:
+   Daya sinyal yang diterima oleh perangkat ESP32 ($P_{\text{RX}}$ dalam dBm) ditentukan oleh daya pancar Access Point ($P_{\text{TX}}$), penguatan antena pemancar ($G_{\text{TX}}$), penguatan antena penerima ($G_{\text{RX}}$), dan redaman dinding/penghalang ($L_{\text{obs}}$):
+   $$
+   P_{\text{RX}} = P_{\text{TX}} + G_{\text{TX}} + G_{\text{RX}} - \text{FSPL} - L_{\text{obs}}
+   $$
+   **Kasus**: Pemancar Wi-Fi memancarkan daya $P_{\text{TX}} = +18\text{ dBm}$, $G_{\text{TX}} = 2\text{ dBi}$, antena PCB ESP32 memiliki $G_{\text{RX}} = 1\text{ dBi}$, jarak perangkat $d = 20\text{ meter}$, dan sinyal menembus 1 dinding bata ringan ($L_{\text{obs}} = 6\text{ dB}$):
+   $$
+   \text{FSPL}_{\text{dB}}(20) = 20 \log_{10}(20) + 40{,}19 = 26{,}02 + 40{,}19 = 66{,}21\text{ dB}
+   $$
+   $$
+   P_{\text{RX}} = 18 + 2 + 1 - 66{,}21 - 6 = -51{,}21\text{ dBm}
+   $$
+   Jika sensitivitas minimum penerima ESP32 untuk modulasi MCS7 (72 Mbps) adalah $S_{\text{min}} = -71\text{ dBm}$, maka *Link Margin* ($M$) sistem adalah:
+   $$
+   M = P_{\text{RX}} - S_{\text{min}} = -51{,}21\text{ dBm} - (-71\text{ dBm}) = +19{,}79\text{ dB}
+   $$
+   Link margin $> 15\text{ dB}$ menjamin tautan nirkabel stabil terhadap *fading* dan fluktuasi interferensi lingkungan sekitar.
+
 ### 7. Common Mistakes & Troubleshooting
 
 | Masalah Umum | Penyebab | Solusi |
@@ -111,6 +142,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Simulasi logika provisioning dan backoff telah dieksekusi di Python (`outputs.md`); uji kompilasi `.ino` dan koneksi router fisik masih berstatus **Belum diuji** saat dokumen ini ditulis.
 
 ## Referensi
+- IEEE Std 802.11-2020, *IEEE Standard for Information Technology—Telecommunications and Information Exchange between Systems - Local and Metropolitan Area Networks—Specific Requirements - Part 11: Wireless LAN MAC and PHY Specifications*.
+- Friis, H. T., *A Note on a Simple Transmission Formula*, Proceedings of the IRE, 1946.
 
 1. Espressif Systems, *ESP-IDF Wi-Fi Driver & Provisioning Guide*, [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/wifi.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/wifi.html) (diperiksa 2026-11-11).
 2. Espressif Systems, *Arduino-ESP32 WiFi & Preferences API*, [https://docs.espressif.com/projects/arduino-esp32/en/latest/api/preferences.html](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/preferences.html) (diperiksa 2026-11-11).

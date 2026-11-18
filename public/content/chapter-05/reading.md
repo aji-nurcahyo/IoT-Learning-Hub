@@ -83,6 +83,32 @@ Setelah menyala $\frac{2^{32}-1}{1000 \times 86400} \approx 49{,}71\text{ hari}$
 
 **Praktik Terbaik**: Hindari menggabungkan `String s = "temp=" + String(t) + " C";` berulang-ulang di dalam `loop()`. Gunakan buffer lokal tetap `char buf[96]` + `snprintf(...)` seperti pada [`ex01_types_serial.ino`](content/chapter-05/src/ex01_types_serial/ex01_types_serial.ino).
 
+### 5.1 Landasan Matematis: Analisis Kompleksitas & Pemodelan Fragmentasi Heap (Mathematical Foundations)
+
+Dalam rekayasa sistem tertanam (*embedded systems*), efisiensi algoritma dan pemodelan alokasi memori berbanding lurus dengan keandalan perangkat:
+
+1. **Kompleksitas Waktu dan Pemakaian Siklus Instruksi**:
+   Operasi sampling atau manipulasi buffer ring berukuran $N$ sampel memiliki kompleksitas waktu $O(1)$ untuk penyisipan (*enqueue*) dan $O(N)$ untuk kalkulasi rata-rata bergerak (*moving average*):
+   $$
+   \mu_k = \frac{1}{N} \sum_{i=0}^{N-1} x_{k-i}
+   $$
+   Jika setiap iterasi akumulasi membutuhkan $C_{\text{loop}} = 4$ siklus instruksi pada frekuensi clock $f_{\text{cpu}} = 160\text{ MHz}$, total waktu eksekusi $t_{\text{exec}}$ adalah:
+   $$
+   t_{\text{exec}} = \frac{N \cdot C_{\text{loop}}}{f_{\text{cpu}}}
+   $$
+   Untuk buffer berukuran $N = 256$, waktu eksekusi komputasi hanya $t_{\text{exec}} = \frac{256 \times 4}{160 \times 10^6} = 6{,}4\,\mu\text{s}$, yang sepenuhnya memenuhi batas waktu *real-time*.
+
+2. **Model Fragmentasi Heap & Kapasitas Memori (Worked Example)**:
+   Alokasi dinamis berulang (`malloc` / `new`) pada heap mikrokontroler memicu fragmentasi memori eksternal. Jika blok bebas terbesar $B_{\text{max}}$ lebih kecil dari ukuran alokasi yang diminta $S_{\text{req}}$, alokasi akan gagal meskipun total memori bebas $M_{\text{free}} > S_{\text{req}}$. Indeks fragmentasi memori $F_{\text{heap}}$ dirumuskan sebagai:
+   $$
+   F_{\text{heap}} = 1 - \frac{B_{\text{max}}}{M_{\text{free}}}
+   $$
+   **Kasus**: Sistem memiliki total sisa memori bebas $M_{\text{free}} = 40\text{ KiB}$, namun terpecah-pecah sehingga blok bebas contiguous terbesar hanya $B_{\text{max}} = 4\text{ KiB}$.
+   $$
+   F_{\text{heap}} = 1 - \frac{4}{40} = 0{,}90 \text{ (atau } 90\%\text{ terfragmentasi)}
+   $$
+   Kondisi $F_{\text{heap}} = 90\%$ menyebabkan sistem menolak alokasi buffer jaringan 8 KiB (`ESP_ERR_NO_MEM`). Oleh karena itu, prinsip rekayasa *embedded* mengharuskan alokasi array statis (`static` buffer) di masa kompilasi untuk menjamin ketiadaan fragmentasi heap runtime.
+
 ### 6. Finite State Machine (FSM) Dasar
 
 Saat logika bertambah kompleks (misalnya *menunggu jadwal $\rightarrow$ membaca sampel $\rightarrow$ mode alarm berkedip cepat*), kumpulan `if-else` bertumpuk dengan banyak variabel boolean (`isAlert`, `wasSampled`, `flag1`) cepat berubah menjadi *spaghetti code*. **FSM** menyederhanakannya menjadi sekumpulan **state** eksklusif (`enum class SystemState { IDLE, SAMPLE, ALERT };`) dan **transisi eksplisit** di dalam `switch (currentState)`.
@@ -137,6 +163,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Verifikasi aritmatika *rollover* dan transisi FSM telah dijalankan via Python `fsm_timing_sim.py`; kompilasi `.ino` dan uji pada Wokwi/ESP32 fisik belum dijalankan di lingkungan ini.
 
 ## Referensi
+- MISRA C:2012, *Guidelines for the Use of the C Language in Critical Systems*, MISRA Consortium Ltd, 2013.
+- ISO/IEC 9899:2018, *Information technology — Programming languages — C*, International Organization for Standardization.
 
 1. Arduino Official Documentation, *Blink Without Delay & millis() Reference*, [https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/](https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/) (diperiksa 2026-11-10).
 2. Espressif Systems, *Arduino-ESP32 API Reference & Memory Guidelines*, [https://docs.espressif.com/projects/arduino-esp32/en/latest/](https://docs.espressif.com/projects/arduino-esp32/en/latest/) (diperiksa 2026-11-10).

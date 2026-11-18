@@ -66,6 +66,32 @@ Saat dua kontak logam di dalam *push button* mekanis menutup atau membuka, sifat
 2. Buat ISR **sesingkat mungkin**: hanya setel *flag* `volatile bool` dan catat timestamp `millis()`.
 3. **DILARANG** memanggil `Serial.print()`, `delay()`, atau alokasi memori di dalam ISR! Proses pencetakan dan *debounce* dilakukan di `loop()`.
 
+### 5.1 Model Matematis Kontak Bouncing & Perhitungan Filter Debounce (Mathematical Foundations)
+
+Sakelar mekanis (push-button) mengalami fenomena transien *bouncing* saat kontak logam saling berbenturan sebelum mencapai kondisi tunak (*steady-state*):
+
+1. **Karakteristik Transien Sakelar Mekanis**:
+   Lama waktu osilasi bouncing $t_{\text{bounce}}$ umumnya berlangsung antara $2\text{ ms}$ hingga $20\text{ ms}$. Jika frekuensi sampling $f_s$ terlalu tinggi tanpa filter, satu kali penekanan tombol dapat memicu puluhan interrupt palsu. Syarat kestabilan periode filter debouncing $T_{\text{debounce}}$ adalah:
+   $$
+   T_{\text{debounce}} > \max(t_{\text{bounce}})
+   $$
+   Dalam praktik rekayasa perangkat lunak, nilai standar yang direkomendasikan adalah $T_{\text{debounce}} = 30\text{ ms}$ hingga $50\text{ ms}$.
+
+2. **Perhitungan Filter RC Debounce Perangkat Keras (Worked Example)**:
+   Pada sirkuit debouncing berbasis perangkat keras (hardware filter), kontak sakelar dihubungkan dengan filter lolos-rendah (Low-Pass Filter) resistor-kapasitor (RC). Waktu pengisian kapasitor hingga mencapai tegangan ambang input logika $V_{\text{IH}} = 0{,}7 \cdot V_{\text{DD}}$ dinyatakan dengan:
+   $$
+   V_C(t) = V_{\text{DD}} \left(1 - e^{-t / (R C)}\right)
+   $$
+   Menyelesaikan persamaan untuk waktu tunda $t_{\text{delay}}$:
+   $$
+   t_{\text{delay}} = -R C \cdot \ln\left(1 - \frac{V_{\text{IH}}}{V_{\text{DD}}}\right) = -R C \cdot \ln(1 - 0{,}7) \approx 1{,}204 \cdot R C
+   $$
+   Jika dipilih kapasitor keramik $C = 100\text{ nF}$ dan diinginkan tunda debounce $t_{\text{delay}} = 10\text{ ms}$:
+   $$
+   R = \frac{t_{\text{delay}}}{1{,}204 \cdot C} = \frac{10 \times 10^{-3}\text{ s}}{1{,}204 \times 100 \times 10^{-9}\text{ F}} \approx 83\text{ k}\Omega \quad (\text{digunakan resistor standar } 82\text{ k}\Omega)
+   $$
+   Resistor *pull-up* $82\text{ k}\Omega$ dan kapasitor $100\text{ nF}$ menjamin osilasi transien teredam sepenuhnya sebelum sinyal diteruskan ke pin GPIO mikrokontroler.
+
 ### 6. Implementasi Praktis: Button-Controlled LED FSM
 
 **Spesifikasi Target (`ESP32-DevKitC V4`)**:
@@ -124,6 +150,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Logika debounce telah diverifikasi secara *software* via `debounce_sim.py` (`outputs.md`); eksekusi `.ino` di board/Wokwi tetap berstatus **Belum diuji** di lingkungan server ini.
 
 ## Referensi
+- JEDEC Standard JESD8C.01, *Interface Standard for Nominal 3 V/3.3 V Supply Digital Integrated Circuits*, JEDEC Solid State Technology Association.
+- Ganssle, J., *A Guide to Debouncing*, The Ganssle Group, Whitepaper Technical Report.
 
 1. Espressif Systems, *ESP-IDF GPIO & RTC GPIO Documentation*, [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html) (diperiksa 2026-11-10).
 2. Arduino Official Documentation, *Debounce on a Pushbutton & attachInterrupt()*, [https://docs.arduino.cc/built-in-examples/digital/Debounce/](https://docs.arduino.cc/built-in-examples/digital/Debounce/) (diperiksa 2026-11-10).

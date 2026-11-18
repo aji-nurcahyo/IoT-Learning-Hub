@@ -69,6 +69,33 @@ Strategi mitigasi backpressure industri:
 2. **Pushback / Throttling**: Memberikan sinyal *slow-down* kepada perangkat pengirim melalui penurunan interval pelaporan.
 3. **Queue Buffering**: Mengalirkan lonjakan beban ke dalam distributed persistent log seperti Apache Kafka atau RabbitMQ.
 
+### 3.1 Landasan Matematis: Distribusi Consistent Hashing & Penyeimbangan Beban Sharding (Mathematical Foundations)
+
+Dalam arsitektur IoT terdistribusi berskala jutaan perangkat, skema partisi kunci menggunakan algoritma Consistent Hashing meminimalkan redistribusi data saat penambahan atau pengurangan node server:
+
+1. **Rasio Migrasi Kunci pada Pertambahan Node Server**:
+   Pada skema modulo tradisional ($h(k) \pmod N$), perubahan jumlah node dari $N$ menjadi $N+1$ menyebabkan hampir seluruh kunci berpindah partisi dengan rasio migrasi:
+   $$
+   R_{\text{modulo}} = \frac{N}{N + 1} \approx 100\% \quad (\text{untuk } N \gg 1)
+   $$
+   Sebaliknya, pada cincin Consistent Hashing dengan $V$ virtual node per server fisik, penambahan satu server hanya memindahkan rata-rata kunci sebesar:
+   $$
+   R_{\text{consistent}} = \frac{1}{N + 1}
+   $$
+
+2. **Analisis Beban Kluster 10 Server Terdistribusi (Worked Example)**:
+   Sebuah platform IoT menangani $M = 1.000.000$ koneksi perangkat MQTT pada kluster $N = 10$ broker.
+   Saat server ke-11 ditambahkan untuk mengantisipasi lonjakan beban (*scale-out*):
+   - Jumlah koneksi yang perlu dimigrasikan pada Consistent Hashing:
+     $$
+     K_{\text{migrasi}} = \frac{1}{11} \times 1.000.000 \approx 90.909\text{ koneksi } (9{,}09\%)
+     $$
+   - Jika memakai modulo hashing tradisional:
+     $$
+     K_{\text{migrasi,trad}} = \frac{10}{11} \times 1.000.000 \approx 909.091\text{ koneksi } (90{,}91\%)
+     $$
+   Pengurangan migrasi dari $90{,}9\%$ menjadi hanya $9{,}09\%$ mencegah fenomena badai koneksi ulang (*thundering herd reconnection*) yang dapat melumpuhkan seluruh kluster broker IoT.
+
 ## Latihan
 
 1. **Analisis Hash Sharding**: Mengapa penggunaan nomor urut acak (*random round-robin*) dilarang saat mendistribusikan telemetri sensor ke beberapa antrean worker yang terpisah? Apa dampaknya terhadap pemeliharaan state sensor dan deteksi anomali deret waktu?
@@ -89,6 +116,8 @@ Kembangkan modul simulasi arsitektur terdistribusi Python (`scalability_cluster_
 3. Penerapan kontrol backpressure yang disiplin melindungi ketersediaan platform dari ancaman lonjakan trafik tak terduga.
 
 ## Referensi
+- Karger, D., et al., *Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web*, ACM STOC, 1997.
+- Kleppmann, M., *Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems*, O'Reilly Media.
 
 1. Kleppmann, M. *Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems*. O'Reilly Media, 2017.
 2. OASIS. *MQTT Version 5.0 Standard Specification: Shared Subscriptions*. 2019.

@@ -66,6 +66,28 @@ SPI memakai driver *push-pull* berkecepatan tinggi dengan 4 jalur (*VSPI* defaul
 - **Firmware ESP32**: [`i2c_uart_spi_probe.ino`](content/chapter-16/src/i2c_uart_spi_probe/i2c_uart_spi_probe.ino) menggabungkan *I2C Scanner* (`0x08..0x77`), `Serial2` `8N1`, dan transaksi uji `SPI_MODE0`. Berstatus **Belum diuji** di server ini sementara core ESP32 dipasang.
 - **Verifikasi Software**: [`bus_protocol_sim.py`](content/chapter-16/src/bus_protocol_sim.py) menguji kalkulasi efisiensi `8N1`/`8E1`, validasi *rise time* I2C $10\text{ k}\Omega / 4{,}7\text{ k}\Omega / 2{,}2\text{ k}\Omega$, deteksi konflik alamat `0x76`, serta waktu transfer $64\text{ B}$ SPI ($128{,}0\,\mu\text{s}$ @ $4\text{ MHz}$ vs $\sim 5{,}56\text{ ms}$ pada UART $115200$) — seluruhnya dieksekusi nyata di Python (`outputs.md`).
 
+### 5.1 Landasan Matematis: Kapasitas Saluran Serial, Batas Jarak I2C & Baud Rate Error (Mathematical Foundations)
+
+Antarmuka komunikasi serial perangkat keras (UART, I2C, SPI) diatur oleh batas fisik waktu propagasi dan kapasitansi saluran:
+
+1. **Toleransi Galat Baud Rate UART**:
+   Komunikasi UART asinkron mengandalkan clock lokal di kedua simpul tanpa jalur clock bersama. Pembacaan bit data dilakukan pada pertengahan periode bit ($t_{\text{sample}} = 0{,}5 \cdot T_{\text{bit}}$). Akumulasi pergeseran fase waktu sepanjang 1 frame (1 Start bit + 8 Data bit + 1 Stop bit = 10 bit) tidak boleh melebihi $\pm 0{,}5 \cdot T_{\text{bit}}$. Syarat batas deviasi frekuensi baud rate maksimum $\Delta f_{\text{baud}}$ secara analitis adalah:
+   $$
+   |\Delta f_{\text{baud}}| < \frac{0{,}5}{10} \times 100\% = 5\%
+   $$
+   Dalam standar rekayasa industri, deviasi baud rate kumulatif antara pemancar dan penerima wajib dijaga di bawah $|\text{Error}| \le 2{,}0\%$ untuk mencegah salah baca data (*framing error*).
+
+2. **Perhitungan Batas Jarak & Kapasitansi Bus I2C (Worked Example)**:
+   Standar NXP I2C Bus Specification menetapkan waktu naik sinyal maksimum (*rise time*) untuk mode Standard ($100\text{ kHz}$) adalah $t_r \le 1000\text{ ns}$, dan untuk Fast Mode ($400\text{ kHz}$) adalah $t_r \le 300\text{ ns}$. Rise time ditentukan oleh konstanta waktu sirkuit resistor pull-up $R_p$ dan kapasitansi total bus $C_{\text{bus}}$:
+   $$
+   t_r = R_p \cdot C_{\text{bus}} \cdot \ln\left( \frac{V_{\text{DD}} - 0{,}1 \cdot V_{\text{DD}}}{V_{\text{DD}} - 0{,}7 \cdot V_{\text{DD}}} \right) = R_p \cdot C_{\text{bus}} \cdot \ln\left( \frac{0{,}9}{0{,}3} \right) \approx 1{,}0986 \cdot R_p \cdot C_{\text{bus}}
+   $$
+   Maka batas kapasitansi bus maksimum untuk resistor pull-up $R_p = 4{,}7\text{ k}\Omega$ pada Fast Mode ($t_r = 300\text{ ns}$) adalah:
+   $$
+   C_{\text{bus,max}} = \frac{t_r}{1{,}0986 \cdot R_p} = \frac{300 \times 10^{-9}}{1{,}0986 \times 4700} \approx 58\text{ pF}
+   $$
+   Jika kabel jumper memiliki kapasitansi parasitik $\approx 50\text{ pF/meter}$, panjang fisik kabel I2C maksimum pada frekuensi 400 kHz tidak boleh melebihi $1{,}1\text{ meter}$. Fakta matematis ini membuktikan bahwa I2C murni ditujukan untuk komunikasi antar-chip di dalam satu PCB (*intra-board bus*).
+
 ### 6. Common Mistakes & Troubleshooting Bus Serial
 
 | Gejala | Penyebab Umum | Pemeriksaan & Solusi |
@@ -103,6 +125,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Perhitungan teknis bus telah diverifikasi melalui `bus_protocol_sim.py` (`outputs.md`); kompilasi `i2c_uart_spi_probe.ino` menunggu selesainya instalasi core ESP32.
 
 ## Referensi
+- UM10204, *I2C-bus specification and user manual*, Rev. 7.0, NXP Semiconductors, 2021.
+- Texas Instruments, *Understanding the I2C Bus*, Application Report SLVA704.
 
 1. NXP Semiconductors, *UM10204: I2C-bus Specification and User Manual*, [https://www.nxp.com/docs/en/user-guide/UM10204.pdf](https://www.nxp.com/docs/en/user-guide/UM10204.pdf) (diperiksa 2026-11-11).
 2. Espressif Systems, *ESP-IDF UART, I2C, and SPI Master Driver Documentation*, [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/index.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/index.html) (diperiksa 2026-11-11).

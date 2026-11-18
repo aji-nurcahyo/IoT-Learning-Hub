@@ -75,6 +75,28 @@ Simpul **`catch`** bertindak sebagai blok `try-catch` global yang menangkap selu
 - Simpul `catch` menambahkan objek `msg.error` yang memuat deskripsi kesalahan, baris kode penyebab, dan identitas simpul yang gagal.
 - Aliran keluaran simpul `catch` diarahkan ke antrean surat mati (*Dead-Letter Queue*) atau file log audit sehingga aliran data utama tidak terhenti (*fail-safe isolation*).
 
+### 3.1 Landasan Matematis: Throughput Aliran Peristiwa & Latensi Pipeline Node-RED (Mathematical Foundations)
+
+Pemrosesan berbasis aliran (*Flow-Based Programming*) pada Node-RED memproses pesan sebagai aliran peristiwa diskrit di atas event-loop single-threaded Node.js:
+
+1. **Model Penjadwalan Event Loop & Waktu Eksekusi Fungsi**:
+   Total latensi transit suatu pesan $T_{\text{pipeline}}$ yang melewati rantai $K$ node fungsi dihitung sebagai:
+   $$
+   T_{\text{pipeline}} = \sum_{i=1}^{K} t_{\text{exec},i} + \sum_{i=1}^{K-1} t_{\text{queue},i}
+   $$
+   di mana $t_{\text{exec},i}$ adalah waktu eksekusi komputasi node ke-$i$ dan $t_{\text{queue},i}$ adalah waktu tunggu di antrean mikro-task V8.
+
+2. **Kapasitas Throughput Maksimum Pipeline (Worked Example)**:
+   Sebuah flow Node-RED menerima pesan MQTT, memvalidasi skema JSON ($t_{\text{exec},1} = 0{,}8\text{ ms}$), mengevaluasi ambang batas alarm ($t_{\text{exec},2} = 0{,}2\text{ ms}$), dan memformat data untuk database ($t_{\text{exec},3} = 0{,}5\text{ ms}$). Total waktu eksekusi sinkron per pesan adalah:
+   $$
+   T_{\text{sync}} = 0{,}8 + 0{,}2 + 0{,}5 = 1{,}5\text{ ms}
+   $$
+   Throughput komputasi teoritis maksimum pipeline pada satu inti CPU adalah:
+   $$
+   \text{Throughput}_{\text{max}} = \frac{1}{T_{\text{sync}}} = \frac{1}{1{,}5 \times 10^{-3}\text{ s}} \approx 666{,}7\text{ pesan/detik}
+   $$
+   Jika beban kedatangan telemetri melampaui 667 pesan/detik, latensi antrean $t_{\text{queue}}$ akan meningkat tanpa batas (*starvation*), sehingga diperlukan partisi beban dengan kluster Node-RED atau pendelegasian pemrosesan berat ke worker thread.
+
 ## Latihan
 
 1. **Analisis Konteks Simpul**:
@@ -119,6 +141,8 @@ Rancang dan validasi alur integrasi visual Node-RED menggunakan format deklarati
 4. **Resiliensi Terisolasi**: Pemasangan simpul `catch` menjamin stabilitas runtime terhadap payload korup tanpa memerlukan proses restart manual.
 
 ## Referensi
+- Morrison, J. P., *Flow-Based Programming: A New Approach to Application Development*, 2nd Edition, CreateSpace, 2010.
+- OpenJS Foundation, *Node-RED Programming Guide & Node Architecture*, Official Documentation.
 
 1. OpenJS Foundation. *Node-RED Official Documentation & Core Concepts*. https://nodered.org/docs/
 2. Morrison, J. P. *Flow-Based Programming: A New Approach to Application Development*. Van Nostrand Reinhold.

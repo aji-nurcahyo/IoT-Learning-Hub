@@ -54,6 +54,39 @@ Untuk menjamin kriteria kelulusan teknis, platform diuji terhadap 6 Kasus Uji Pe
 | **SATC-05** | Digital Twin Sync | Pemanas daya 100W lalu lonjakan 250W | Galat residu stabil dan proyeksi What-If memprediksi kenaikan suhu. |
 | **SATC-06** | Resilience & Privacy | Injeksi putus jaringan & payload PII | Data tertahan di buffer terkuras utuh dan data PII terbuang 100%. |
 
+### 2.1 Landasan Matematis: Metrik Efektivitas Sistem Gabungan (OEE) & Ketersediaan Capstone (Mathematical Foundations)
+
+Pada perancangan platform industri tingkat akhir (Level 4 Capstone), keberhasilan integrasi dievaluasi menggunakan metrik Overall Equipment Effectiveness (OEE) dan keandalan sistem kritis:
+
+1. **Model Overall Equipment Effectiveness (OEE)**:
+   Metrik OEE menggabungkan tiga dimensi utama kinerja fasilitas industri: Ketersediaan (*Availability* / $A_{\text{oee}}$), Performa (*Performance* / $P_{\text{oee}}$), dan Kualitas (*Quality* / $Q_{\text{oee}}$):
+   $$
+   \text{OEE} = A_{\text{oee}} \times P_{\text{oee}} \times Q_{\text{oee}}
+   $$
+   - $A_{\text{oee}} = \frac{\text{Operating Time}}{\text{Planned Production Time}}$
+   - $P_{\text{oee}} = \frac{\text{Ideal Cycle Time} \times \text{Total Count}}{\text{Operating Time}}$
+   - $Q_{\text{oee}} = \frac{\text{Good Count}}{\text{Total Count}}$
+
+2. **Kalkulasi Kinerja Platform Smart Factory Terpadu (Worked Example)**:
+   Pabrik beroperasi selama waktu terencana $T_{\text{plan}} = 480\text{ menit}$ (8 jam).
+   - Waktu henti akibat setup dan perawatan adalah $30\text{ menit} \rightarrow \text{Operating Time} = 450\text{ menit}$.
+     $$
+     A_{\text{oee}} = \frac{450}{480} = 0{,}9375 \quad (93{,}75\%)
+     $$
+   - Laju ideal produksi adalah $0{,}5\text{ menit/unit}$. Total unit yang diproduksi adalah $810\text{ unit}$.
+     $$
+     P_{\text{oee}} = \frac{0{,}5 \times 810}{450} = \frac{405}{450} = 0{,}9000 \quad (90{,}00\%)
+     $$
+   - Dari 810 unit yang diproduksi, sistem inspeksi Edge AI TinyML mendeteksi 16 unit cacat sehingga produk baik berjumlah $794\text{ unit}$.
+     $$
+     Q_{\text{oee}} = \frac{794}{810} \approx 0{,}9802 \quad (98{,}02\%)
+     $$
+   Nilai OEE komprehensif pabrik yang dipantau platform IoT adalah:
+   $$
+   \text{OEE} = 0{,}9375 \times 0{,}9000 \times 0{,}9802 \approx 0{,}8270 \quad (82{,}70\%)
+   $$
+   Pencapaian $\text{OEE} > 80\%$ merefleksikan standar kelas dunia (*World Class Manufacturing*), membuktikan bahwa integrasi platform end-to-end mampu menyajikan analitik kuantitatif yang presisi untuk pengambilan keputusan operasional.
+
 ## Latihan
 
 1. **Analisis Ketergantungan Subsistem**: Bagaimana kegagalan pada subsistem proteksi daya (Chapter 31) dapat merembet (*cascading failure*) dan memicu anomali inferensi pada model TinyML (Chapter 35)? Jelaskan perlunya detektor brownout sebagai penjaga gerbang operasional.
@@ -71,6 +104,8 @@ Eksekusi modul terpadu *Advanced IoT Systems Capstone Platform* Python (`advance
 3. Arsitektur terintegrasi ini menjadi representasi standar industri untuk sistem IoT masa depan yang cerdas, aman, dan tahan banting.
 
 ## Referensi
+- SEMI E10-0304, *Specification for Definition and Measurement of Equipment Reliability, Availability, and Maintainability (RAM)*.
+- IEEE Std 1012-2016, *IEEE Standard for System, Software, and Hardware Verification and Validation*, IEEE.
 
 1. IEEE Internet of Things Journal. *Special Issue on Resilient, Secure, and Scalable IoT Systems*. 2023.
 2. NIST Special Publication 800-213. *IoT Device Cybersecurity Guidance for the Federal Government*. National Institute of Standards and Technology, 2021.

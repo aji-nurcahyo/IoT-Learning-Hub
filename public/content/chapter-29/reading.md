@@ -76,6 +76,28 @@ Praktik terbaik industri:
 2. **Fase 2 (Canary Group)**: Update disalurkan ke $5\%$ armada produksi acak. Sistem memantau metrik crash rate, PDR, dan stabilitas baterai selama $24\text{–}48\text{ jam}$.
 3. **Fase 3 (Staged Wave)**: Jika kelompok canary stabil, rilis diperluas ke $25\%$, lalu $50\%$, dan akhirnya $100\%$ armada penuh.
 
+### 3.1 Landasan Matematis: Probabilitas Kegagalan Flash & Model Pemulihan Rollback (Mathematical Foundations)
+
+Mekanisme pembaruan firmware over-the-air (OTA) dirancang untuk memastikan perangkat tidak mengalami *bricking* meskipun terjadi gangguan transmisi atau galat firmware:
+
+1. **Model Keandalan Transmisi OTA Multi-Blok**:
+   Jika firmware berukuran $M$ byte dipecah menjadi $N_{\text{block}} = \lceil M / S_{\text{block}} \rceil$ blok independen, dan probabilitas integritas hash SHA-256 per blok berhasil adalah $q = (1 - p)$ di mana $p$ adalah packet error rate:
+   $$
+   P_{\text{success}} = q^{N_{\text{block}}} = (1 - p)^{N_{\text{block}}}
+   $$
+   Untuk firmware sebesar 1 MiB ($M = 1.048.576\text{ byte}$) dengan ukuran blok $S_{\text{block}} = 4096\text{ byte}$, terdapat $N_{\text{block}} = 256$ blok. Jika $p = 0{,}001$ ($0{,}1\%$ galat per blok):
+   $$
+   P_{\text{success}} = (1 - 0{,}001)^{256} \approx 0{,}774 \quad (77{,}4\%)
+   $$
+   Tanpa mekanisme pengulangan blok individual (*per-block retry*), lebih dari $22\%$ proses unduh firmware akan gagal total.
+
+2. **Analisis Waktu Timeout Watchdog & Rollback State Machine (Worked Example)**:
+   Setelah partisi boot baru diaktifkan, firmware baru diberi waktu jendela evaluasi keselamatan $T_{\text{window}} = 30\text{ detik}$ untuk menghubungi server validasi dan mencatat status `ESP_OTA_IMG_VALID`. Jika dalam waktu $T_{\text{window}}$ terjadi crash CPU (*panik/kernel fault*) atau koneksi server gagal:
+   $$
+   T_{\text{rollback}} = T_{\text{watchdog}} + T_{\text{reboot}} \approx 5{,}0\text{ s} + 1{,}2\text{ s} = 6{,}2\text{ detik}
+   $$
+   Hardware RTC bootloader otomatis mengembalikan pointer boot ke partisi sebelumnya (Slot A), menjamin ketersediaan sistem tetap $100\%$ pulih tanpa intervensi fisik teknisi ke lapangan.
+
 ## Latihan
 
 1. **Analisis Dual-Bank Partitioning**:
@@ -114,6 +136,8 @@ Bangun dan uji sistem simulator partisi Dual-Bank A/B dan pemulihan otomatis OTA
 4. **Penyebaran Bertahap**: Strategi rilis canary meminimalkan risiko operasional dengan membatasi dampak kesalahan kode hanya pada sebagian kecil armada uji.
 
 ## Referensi
+- Espressif Systems, *Over-The-Air Updates (OTA) Architecture Guidelines*, ESP-IDF Programming Guide.
+- IEC 62443-4-2, *Security for industrial automation and control systems - Technical security requirements for IACS components*.
 
 1. Espressif Systems. *ESP-IDF Programming Guide: Over The Air Updates (OTA) & Anti-rollback*. https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html
 2. ARM Mbed. *Mbed OS Bootloader and Dual-Bank Firmware Update Architecture*.

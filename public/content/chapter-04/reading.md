@@ -80,6 +80,39 @@ Aturan pembagian pin pada **ESP32-DevKitC V4 (WROOM-32)**:
 
 Pada Level 1 kita menggunakan **Arduino-ESP32** (melalui Arduino IDE 2.x, PlatformIO, atau Wokwi) agar fokus tertuju pada konsep *embedded*, kelistrikan, dan logika *Firmware* tanpa tenggelam dalam kompleksitas konfigurasi *build system* sejak hari pertama.
 
+### 5.1 Landasan Matematis: Frekuensi Clock, Disipasi Daya CMOS & Perhitungan Beban Pin (Mathematical Foundations)
+
+Pemilihan mikrokontroler dan perancangan periferal perangkat keras memerlukan pemodelan kuantitatif waktu eksekusi clock dan konsumsi energi:
+
+1. **Frekuensi Clock dan Periode Siklus Instruksi**:
+   Jika prosesor beroperasi pada frekuensi inti $f_{\text{cpu}}$, periode siklus instruksi dasar $T_{\text{clk}}$ dinyatakan dengan:
+   $$
+   T_{\text{clk}} = \frac{1}{f_{\text{cpu}}}
+   $$
+   Untuk ESP32 pada frekuensi clock maksimum $f_{\text{cpu}} = 240\text{ MHz}$, $T_{\text{clk}} = \frac{1}{240 \times 10^6} \approx 4{,}167\text{ ns}$.
+
+2. **Daya Dinamis CMOS (Dynamic Switching Power)**:
+   Konsumsi daya mikrokontroler didominasi oleh pengisian dan pengosongan kapasitansi gerbang internal $C_{\text{eff}}$ pada tegangan operasi $V_{\text{dd}}$:
+   $$
+   P_{\text{dynamic}} = \alpha \cdot C_{\text{eff}} \cdot V_{\text{dd}}^2 \cdot f_{\text{cpu}}
+   $$
+   di mana $\alpha$ adalah rasio peralihan gerbang (*activity factor*). Hubungan kuadratik terhadap $V_{\text{dd}}^2$ dan linier terhadap frekuensi $f_{\text{cpu}}$ menjelaskan mengapa menurunkan frekuensi clock (misalnya dari 240 MHz ke 80 MHz) memangkas arus dari $\sim 50\text{ mA}$ menjadi $\sim 20\text{ mA}$ saat aktif tanpa radio.
+
+3. **Perhitungan Arus LED & Disipasi Daya Resistor Pembatas (Worked Numerical Example)**:
+   Saat mengendalikan periferal indikator (seperti LED hijau pada GPIO 25) dari pin mikrokontroler dengan tegangan logika $V_{\text{OH}} = 3{,}3\text{ V}$ dan tegangan maju LED $V_{\text{F}} = 2{,}1\text{ V}$:
+   $$
+   I_{\text{LED}} = \frac{V_{\text{OH}} - V_{\text{F}}}{R_{\text{lim}}}
+   $$
+   Dengan memilih resistor pembatas arus standar $R_{\text{lim}} = 220\,\Omega$:
+   $$
+   I_{\text{LED}} = \frac{3{,}3\text{ V} - 2{,}1\text{ V}}{220\,\Omega} = \frac{1{,}2\text{ V}}{220\,\Omega} \approx 5{,}45\text{ mA}
+   $$
+   Nilai $5{,}45\text{ mA}$ berada jauh di bawah batas arus rekomendasi maksimum pin ESP32 ($I_{\text{max}} = 12\text{ mA}$ per pin, batas absolut $40\text{ mA}$). Daya yang didisipasikan oleh resistor adalah:
+   $$
+   P_{\text{R}} = I_{\text{LED}}^2 \cdot R_{\text{lim}} = (0{,}00545\text{ A})^2 \times 220\,\Omega \approx 6{,}53\text{ mW}
+   $$
+   Nilai ini sangat aman untuk resistor SMD atau *through-hole* standar dengan batas rating $0{,}125\text{ W}$ ($125\text{ mW}$).
+
 ### 6. Development Environment, Flashing, Boot Modes & Serial Monitor
 
 Alur kerja pengembangan *Firmware* mengikuti siklus: **Edit Kode $\rightarrow$ Compile (menghasilkan biner `.bin`) $\rightarrow$ Flash via UART/USB $\rightarrow$ Monitor Output via Serial**.
@@ -143,6 +176,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Audit aturan pin melalui `board_matrix.py` telah dieksekusi di Python; kompilasi firmware `.ino` dan uji board fisik tetap berstatus **Belum diuji** di lingkungan server ini.
 
 ## Referensi
+- JEDEC Standard JESD8C.01, *Interface Standard for Nominal 3 V/3.3 V Supply Digital Integrated Circuits*, JEDEC Solid State Technology Association.
+- Espressif Systems, *ESP32 Datasheet (Rev 4.x)*, Espressif Systems.
 
 1. Espressif Systems, *ESP32 Series Datasheet & Pin List*, [https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf](https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf) (diperiksa 2026-11-10).
 2. Espressif Systems, *ESP-IDF Programming Guide — ESP32-S3 & ESP32-C3 Targets*, [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html) (diperiksa 2026-11-10).

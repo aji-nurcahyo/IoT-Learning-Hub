@@ -78,6 +78,36 @@ Pada skrip [`ble_gatt_sim.py`](content/chapter-17/src/ble_gatt_sim.py), kita men
 
 > **Catatan keamanan & arsitektur ESP32**: Untuk data sensitif, BLE tidak boleh hanya mengandalkan mode *Just Works* tanpa autentikasi; gunakan *LE Secure Connections* (ECDH) dengan *Passkey/Numeric Comparison* bila diperlukan, dan perhatikan bahwa BLE serta Wi-Fi di ESP32 berbagi satu modul radio $2{,}4\text{ GHz}$ secara bergiliran (*coexistence*), sehingga penggunaan keduanya serentak menuntut alokasi RAM dan manajemen interval yang hati-hati.
 
+### 5.1 Landasan Matematis: BLE Advertising Interval & Perhitungan Konsumsi Energi (Mathematical Foundations)
+
+Protokol Bluetooth Low Energy (BLE Core Specification v5.x) mengoptimalkan konsumsi daya melalui siklus duty cycle siaran periodik pada tiga kanal iklan bebas interferensi Wi-Fi (Kanal 37, 38, dan 39):
+
+1. **Interval Siaran (Advertising Interval) & Pertambahan Jitter Acak**:
+   Untuk menghindari tabrakan berulang (*packet collision*) antar-beacons independen, waktu antar-paket siaran $T_{\text{adv}}$ dirumuskan dengan menambahkan penundaan acak (*pseudo-random delay*):
+   $$
+   T_{\text{adv}} = \text{advInterval} + \text{advDelay}
+   $$
+   di mana $\text{advInterval}$ merupakan kelipatan bulat dari $0{,}625\text{ ms}$ (rentang $20\text{ ms}$ hingga $10{,}24\text{ s}$), dan $\text{advDelay}$ adalah bilangan bulat acak seragam antara $0\text{ ms}$ hingga $10\text{ ms}$.
+
+2. **Perhitungan Arus Rata-Rata Beacon & Daya Tahan Baterai Coin-Cell (Worked Example)**:
+   Sebuah BLE beacon mengirimkan paket non-connectable advertising sepanjang $t_{\text{tx}} = 3\text{ ms}$ dengan arus puncak $I_{\text{peak}} = 15\text{ mA}$. Di antara interval pengiriman, modul berada dalam kondisi deep sleep dengan arus statis $I_{\text{sleep}} = 4\,\mu\text{A}$. Interval siaran diatur sebesar $T_{\text{adv}} = 1000\text{ ms}$ (1 detik).
+   Muatan listrik per siklus transmisi siaran $Q_{\text{adv}}$ adalah:
+   $$
+   Q_{\text{adv}} = I_{\text{peak}} \cdot t_{\text{tx}} + I_{\text{sleep}} \cdot (T_{\text{adv}} - t_{\text{tx}})
+   $$
+   $$
+   Q_{\text{adv}} = (15\text{ mA} \times 0{,}003\text{ s}) + (0{,}004\text{ mA} \times 0{,}997\text{ s}) = 0{,}045\text{ mAs} + 0{,}003988\text{ mAs} \approx 0{,}04899\text{ mAs}
+   $$
+   Arus rata-rata kontinu $I_{\text{avg}}$ sistem adalah:
+   $$
+   I_{\text{avg}} = \frac{Q_{\text{adv}}}{T_{\text{adv}}} = \frac{0{,}04899\text{ mAs}}{1\text{ s}} \approx 0{,}049\text{ mA} = 49\,\mu\text{A}
+   $$
+   Dengan menggunakan baterai koin lithium CR2032 berkapasitas nominal $C = 220\text{ mAh}$ dan faktor penurunan kapasitas akibat arus pulsa $\eta = 0{,}85$:
+   $$
+   t_{\text{life}} = \frac{220 \times 0{,}85\text{ mAh}}{0{,}049\text{ mA}} \approx 3816\text{ jam } (\sim 159\text{ hari} \text{ atau } 5{,}3\text{ bulan})
+   $$
+   Jika interval siaran diperpanjang menjadi $5\text{ detik}$, arus rata-rata merosot ke $\approx 13\,\mu\text{A}$ sehingga usia baterai melonjak hingga 1,6 tahun.
+
 ### 6. Implementasi Firmware & Troubleshooting Umum
 
 Sketsa [`ble_gatt_sensor.ino`](content/chapter-17/src/ble_gatt_sensor/ble_gatt_sensor.ino) memperlihatkan pola minimal namun tangguh untuk *GATT Server* ESP32: menggunakan `BLEDevice::setMTU(128)`, mendaftarkan descriptor `new BLE2902()` pada karakteristik `NOTIFY`, memvalidasi rentang input pada `onWrite()`, dan memanggil ulang `pServer->startAdvertising()` setelah *Central* putus.
@@ -103,6 +133,8 @@ Rancang *GATT Profile* untuk stasiun iklim mikro bertenaga baterai dan selesaika
 - Menjaga **Advertising Interval** tetap realistis ($500\text{–}2000\text{ ms}$) dan memulihkan *advertising* pada `onDisconnect()` adalah kunci keandalan node BLE lapangan.
 
 ## Referensi
+- Bluetooth SIG, *Bluetooth Core Specification v5.4*, Vol 6: Low Energy Controller, 2023.
+- Gomez, C., Oller, J., & Paradells, J., *Overview and Evaluation of Bluetooth Low Energy: An Emerging Technology for the Internet of Things*, Sensors, 2012.
 
 1. Bluetooth SIG, *Bluetooth Core Specification & Technical Overview*, [https://www.bluetooth.com/learn-about-bluetooth/tech-overview/](https://www.bluetooth.com/learn-about-bluetooth/tech-overview/).
 2. Bluetooth SIG, *GATT Specification Supplement (Assigned Numbers: 0x181A, 0x2A6E, 0x2902)*, [https://www.bluetooth.com/specifications/assigned-numbers/](https://www.bluetooth.com/specifications/assigned-numbers/).

@@ -80,6 +80,24 @@ Publikasi NIST IR 8259 menetapkan lima pilar kapabilitas dasar perangkat IoT:
 4. **Logical Access to Interfaces**: Seluruh antarmuka fisik (UART, JTAG, USB) dan antarmuka jaringan dibatasi otentikasi ketat.
 5. **Software Update**: Firmware dapat diperbarui secara terverifikasi (tanda tangan digital) untuk menambal kerentanan di masa depan.
 
+### 3.1 Landasan Matematis: Kompleksitas Komputasi Kriptografi Elliptic Curve (ECDSA) (Mathematical Foundations)
+
+Keamanan IoT modern mengandalkan kriptografi kurva eliptis (*Elliptic Curve Cryptography* / ECC) seperti kurva NIST P-256 (secp256r1) karena efisiensi panjang kunci yang jauh lebih ringkas dibanding RSA:
+
+1. **Perbandingan Kekuatan Keamanan & Ukuran Kunci**:
+   Tingkat keamanan $k$ bit simetris yang setara dirumuskan menurut rekomendasi NIST SP 800-57:
+   - RSA-2048 memberikan kekuatan keamanan $\approx 112\text{ bit}$ simetris (panjang kunci publik: 256 byte).
+   - RSA-3072 memberikan kekuatan keamanan $\approx 128\text{ bit}$ simetris (panjang kunci publik: 384 byte).
+   - ECC P-256 memberikan kekuatan keamanan $\approx 128\text{ bit}$ simetris dengan panjang kunci publik hanya **64 byte** (atau 33 byte terkompresi).
+
+2. **Beban Transmisi Handshake TLS (Worked Example)**:
+   Sertifikat digital X.509 berbasis RSA-2048 memiliki ukuran tipikal $L_{\text{cert,RSA}} \approx 1800\text{ byte}$, sedangkan sertifikat ECDSA P-256 hanya $L_{\text{cert,ECC}} \approx 650\text{ byte}$.
+   Pada mutual TLS (mTLS v1.3), kedua belah pihak mempertukarkan sertifikat (perangkat $\leftrightarrow$ server). Penghematan byte selama negosiasi handshake adalah:
+   $$
+   \Delta L_{\text{handshake}} = 2 \times (L_{\text{cert,RSA}} - L_{\text{cert,ECC}}) = 2 \times (1800 - 650) = 2300\text{ byte}
+   $$
+   Pengurangan lebih dari 2 KiB data transmisi pada setiap proses pembentukan sesi TLS memangkas konsumsi energi radio mikrokontroler hingga $\approx 60\%$, membuktikan keunggulan mutlak cipher-suite ECDSA (seperti `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`) untuk sistem tertanam.
+
 ## Latihan
 
 1. **Analisis Vektor Serangan**:
@@ -127,6 +145,8 @@ Bangun dan uji sistem evaluasi keamanan siber IoT terintegrasi menggunakan Pytho
 4. **Standar Kepatuhan**: Kepatuhan terhadap pedoman NIST IR 8259 menjamin perangkat IoT siap menghadapi ancaman keamanan siber modern.
 
 ## Referensi
+- NIST Special Publication 800-57 Part 1 Rev. 5, *Recommendation for Key Management*, NIST, 2020.
+- IETF RFC 8446, *The Transport Layer Security (TLS) Protocol Version 1.3*, Internet Engineering Task Force.
 
 1. National Institute of Standards and Technology (NIST). *NIST IR 8259: Foundational Cybersecurity Activities for IoT Device Manufacturers*.
 2. Rescorla, E. *The Transport Layer Security (TLS) Protocol Version 1.3 (RFC 8446)*. Internet Engineering Task Force (IETF).

@@ -77,6 +77,33 @@ Untuk menjamin ketersediaan tinggi (*high availability*), proses gateway dijalan
 - `ProtectSystem=full` & `ProtectHome=true`: Mengunci direktori sistem dari modifikasi ilegal (prinsip *least privilege*).
 - `LimitNOFILE=65536`: Memperluas kuota *file descriptor* untuk koneksi socket yang banyak.
 
+### 3.1 Landasan Matematis: Buffer Dimensioning & Latensi Pemrosesan Gateway (Mathematical Foundations)
+
+Sebagai jembatan antara bus sensor fisik dan infrastruktur IP, gateway bertindak sebagai sistem antrean $M/M/1$:
+
+1. **Pemodelan Antrean Gateway (Queueing Model)**:
+   Jika kedatangan paket dari simpul sensor memiliki laju rata-rata $\lambda$ (paket/detik) berdistribusi Poisson, dan laju layanan transmisi gateway ke broker cloud adalah $\mu$ (paket/detik) dengan syarat kestabilan $\rho = \frac{\lambda}{\mu} < 1$:
+   - Jumlah rata-rata paket dalam antrean buffer gateway $L_q$ adalah:
+     $$
+     L_q = \frac{\rho^2}{1 - \rho} = \frac{\lambda^2}{\mu(\mu - \lambda)}
+     $$
+   - Waktu tunggu rata-rata paket di gateway sebelum terkirim $W$ dirumuskan menurut Teorema Little:
+     $$
+     W = \frac{1}{\mu - \lambda}
+     $$
+
+2. **Perhitungan Waktu Tunggu Gateway Terhadap Utilitas (Worked Example)**:
+   Sebuah gateway mengumpulkan data dari 50 sensor dengan total laju kedatangan $\lambda = 80\text{ paket/detik}$. Kapasitas pemrosesan dan enkapsulasi JSON gateway mencapai $\mu = 100\text{ paket/detik}$.
+   Faktor utilitas gateway $\rho$ adalah:
+   $$
+   \rho = \frac{80}{100} = 0{,}80 \quad (80\%)
+   $$
+   Waktu tinggal rata-rata paket di gateway:
+   $$
+   W = \frac{1}{100 - 80} = \frac{1}{20} = 0{,}05\text{ detik } (50\text{ ms})
+   $$
+   Jika koneksi internet mengalami degradasi sehingga laju pengiriman turun menjadi $\mu' = 85\text{ paket/detik}$ (utilitas melonjak ke $\rho = 0{,}941$), maka waktu tunggu rata-rata melonjak drastis menjadi $W' = \frac{1}{85 - 80} = 0{,}20\text{ detik}$ ($200\text{ ms}$). Pemodelan ini membuktikan perlunya alokasi thread pool asinkron agar gateway tidak mengalami penumpukan antrean (*queue explosion*).
+
 ## Latihan
 
 1. **Analisis Izin Akses Linux**:
@@ -114,6 +141,8 @@ Rancang dan konfigurasikan paket perangkat lunak IoT Gateway berbasis Python dan
 5. **Isolasi Keamanan**: Menjalankan daemon di bawah akun pengguna khusus (`iotgateway`) mencegah potensi eskalasi hak akses sistem.
 
 ## Referensi
+- Kleinrock, L., *Queueing Systems, Volume 1: Theory*, John Wiley & Sons, 1975.
+- POSIX.1-2017 / IEEE Std 1003.1-2017, *Standard for Information Technology—Portable Operating System Interface (POSIX)*.
 
 1. Kerrisk, M. *The Linux Programming Interface: A Linux and UNIX System Programming Handbook*. No Starch Press.
 2. Poettering, L. *systemd System and Service Manager Documentation*. https://systemd.io/

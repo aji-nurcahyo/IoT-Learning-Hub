@@ -76,6 +76,34 @@ Bagaimana dashboard mengetahui jika sebuah ESP32 di kebun tiba-tiba kehabisan ba
 - **Firmware ESP32**: [`mqtt_lwt_retained.ino`](content/chapter-15/src/mqtt_lwt_retained/mqtt_lwt_retained.ino) mendaftarkan LWT retained `"offline"`, menerbitkan retained `"online"` setelah terhubung, men-subscribe perintah dengan **QoS 1**, dan mengabaikan duplikat `cmd_seq`. *(Catatan: pustaka `PubSubClient` populer di Arduino mendukung `LWT`, `retain`, dan `subscribe` QoS 0/1, namun `publish()`-nya dibatasi QoS 0. Untuk `publish` QoS 1/2 atau fitur penuh MQTT 5.0 pada ESP32, gunakan komponen **`esp-mqtt`** bawaan ESP-IDF).*
 - **Simulasi Python**: [`mqtt_qos_lwt_sim.py`](content/chapter-15/src/mqtt_qos_lwt_sim.py) memverifikasi jumlah paket QoS 0/1/2, penyaringan duplikat `seq=11 (DUP=True)`, perilaku *retained*, serta pemicuan LWT pada `46s > 1.5 * 30s` (`outputs.md`).
 
+### 6.1 Model Matematis Keandalan QoS & Analisis Probabilitas Pengiriman Pesan (Mathematical Foundations)
+
+Mekanisme Quality of Service (QoS) pada MQTT menjamin tingkat keterikatan pengiriman pesan di atas jaringan transmisi nirkabel yang memiliki probabilitas kehilangan paket (*Packet Loss Rate* / $p$):
+
+1. **Probabilitas Sukses Pengiriman Berdasarkan Tingkat QoS**:
+   Jika probabilitas kegagalan transmisi paket tunggal di kanal nirkabel adalah $p$ ($0 \le p < 1$):
+   - **QoS 0 (*At Most Once*)**: Pesan hanya dikirim satu kali tanpa konfirmasi. Probabilitas pesan berhasil diterima subscriber $P_{\text{succ,0}}$ adalah:
+     $$
+     P_{\text{succ,0}} = 1 - p
+     $$
+   - **QoS 1 (*At Least Once*)**: Pengirim mengulang transmisi hingga menerima PUBACK sampai batas pengulangan maksimum $K$ kali. Probabilitas kegagalan pesan hilang sepenuhnya merosot menjadi $p^K$:
+     $$
+     P_{\text{succ,1}} = 1 - p^K
+     $$
+     Untuk $p = 0{,}10$ ($10\%$ packet loss) dan batas pengulangan $K = 3$, $P_{\text{succ,1}} = 1 - (0{,}1)^3 = 0{,}999$ ($99{,}9\%$ sukses).
+
+2. **Analisis Beban Pesan & Waktu Tunda Transaksi 4-Way Handshake QoS 2 (Worked Example)**:
+   Pada QoS 2 (*Exactly Once*), proses transmisi melibatkan pertukaran 4 paket kontrol: PUBLISH $\rightarrow$ PUBREC $\rightarrow$ PUBREL $\rightarrow$ PUBCOMP.
+   Total waktu transmisi end-to-end tanpa kehilangan paket $T_{\text{QoS2}}$ adalah:
+   $$
+   T_{\text{QoS2}} = 4 \cdot \left( \frac{\text{RTT}}{2} \right) = 2 \cdot \text{RTT}
+   $$
+   Total byte kontrol yang dikonsumsi untuk satu pesan QoS 2 (di luar payload) dengan ukuran rata-rata paket kontrol MQTT 4 byte dan header TCP/IP 40 byte adalah:
+   $$
+   B_{\text{overhead}} = 4 \times (4\text{ B} + 40\text{ B}) = 176\text{ byte}
+   $$
+   Beban kontrol ini 4 kali lebih besar dibanding QoS 0. Oleh karena itu, aturan rekayasa industri menetapkan: QoS 0 digunakan untuk data telemetri frekuensi tinggi yang toleran terhadap kehilangan sampel terisolasi (misal sensor suhu lingkungan), QoS 1 untuk log kejadian berkala, dan QoS 2 dicadangkan khusus untuk transaksi kritis (seperti perintah transfer finansial atau pemutakhiran firmware).
+
 ### 7. Common Mistakes & Troubleshooting
 
 | Kesalahan | Dampak di Sistem Nyata | Solusi |
@@ -115,6 +143,8 @@ Ringkasan **Rubrik Penilaian (Total 100 Poin)**:
 - Simulasi QoS, deduplikasi, *retained*, dan LWT telah diverifikasi di Python (`outputs.md`); kompilasi `.ino` menunggu selesainya instalasi core ESP32.
 
 ## Referensi
+- OASIS Standard, *MQTT Version 5.0 Section 4.3: Quality of Service levels and protocol flows*, OASIS Open.
+- RFC 8938, *Deterministic Networking (DetNet) Data Plane - Security Considerations*, IETF.
 
 1. OASIS Standard, *MQTT Version 5.0 Specification (Section 4.3 QoS, 3.1.2.11 Session Expiry, 3.1.2.5 Will)*, [https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html](https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html) (diperiksa 2026-11-11).
 2. Espressif Systems, *ESP-IDF ESP-MQTT Client Documentation (QoS 0/1/2 & MQTT 5.0)*, [https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mqtt.html) (diperiksa 2026-11-11).

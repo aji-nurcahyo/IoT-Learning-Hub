@@ -79,6 +79,35 @@ Namun, penggunaan Mutex tanpa disiplin dapat memicu **Priority Inversion**:
 
 FreeRTOS menyelesaikan masalah ini melalui **Priority Inheritance**: saat $T_H$ terblokir menunggu Mutex yang dipegang oleh $T_L$, prioritas $T_L$ dinaikkan sementara menyamai $T_H$, sehingga $T_L$ tidak dapat direbut oleh $T_M$ dan dapat segera melepaskan Mutex.
 
+### 3.1 Landasan Matematis: Penjadwalan Rate-Monotonic (RMA) & Schedulability Bounds (Mathematical Foundations)
+
+Sistem operasi waktu-nyata (*Real-Time Operating System* / RTOS) seperti FreeRTOS menjamin batas waktu deterministik melalui algoritma penjadwalan prioritas preemptive:
+
+1. **Batas Keterjadwalan Liu & Layland (Rate-Monotonic Analysis / RMA)**:
+   Untuk satu set $n$ task periodik independen dengan waktu komputasi terburuk (*Worst-Case Execution Time* / WCET) $C_i$ dan periode pengulangan $T_i$, di mana task dengan periode lebih pendek diberi prioritas lebih tinggi, task dijamin memenuhi deadline jika total utilisasi CPU $U$ memenuhi:
+   $$
+   U = \sum_{i=1}^{n} \frac{C_i}{T_i} \le n \left(2^{1/n} - 1\right)
+   $$
+   Untuk jumlah task mendekati tak terhingga ($n \to \infty$), batas keterjadwalan asimtotik adalah:
+   $$
+   \lim_{n \to \infty} n \left(2^{1/n} - 1\right) = \ln(2) \approx 0{,}693 \quad (69{,}3\%)
+   $$
+
+2. **Uji Keterjadwalan Sistem Multi-Task FreeRTOS ESP32 (Worked Example)**:
+   Sebuah sistem akuisisi data memiliki 3 task konkuren:
+   - Task 1 (Sampling Sensor Cepat): $C_1 = 2\text{ ms}$, $T_1 = 10\text{ ms} \rightarrow U_1 = \frac{2}{10} = 0{,}20$
+   - Task 2 (Kalkulasi Filter & FSM): $C_2 = 10\text{ ms}$, $T_2 = 50\text{ ms} \rightarrow U_2 = \frac{10}{50} = 0{,}20$
+   - Task 3 (Enkapsulasi & Kirim Jaringan): $C_3 = 25\text{ ms}$, $T_3 = 100\text{ ms} \rightarrow U_3 = \frac{25}{100} = 0{,}25$
+   Total utilisasi CPU gabungan adalah:
+   $$
+   U = 0{,}20 + 0{,}20 + 0{,}25 = 0{,}65 \quad (65\%)
+   $$
+   Batas teoritis Liu & Layland untuk $n = 3$ task adalah:
+   $$
+   U_{\text{bound}} = 3 \left(2^{1/3} - 1\right) = 3 \left(1{,}2599 - 1\right) = 3 \times 0{,}2599 \approx 0{,}7798 \quad (77{,}98\%)
+   $$
+   Karena $U = 0{,}65 \le 0{,}7798$, seluruh task terbukti secara matematis **dijamin 100% memenuhi deadline** tanpa risiko *deadline miss*.
+
 ## Latihan
 
 1. **Analisis Timeline Eksekusi**: Diberikan tiga task: Task A (Pri 1, burst 4 tick), Task B (Pri 2, burst 2 tick, tiba tick 2), dan Task C (Pri 3, burst 1 tick, tiba tick 3). Gambarkan diagram Gantt eksekusi sistem dari tick 0 hingga tick 8.
@@ -96,6 +125,8 @@ Kembangkan modul simulasi penjadwal preemptive Python (`rtos_scheduler_sim.py`) 
 3. Fenomena *Priority Inversion* dapat mematikan sistem tertanam kritis jika tidak dimitigasi oleh mekanisme *Priority Inheritance*.
 
 ## Referensi
+- Liu, C. L., & Layland, J. W., *Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment*, Journal of the ACM, 1973.
+- Barry, R., *Mastering the FreeRTOS Real Time Kernel: A Hands-On Tutorial Guide*, Real Time Engineers Ltd.
 
 1. Real Time Engineers Ltd. *Mastering the FreeRTOS Real Time Kernel - A Hands-On Tutorial Guide*. 2023.
 2. Espressif Systems. *ESP-IDF FreeRTOS (SMP) Architecture & API Reference*. Espressif Inc., 2024.

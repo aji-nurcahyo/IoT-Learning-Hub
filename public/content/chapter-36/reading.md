@@ -81,6 +81,45 @@ Keunggulan utama Digital Twin adalah kemampuannya menjadi *sandbox* simulasi tan
 - *"Berapa suhu akhir ruangan 60 detik ke depan jika daya pemanas dinaikkan dari 100 Watt ke 250 Watt?"*
 - Model digital menjalankan proyeksi ke depan secara instan ($T_{sim}$ naik ke 47.11 $^\circ\text{C}$). Jika suhu tersebut melebihi batas keselamatan perangkat keras, sistem kontrol dapat menolak perintah tersebut sebelum dieksekusi pada mesin fisik nyata.
 
+### 5. Landasan Matematis: Analisis Solusi Analitis vs Numerik & Syarat Stabilitas Euler (Mathematical Foundations)
+
+Persamaan diferensial dinamika termal orde-satu memiliki solusi eksak analitis pada kondisi input daya konstan $Q_{\text{in}}$ dari kondisi awal $T(0) = T_0$:
+$$
+T(t) = T_{\text{amb}} + Q_{\text{in}} R_{\text{th}} + \left( T_0 - T_{\text{amb}} - Q_{\text{in}} R_{\text{th}} \right) e^{-t / \tau}
+$$
+di mana $\tau = R_{\text{th}} C_{\text{th}}$ adalah konstanta waktu termal sistem (dalam satuan detik).
+Saat $t \to \infty$, suku eksponensial meluruh mendekati nol, menghasilkan suhu tunak (*steady-state temperature*):
+$$
+T_{\text{ss}} = T_{\text{amb}} + Q_{\text{in}} R_{\text{th}}
+$$
+
+**Syarat Batas Stabilitas Integrasi Numerik Euler**:
+Dalam metode Forward Euler, galat lokal pemotongan berorde $O(\Delta t)$. Agar integrasi numerik stabil tanpa osilasi tak hingga, langkah waktu diskrit $\Delta t$ wajib memenuhi kriteria stabilitas:
+$$
+\left| 1 - \frac{\Delta t}{R_{\text{th}} C_{\text{th}}} \right| < 1 \implies 0 < \Delta t < 2 R_{\text{th}} C_{\text{th}} = 2\tau
+$$
+Untuk menghindari osilasi palsu disyaratkan $\Delta t \le \tau$. Jika $\tau = 50\text{ s}$, maka langkah simulasi $\Delta t = 1{,}0\text{ s}$ menjamin konvergensi numerik yang sangat presisi dengan galat pemotongan terabaikan.
+
+**Worked Numerical Example (What-If Projection & Kalibrasi Residu)**:
+Sebuah ruang baterai memiliki parameter $C_{\text{th}} = 500\text{ J/K}$ dan $R_{\text{th}} = 0{,}10\text{ K/W}$ (sehingga $\tau = 50\text{ detik}$). Suhu awal sistem setara suhu ambien $T_0 = T_{\text{amb}} = 25{,}0\,^\circ\text{C}$.
+1. Sistem diberi daya disipasi panas $Q_{\text{in}} = 200\text{ Watt}$. Suhu tunak teoritis adalah:
+   $$
+   T_{\text{ss}} = 25{,}0 + (200 \times 0{,}10) = 25{,}0 + 20{,}0 = 45{,}0\,^\circ\text{C}
+   $$
+2. Proyeksi suhu pada $t = 30\text{ detik}$ di masa depan:
+   $$
+   T(30) = 45{,}0 + (25{,}0 - 45{,}0) e^{-30 / 50} = 45{,}0 - 20{,}0 \cdot e^{-0{,}6}
+   $$
+   Karena $e^{-0{,}6} \approx 0{,}5488$:
+   $$
+   T(30) = 45{,}0 - (20{,}0 \times 0{,}5488) = 45{,}0 - 10{,}976 = 34{,}024\,^\circ\text{C}
+   $$
+3. Jika pada detik ke-30 sensor fisik telemetri melaporkan suhu aktual $T_{\text{physical}} = 38{,}50\,^\circ\text{C}$, maka galat residu sinkronisasi adalah:
+   $$
+   \text{Residual} = |38{,}50 - 34{,}024| = 4{,}476\,^\circ\text{C}
+   $$
+   Jika ambang toleransi residu normal diatur $\epsilon = 1{,}5\,^\circ\text{C}$, nilai residu $4{,}48\,^\circ\text{C}$ memicu deteksi dini degradasi sistem pendingin (misal kipas radiator macet) bahkan sebelum suhu mencapai batas bahaya absolut $50\,^\circ\text{C}$.
+
 ## Latihan
 
 1. **Analisis Keseimbangan Termal Steady-State**:

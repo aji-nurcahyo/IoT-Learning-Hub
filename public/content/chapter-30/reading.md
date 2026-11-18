@@ -58,6 +58,33 @@ Keberhasilan implementasi Capstone Level 3 diukur melalui enam kasus uji penerim
 
 Skrip [`capstone_platform.py`](content/chapter-30/src/capstone_platform.py) menyatukan seluruh modul yang telah dikembangkan di bab-bab sebelumnya menjadi sebuah lingkungan pengujian otomatis tunggal. Skrip ini menginstansiasi seluruh kelas subsistem di memori lokal, menyimulasikan aliran data waktu nyata, dan mengeksekusi seluruh 6 kasus uji SATC secara deterministik tanpa membutuhkan hardware eksternal atau koneksi cloud berbayar.
 
+### 3.1 Landasan Matematis: Ketersediaan Layanan Pipeline End-to-End & Analisis Latensi P99 (Mathematical Foundations)
+
+Pada integrasi sistem tingkat platform (Level 3 Capstone), parameter kualitas layanan (*Quality of Service*) dievaluasi melalui latensi persentil ke-99 ($P_{99}$) dan ketersediaan komposit:
+
+1. **Distribusi Latensi Persentil ke-99 ($P_{99}$)**:
+   Dalam sistem telemetri terdistribusi, rata-rata latensi ($mu$) sering kali menyamarkan lonjakan waktu respons ekstrem (*tail latency*). Nilai persentil ke-99 menyatakan batas atas latensi di mana $99\%$ transaksi berhasil diselesaikan:
+   $$
+   P_{99} = \inf \{ t \in \mathbb{R} : F(t) \ge 0{,}99 \}
+   $$
+   di mana $F(t)$ adalah fungsi distribusi kumulatif waktu respons end-to-end (Sensor $\rightarrow$ Broker $\rightarrow$ Database $\rightarrow$ UI).
+
+2. **Kalkulasi Ketersediaan Layanan Komposit (Worked Example)**:
+   Arsitektur capstone terdiri atas empat tier independen yang terhubung seri:
+   - Ingest Broker (MQTT Cluster): $A_1 = 99{,}95\%$
+   - Gateway/Worker Stream Processor: $A_2 = 99{,}90\%$
+   - Time-Series Database Cluster: $A_3 = 99{,}99\%$
+   - Web Dashboard & Alerting Service: $A_4 = 99{,}90\%$
+   Ketersediaan sistem end-to-end $A_{\text{E2E}}$ adalah:
+   $$
+   A_{\text{E2E}} = A_1 \times A_2 \times A_3 \times A_4 = 0{,}9995 \times 0{,}9990 \times 0{,}9999 \times 0{,}9990 \approx 0{,}9974 \quad (99{,}74\%)
+   $$
+   Waktu henti (*downtime*) kumulatif per tahun dari platform sistem adalah:
+   $$
+   T_{\text{down}} = 8760 \times (1 - 0{,}9974) = 8760 \times 0{,}0259 \approx 22{,}78\text{ jam/tahun}
+   $$
+   Untuk meningkatkan ketersediaan menjadi $99{,}99\%$ (*Four Nines*), tier worker stream processor dan ingest broker wajib mengimplementasikan redundansi aktif paralel (*Active-Active Clustered Nodes*).
+
 ## Latihan
 
 1. **Analisis Skalabilitas Platform**:
@@ -95,6 +122,8 @@ Bangun, jalankan, dan evaluasi platform pemantauan lingkungan terintegrasi mengg
 3. **Kesiapan Skala Industri**: Fondasi arsitektur yang dibangun pada Level 3 memberikan pijakan kokoh untuk melangkah ke analisis data tingkat lanjut, machine learning edge, dan sistem otonom cerdas pada Level 4.
 
 ## Referensi
+- Dean, J., & Barroso, L. A., *The Tail at Scale*, Communications of the ACM, Vol. 56 No. 2, 2013.
+- IEEE Std 1451.4, *Standard for A Smart Transducer Interface for Sensors and Actuators*, IEEE.
 
 1. Sinclair, I. *Sensors and Transducers (3rd Edition)*. Newnes Elsevier.
 2. Bass, L., Clements, P., & Kazman, R. *Software Architecture in Practice (4th Edition)*. Addison-Wesley Professional.

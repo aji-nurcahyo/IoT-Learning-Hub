@@ -80,6 +80,29 @@ Modbus memiliki keterbatasan fatal: tidak membawa informasi konteks (metadata) d
 2. **Keamanan Bawaan**: Mendukung enkripsi simetris (AES-128/256), penandatanganan digital sertifikat X.509, serta otentikasi berbasis peran pengguna.
 3. **Komunikasi Multi-Platform**: Beroperasi di atas port TCP biner murni (`opc.tcp://`) maupun PubSub di atas broker MQTT/UDP.
 
+### 3.1 Landasan Matematis: Polinomial CRC-16 Modbus & Verifikasi Integritas Frame (Mathematical Foundations)
+
+Komunikasi industri (IIoT) mengandalkan Cyclic Redundancy Check (CRC-16) standar Modbus untuk mendeteksi galat transmisi di lingkungan pabrik yang penuh gangguan elektromagnetik:
+
+1. **Polinomial Pembagi CRC-16 (Modbus Standard)**:
+   Algoritma CRC-16 Modbus menggunakan representasi polinomial biner:
+   $$
+   G(x) = x^{16} + x^{15} + x^2 + 1 \quad (\text{heksadesimal: } \texttt{0x8005}, \text{ reversed: } \texttt{0xA001})
+   $$
+   Register CRC diinisialisasi dengan nilai `0xFFFF`. Setiap byte data di-XOR dengan 8 bit terendah register, kemudian digeser ke kanan sebanyak 8 kali dengan conditional XOR terhadap polinomial `0xA001`.
+
+2. **Kemampuan Deteksi Galat & Analisis Probabilitas Residual Error (Worked Example)**:
+   Secara teoritis, CRC-16 menjamin deteksi $100\%$ terhadap seluruh galat bit tunggal (*single-bit error*), galat bit ganda (*double-bit error*), dan pola rentetan galat (*burst error*) dengan panjang $\le 16\text{ bit}$.
+   Probabilitas galat acak yang lolos dari deteksi CRC-16 pada frame data sembarang adalah:
+   $$
+   P_{\text{undetected}} = \frac{1}{2^{16}} = \frac{1}{65536} \approx 1{,}526 \times 10^{-5} \quad (0{,}0015\%)
+   $$
+   Untuk frame Modbus RTU standar dengan panjang $L = 8\text{ byte}$ pada baud rate $9600\text{ bps}$ ($T_{\text{char}} = 1{,}04\text{ ms}$), waktu transmisi frame total adalah:
+   $$
+   T_{\text{frame}} = 8 \times 10 \times \frac{1}{9600} \approx 8{,}33\text{ ms}
+   $$
+   Waktu hening antar-frame minimum (*silent interval*) yang disyaratkan standar Modbus adalah $t_{3{,}5} = 3{,}5 \times T_{\text{char}} \approx 3{,}65\text{ ms}$, memastikan demarkasi frame tanpa memerlukan karakter khusus pembungkus paket.
+
 ## Latihan
 
 1. **Analisis Frame Modbus**: Diketahui frame respon Modbus RTU: `01 03 04 00 FF 02 8C CA C6`. Uraikan arti setiap byte:
@@ -101,6 +124,8 @@ Kembangkan modul simulasi protokol industri Python (`industrial_protocol_sim.py`
 3. OPC UA menjadi standar interoperabilitas global berkat pemodelan data berorientasi objek yang kaya konteks dan enkripsi sertifikat kriptografi tingkat militer.
 
 ## Referensi
+- Modbus Organization, *Modbus Application Protocol Specification V1.1b3*, Modbus.org, 2012.
+- IEC 62541-1:2020, *OPC Unified Architecture - Part 1: Overview and Concepts*, International Electrotechnical Commission.
 
 1. Modbus Organization. *Modbus Application Protocol Specification V1.1b3*. 2012.
 2. OPC Foundation. *OPC Unified Architecture Specification Part 1-5 (IEC 62541)*. 2023.
