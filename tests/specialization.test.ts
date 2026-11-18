@@ -161,3 +161,42 @@ test('Specialization Track A (Smart Home & Building Automation): seluruh 6 modul
     assert.match(stdout, /"status":\s*"PASS"/);
   }
 });
+
+test('Specialization Track E (Smart Cities & Telecommunications): seluruh 6 modul terverifikasi 100% PASS', () => {
+  const modSlugs = ['mod-e01', 'mod-e02', 'mod-e03', 'mod-e04', 'mod-e05', 'mod-e06'];
+  const scripts = [
+    'smart_city_ngsild_multitenant_sim.py',
+    'urban_rf_propagation_sim.py',
+    'cellular_iot_energy_sim.py',
+    'municipal_contention_queue_sim.py',
+    'geospatial_telemetry_h3_sim.py',
+    'city_scale_capstone_platform.py'
+  ];
+
+  for (let i = 0; i < modSlugs.length; i++) {
+    const slug = modSlugs[i];
+    const script = scripts[i];
+    const modDir = resolve(root, 'public/content/specialization/track-e', slug);
+
+    const expectedFiles = [
+      'reading.md',
+      'slides.json',
+      'code.md',
+      'diagram.svg',
+      'exercises.md',
+      'assignment.md',
+      'review.md',
+      'outputs.md',
+      `src/${script}`
+    ];
+
+    for (const f of expectedFiles) {
+      assert.ok(existsSync(resolve(modDir, f)), `File ${f} harus ada di ${slug}`);
+    }
+
+    const scriptPath = resolve(modDir, 'src', script);
+    const stdout = execSync(`python "${scriptPath}"`, { encoding: 'utf8' });
+    assert.match(stdout, /STATUS VERIFIKASI: 100% PASS/);
+    assert.match(stdout, /"status":\s*"PASS"/);
+  }
+});

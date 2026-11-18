@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Smart City Capstone: Integrasi Metropolitan",
+    "body": "Menyatukan ontologi data, rekayasa radio seluler, antrean prioritas, dan analitik geospasial.",
+    "notes": "Arsitektur platform IoT kota cerdas komprehensif."
+  },
+  {
+    "title": "SATC-E01: High-Throughput Ingestion",
+    "body": "Uji stres 12.000 paket/detik ditelan tanpa kehilangan paket (Zero Packet Drop).",
+    "notes": "Skalabilitas gateway dan message broker perkotaan."
+  },
+  {
+    "title": "SATC-E02: Garansi Latensi Darurat BPBD",
+    "body": "Antrean prioritas M/G/1 menghasilkan latensi sub-milidetik (0.44 ms), memenuhi SLA < 80 ms.",
+    "notes": "Perlindungan lalu lintas darurat di tengah jutaan paket telemetri."
+  },
+  {
+    "title": "SATC-E03: Kedaulatan Data Multi-Tenant",
+    "body": "Pencegahan akses silang antar-dinas dengan respon 403 Forbidden kriptografis terbukti.",
+    "notes": "Zero-Trust architecture untuk lingkungan pemerintahan daerah."
+  },
+  {
+    "title": "SATC-E04: Geofence Real-Time & Privasi H3",
+    "body": "Deteksi pelanggaran zona bahaya dalam 1.45 ms dan masking heksagonal H3 Resolution 8.",
+    "notes": "Kepatuhan privasi data publik dan keselamatan perkotaan."
+  }
+]

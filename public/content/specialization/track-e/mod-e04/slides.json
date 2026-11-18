@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Kontensi Kanal di Jaringan Kota",
+    "body": "Puluhan ribu simpul memicu badai tabrakan paket data jika tidak dikelola secara terstruktur.",
+    "notes": "Tantangan fisik medium transmisi radio bersama di lanskap perkotaan."
+  },
+  {
+    "title": "Analisis Matematika ALOHA",
+    "body": "Throughput Pure ALOHA dibatasi 18.4%; Slotted ALOHA melipatgandakannya menjadi 36.8%.",
+    "notes": "Perbandingan efisiensi protokol medium access control (MAC)."
+  },
+  {
+    "title": "Kebutuhan Antrean Multi-Kelas",
+    "body": "Memisahkan paket peringatan bahaya banjir BPBD dari paket telemetri rutin meteran air.",
+    "notes": "Klasifikasi Quality of Service (QoS) di tingkat broker kota."
+  },
+  {
+    "title": "M/G/1 Non-Preemptive Priority Model",
+    "body": "Menjamin prioritas tertinggi segera diproses tanpa merusak frame transmisi yang sedang aktif.",
+    "notes": "Formulasi analitis waktu tunggu antrean berbobot."
+  },
+  {
+    "title": "Validasi Garansi SLA Darurat",
+    "body": "Pada utilisasi 80%, latensi darurat tetap berada di bawah 3 ms, memenuhi standar SLA kota.",
+    "notes": "Bukti keandalan deterministik infrastruktur telekomunikasi cerdas."
+  }
+]

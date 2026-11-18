@@ -5391,7 +5391,51 @@
         37,
         39
       ],
-      "status": "planned"
+      "status": "available",
+      "modules": [
+        {
+          "id": "e01",
+          "slug": "mod-e01",
+          "number": 1,
+          "title": "Smart City IoT Systems Engineering, Urban Topologies & Municipal Architecture",
+          "status": "available"
+        },
+        {
+          "id": "e02",
+          "slug": "mod-e02",
+          "number": 2,
+          "title": "Urban RF Propagation, Clutter Loss & Path Loss Modeling (COST 231 Hata)",
+          "status": "available"
+        },
+        {
+          "id": "e03",
+          "slug": "mod-e03",
+          "number": 3,
+          "title": "Cellular IoT, 5G Massive MTC & Power Saving Modes",
+          "status": "available"
+        },
+        {
+          "id": "e04",
+          "slug": "mod-e04",
+          "number": 4,
+          "title": "Municipal Network Contention, Slotted ALOHA & Priority Queueing",
+          "status": "available"
+        },
+        {
+          "id": "e05",
+          "slug": "mod-e05",
+          "number": 5,
+          "title": "Geospatial Telemetry, Geofencing & Spatial Aggregation (H3 / S2)",
+          "status": "available"
+        },
+        {
+          "id": "e06",
+          "slug": "mod-e06",
+          "number": 6,
+          "title": "City-Scale Multi-Tenant IoT Platform & Telecommunications Integration Capstone",
+          "status": "available"
+        }
+      ]
     }
   ],
   "references": [

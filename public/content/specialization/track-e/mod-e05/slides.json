@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Konteks Spasial Data Perkotaan",
+    "body": "Setiap sensor dan armada kota memiliki koordinat geografis yang dinamis.",
+    "notes": "Integrasi sistem informasi geografis (GIS) dan IoT perkotaan."
+  },
+  {
+    "title": "Geodesi Komputasi: Formula Haversine",
+    "body": "Menghitung jarak permukaan bola bumi WGS84 secara presisi tanpa distorsi bidang datar.",
+    "notes": "Dasar penentuan jarak jangkauan armada ke pusat komando."
+  },
+  {
+    "title": "Algoritma Geofence Ray-Casting",
+    "body": "Memanfaatkan Teorema Jordan Curve untuk mendeteksi pelanggaran perimeter virtual.",
+    "notes": "Pengecekan jumlah perpotongan sinar ganjil/genap sub-milidetik."
+  },
+  {
+    "title": "Uber H3: Grid Heksagonal Global",
+    "body": "Kuantisasi spasial heksagonal dengan jarak ketetanggaan seragam yang ideal untuk pemodelan.",
+    "notes": "Struktur indeks spasial hirarkis diskret."
+  },
+  {
+    "title": "Kepatuhan Privasi Data Publik",
+    "body": "Mengaburkan koordinat mikro menjadi identitas sel H3 untuk melindungi privasi pengemudi dan warga.",
+    "notes": "Kepatuhan terhadap regulasi privasi data nasional."
+  }
+]

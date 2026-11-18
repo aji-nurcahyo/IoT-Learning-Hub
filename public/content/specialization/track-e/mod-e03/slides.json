@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Cellular IoT: Menjembatani Masifitas Kota",
+    "body": "3GPP Rel 13 menghadirkan NB-IoT & LTE-M untuk mendobrak keterbatasan daya seluler.",
+    "notes": "Evolusi telekomunikasi seluler berlisensi untuk ekosistem Smart City."
+  },
+  {
+    "title": "NB-IoT vs LTE-M: Karakteristik Inti",
+    "body": "NB-IoT unggul pada penetrasi basement perkotaan; LTE-M unggul pada mobilitas dan data rate.",
+    "notes": "Perbandingan spektral dan throughput kanal."
+  },
+  {
+    "title": "Power Saving Mode (PSM) Arsitektur",
+    "body": "Modem mematikan transceiver RF tanpa memutus sesi registrasi jaringan seluler.",
+    "notes": "Penghematan arus drastis hingga 3-5 mikroampere."
+  },
+  {
+    "title": "Konfigurasi Timer 3GPP T3324 & T3412",
+    "body": "T3324 menentukan jendela idle aktif, T3412 menentukan siklus pelaporan periodik.",
+    "notes": "Keseimbangan antara latensi downlink dan masa pakai baterai."
+  },
+  {
+    "title": "Perhitungan Umur Baterai LiSOCl2",
+    "body": "Pelaporan harian menghasilkan umur operasional di atas 10 tahun tanpa penggantian sel baterai.",
+    "notes": "Validasi matematis model konsumsi daya komposit."
+  }
+]

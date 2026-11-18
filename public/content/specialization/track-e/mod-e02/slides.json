@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Propagasi Radio Lingkungan Perkotaan",
+    "body": "- Karakteristik Urban Clutter: Refleksi kaca gedung, difraksi puncak atap, dan street canyon.\n- Mengapa Free Space Path Loss (FSPL) sangat tidak akurat di perkotaan.\n- Rugi redaman tambahan akibat gedung perkotaan mencapai > 34 dB.",
+    "notes": "Garisbawahi bahwa mengabaikan redaman gedung akan menyebabkan jaringan IoT perkotaan mengalami blind-spot parah."
+  },
+  {
+    "title": "Model Empiris COST 231 Hata",
+    "body": "- Standar acuan perencanaan seluler dan IoT metropolitan (1500 - 2000 MHz).\n- Pengaruh ketinggian antena BTS (hb = 30 m) dan sensor jalan (hm = 1.5 m).\n- Faktor koreksi kota metropolitan padat CM = +3 dB.",
+    "notes": "Tunjukkan bahwa menaikkan tinggi antena pemancar menurunkan redaman lintasan secara logaritmik."
+  },
+  {
+    "title": "Multipath Fading Rayleigh & Margin 99%",
+    "body": "- Fluktuasi amplitudo sinyal NLoS acak akibat interferensi fase multipath.\n- Formulasi analitis Fading Margin: +20 dB untuk jaminan keandalan 99%.\n- Bukti link margin +23.27 dB melampaui ambang batas sensitivitas receiver.",
+    "notes": "Jelaskan bahwa fading margin adalah cadangan daya wajib agar paket telemetri tidak hilang saat mobil lewat."
+  }
+]

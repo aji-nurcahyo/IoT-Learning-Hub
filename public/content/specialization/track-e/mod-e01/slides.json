@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Sistem IoT Skala Metropolitan",
+    "body": "- Mengatasi tantangan fragmentasi dan silo data antar-dinas perkotaan.\n- Topologi jaringan bertingkat: Simpul -> Gateway -> Aggregator Distrik -> Cloud.\n- Standar internasional ITU-T Y.4000 series untuk arsitektur kota cerdas.",
+    "notes": "Garisbawahi bahwa platform bersama menghemat anggaran kota hingga puluhan miliar rupiah dibanding sistem terpisah."
+  },
+  {
+    "title": "Model Ontologi Konteks FIWARE NGSI-LD",
+    "body": "- Standar ETSI GS CIM 009 untuk pertukaran data konteks universal.\n- Abstraksi Entity (URN unik), Property (observedAt), dan Relationship.\n- Format W3C JSON-LD menjamin interoperabilitas semantik antar-instansi.",
+    "notes": "Jelaskan bagaimana entitas NGSI-LD mempermudah dinas pemadam kebakaran mengakses sensor hidran air secara otomatis."
+  },
+  {
+    "title": "Keamanan Multi-Tenant & Ketersediaan Four-Nines",
+    "body": "- Penegakan isolasi akses data lintas tenant berbasis token ACL.\n- Model keandalan redundansi gateway paralel A_city = 1 - prod(1 - A_gw).\n- 4 Gateway individual 90% menghasilkan ketersediaan Four-Nines 99.99%.",
+    "notes": "Tunjukkan bahwa redundansi topologi nirkabel adalah kunci utama ketahanan infrastruktur kota terhadap bencana."
+  }
+]

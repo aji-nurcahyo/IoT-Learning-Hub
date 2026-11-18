@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" width="100%" height="100%">
+  <rect width="880" height="340" fill="#0f172a" rx="10"/>
+  <text x="440" y="30" fill="#f8fafc" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">Metropolitan City-Scale IoT Platform Architecture (Capstone Track E)</text>
+  
+  <!-- Tier 1: Field Devices -->
+  <rect x="40" y="70" width="160" height="230" rx="6" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+  <text x="120" y="95" fill="#f8fafc" font-size="12" font-weight="bold" text-anchor="middle">Field IoT Devices</text>
+  <rect x="55" y="115" width="130" height="40" rx="4" fill="#0284c7" fill-opacity="0.3"/>
+  <text x="120" y="138" fill="#38bdf8" font-size="10" text-anchor="middle">Water Sensors (PUPR)</text>
+  <rect x="55" y="165" width="130" height="40" rx="4" fill="#16a34a" fill-opacity="0.3"/>
+  <text x="120" y="188" fill="#4ade80" font-size="10" text-anchor="middle">Smart Bins (DLH)</text>
+  <rect x="55" y="215" width="130" height="40" rx="4" fill="#dc2626" fill-opacity="0.3"/>
+  <text x="120" y="238" fill="#f87171" font-size="10" text-anchor="middle">Emergency Sirens (BPBD)</text>
+  <text x="120" y="280" fill="#94a3b8" font-size="9" text-anchor="middle">NB-IoT / LTE-M / LoRa</text>
+
+  <!-- Tier 2: Ingestion & Priority Broker -->
+  <rect x="250" y="70" width="180" height="230" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="340" y="95" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">Ingestion &amp; Queue</text>
+  <rect x="265" y="115" width="150" height="35" rx="4" fill="#0f172a"/>
+  <text x="340" y="137" fill="#cbd5e1" font-size="10" text-anchor="middle">12,000 pkt/s Ingestion</text>
+  <rect x="265" y="160" width="150" height="50" rx="4" fill="#0f172a"/>
+  <text x="340" y="180" fill="#fca5a5" font-size="10" font-weight="bold" text-anchor="middle">Class 1: M/G/1 Priority</text>
+  <text x="340" y="198" fill="#4ade80" font-size="9" text-anchor="middle">Latency: 0.44 ms (&lt; 80 ms)</text>
+  <rect x="265" y="220" width="150" height="35" rx="4" fill="#0f172a"/>
+  <text x="340" y="242" fill="#93c5fd" font-size="10" text-anchor="middle">Class 2: Telemetry Queue</text>
+  <text x="340" y="280" fill="#38bdf8" font-size="9" text-anchor="middle">SATC-E01 &amp; SATC-E02 PASS</text>
+
+  <!-- Tier 3: FIWARE Orion-LD & Multi-Tenant -->
+  <rect x="480" y="70" width="170" height="230" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="565" y="95" fill="#c084fc" font-size="12" font-weight="bold" text-anchor="middle">FIWARE NGSI-LD</text>
+  <rect x="495" y="115" width="140" height="40" rx="4" fill="#0f172a"/>
+  <text x="565" y="138" fill="#cbd5e1" font-size="10" text-anchor="middle">ETSI GS CIM 009</text>
+  <rect x="495" y="165" width="140" height="55" rx="4" fill="#0f172a"/>
+  <text x="565" y="185" fill="#f43f5e" font-size="10" font-weight="bold" text-anchor="middle">Multi-Tenant ACL</text>
+  <text x="565" y="205" fill="#4ade80" font-size="9" text-anchor="middle">403 Forbidden Verified</text>
+  <rect x="495" y="230" width="140" height="35" rx="4" fill="#0f172a"/>
+  <text x="565" y="252" fill="#cbd5e1" font-size="10" text-anchor="middle">Context Entity Graph</text>
+  <text x="565" y="280" fill="#a855f7" font-size="9" text-anchor="middle">SATC-E03 PASS</text>
+
+  <!-- Tier 4: Geospatial & Privacy -->
+  <rect x="700" y="70" width="140" height="230" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="770" y="95" fill="#34d399" font-size="12" font-weight="bold" text-anchor="middle">GIS &amp; Privacy</text>
+  <rect x="710" y="115" width="120" height="45" rx="4" fill="#0f172a"/>
+  <text x="770" y="135" fill="#fca5a5" font-size="10" font-weight="bold" text-anchor="middle">Geofence Ray-Cast</text>
+  <text x="770" y="150" fill="#4ade80" font-size="9" text-anchor="middle">1.45 ms (&lt; 100 ms)</text>
+  <rect x="710" y="170" width="120" height="45" rx="4" fill="#0f172a"/>
+  <text x="770" y="190" fill="#93c5fd" font-size="10" font-weight="bold" text-anchor="middle">H3 Hex Masking</text>
+  <text x="770" y="205" fill="#cbd5e1" font-size="9" text-anchor="middle">Resolution 8 (~0.73 km²)</text>
+  <rect x="710" y="225" width="120" height="45" rx="4" fill="#0f172a"/>
+  <text x="770" y="245" fill="#34d399" font-size="10" font-weight="bold" text-anchor="middle">Open Data Portal</text>
+  <text x="770" y="260" fill="#94a3b8" font-size="9" text-anchor="middle">UU PDP Compliant</text>
+  <text x="770" y="280" fill="#10b981" font-size="9" text-anchor="middle">SATC-E04 PASS</text>
+
+  <!-- Connectors -->
+  <line x1="200" y1="180" x2="250" y2="180" stroke="#64748b" stroke-width="2"/>
+  <line x1="430" y1="180" x2="480" y2="180" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="650" y1="180" x2="700" y2="180" stroke="#a855f7" stroke-width="2"/>
+</svg>
