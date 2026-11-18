@@ -866,3 +866,4 @@ Pada perancangan platform industri tingkat akhir (Level 4 Capstone), keberhasila
     ]
   }
 ];
+
