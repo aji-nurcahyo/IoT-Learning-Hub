@@ -158,3 +158,4 @@ Meskipun kelima peminatan memiliki target vertikal yang berbeda, terdapat jembat
    - Modul `C03` (Propagasi LoRaWAN & Klirens Fresnel) melengkapi modul `E02` (Propagasi Urban COST 231 Hata), memberikan mahasiswa pemahaman holistik tentang perambatan gelombang radio baik di pedesaan/perkebunan maupun di perkotaan padat.
 3. **Sinergi Track A (Smart Home) & Track E (Smart Cities)**:
    - Modul `A04` (Sub-metering energi gedung) berintegrasi langsung dengan modul `E01` (Arsitektur data terbuka NGSI-LD kota pintar), memodelkan bagaimana ribuan bangunan cerdas melaporkan profil konsumsi daya ke sistem smart grid kotamadya.
+

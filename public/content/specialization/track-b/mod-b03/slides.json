@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Saluran Fisik RS-485 & Terminasi 120 Ohm",
+    "body": "Transmisi diferensial seimbang (A dan B) tahan interferensi derau.\nResistor terminasi 120 Ohm wajib di kedua ujung untuk meredam refleksi gelombang.",
+    "notes": "Gambarkan bentuk gelombang distorsi jika resistor terminasi dilepas pada baud rate tinggi."
+  },
+  {
+    "title": "Kalkulasi Waktu Siklus Polling Modbus RTU",
+    "body": "Waktu siklus dipengaruhi frame request, waktu turnaround PLC slave, frame response, dan t3.5.\nBatas refresh rate membatasi jumlah slave pada satu segmen saluran serial.",
+    "notes": "Tunjukkan mengapa polling berurutan memunculkan trade-off antara jumlah perangkat dan kecepatan update data."
+  },
+  {
+    "title": "Arsitektur Model Informasi OPC UA",
+    "body": "Pohon ruang alamat berbasis graf simpul (Nodeset Object Graph).\nSemantik metadata kaya menggantikan pemetaan register heksadesimal mentah.",
+    "notes": "Jelaskan konsep TypeDefinition dan instance declaration pada OPC UA."
+  },
+  {
+    "title": "Konsep Time-Sensitive Networking (TSN)",
+    "body": "Ekstensi standar IEEE 802.1 untuk komunikasi Ethernet deterministik.\nTime-aware shaper (802.1Qbv) mengalokasikan jendela waktu transmisi bergaransi bebas tabrakan.",
+    "notes": "Bahas konvergensi TSN yang memungkinkan data kontrol kritis dan telemetri IoT berbagi kabel Ethernet yang sama."
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Statistik Domain Waktu: RMS vs Kurtosis",
+    "body": "RMS mengukur energi getaran total (ketidakseimbangan & misalignment).\nKurtosis mengukur ketajaman ekor distribusi impak mikro bantalan.",
+    "notes": "Jelaskan mengapa sinyal getaran dengan nilai RMS normal tetap bisa memiliki Kurtosis sangat tinggi (peringatan dini cacat bearing)."
+  },
+  {
+    "title": "Mengapa FFT Langsung Sering Gagal?",
+    "body": "Impak mikro bantalan memiliki energi kecil yang tenggelam di bawah kebisingan mesin.\nImpak memodulasi resonansi struktural alami casing frekuensi tinggi.",
+    "notes": "Uraikan fenomena modulasi amplitudo pada getaran mesin berputar."
+  },
+  {
+    "title": "Demodulasi Selubung via Transformasi Hilbert",
+    "body": "Pembentukan sinyal analitik kompleks s(t) = x(t) + j*H{x(t)}.\nEkstraksi selubung amplitudo A(t) melenyapkan gelombang pembawa resonansi.",
+    "notes": "Tunjukkan bahwa FFT dari A(t) mengembalikan komponen frekuensi modulasi impak secara murni."
+  },
+  {
+    "title": "Frekuensi Karakteristik Bantalan (BPFO & BPFI)",
+    "body": "Penurunan analitis frekuensi cacat berbasis geometri mekanis bantalan.\nIdentifikasi lokasi spesifik kerusakan: cincin luar, cincin dalam, atau bola gelinding.",
+    "notes": "Hubungkan nilai teoritis BPFO 107.5 Hz dengan data pengujian motor 1800 RPM."
+  }
+]

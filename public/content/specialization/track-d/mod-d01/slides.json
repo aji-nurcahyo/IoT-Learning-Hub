@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Evolusi Pemrosesan AI Embedded",
+    "body": "Dari CPU konvensional menuju instruksi SIMD vektor dan akselerator NPU terdedikasi.\nEfisiensi komputasi per miliwatt meningkat lebih dari 50 kali lipat.",
+    "notes": "Jelaskan peran komputasi fixed-point INT8 dalam memaksimalkan throughput SIMD."
+  },
+  {
+    "title": "Prinsip Kerja Roofline Performance Model",
+    "body": "Visualisasi batas kemampuan komputasi sistem tertanam.\nBatas kiri adalah Memory-Bound, batas kanan horizontal adalah Compute-Bound.",
+    "notes": "Gambarkan sumbu X sebagai intensitas aritmatika dan sumbu Y sebagai kinerja GMAC/s."
+  },
+  {
+    "title": "Hierarki Memori: Flash vs SRAM vs TCM",
+    "body": "Flash SPI eksternal murah namun lambat (puluhan MB/s).\nSRAM Tight-Coupled Memory (TCM) terintegrasi langsung ke inti prosesor (> 1 GB/s).",
+    "notes": "Uraikan mengapa layer Dense/FC sangat sensitif terhadap bandwidth memori."
+  },
+  {
+    "title": "Strategi Optimasi Penempatan Tensor Arena",
+    "body": "Alokasi bobot kritis di memori berkecepatan tinggi untuk melipatgandakan frame rate.\nMenghindari cache-miss dan latensi tunggu bus eksternal.",
+    "notes": "Tunjukkan bukti peningkatan kinerja pada simulasi hardware_roofline_model_sim.py."
+  }
+]

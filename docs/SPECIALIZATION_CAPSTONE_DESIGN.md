@@ -231,3 +231,4 @@ Kompensasi jaminan latensi paket darurat membuktikan $W_1 \ll W_2$.
 2. **Jaminan Kualitas Layanan (SLA) & Antrean Prioritas** (25 poin): Implementasi antrean prioritas $M/G/1$, evaluasi latensi ekor $P_{99}$, dan determinisme respon darurat.
 3. **Kepatuhan Standar Kota Cerdas & Tata Kelola Privasi** (25 poin): Kesesuaian model data FIWARE NGSI-LD, isolasi multi-tenant, dan agregasi spasial anonimitas H3.
 4. **Verifikasi Kinerja, Otomasi Pengujian & Dokumentasi** (25 poin): Kelulusan 100% skenario SATC, visualisasi dashboard geospasial real-time, dan dokumentasi arsitektur sistem skala metropolitan.
+

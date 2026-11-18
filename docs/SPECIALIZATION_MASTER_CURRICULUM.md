@@ -619,3 +619,4 @@ Berdasarkan audit dependensi teknologi, ketersediaan toolchain simulasi perangka
    - *Justifikasi*: Mengembangkan Chapter 34 (Matter/Thread) dan Chapter 28 (Security). Memerlukan pemodelan emulasi jaringan IPv6 Thread border router yang cukup kompleks namun sangat relevan untuk industri otomasi modern.
 5. **Prioritas 5: Track E (IoT for Telecommunications & Smart Cities)**
    - *Justifikasi*: Merangkum seluruh arsitektur jaringan skala besar (Chapter 11, 18, 37, 39). Sangat tepat bagi mahasiswa Teknik Telekomunikasi; membutuhkan pemodelan spasial PostGIS dan simulasi antrean kontensi data masif.
+

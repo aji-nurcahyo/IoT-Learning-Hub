@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Siklus Hidup Model Edge AI",
+    "body": "- Tantangan deployment model neural network pada firmware mikrokontroler.\n- Mengapa akurasi model selalu terdegradasi seiring waktu (Data Drift & Concept Drift).\n- Pipeline kompilasi Ahead-of-Time (AOT) dan zero heap allocation.",
+    "notes": "Garisbawahi bahwa model edge tidak boleh mengandalkan alokasi memori dinamis malloc() untuk mencegah fragmentasi heap."
+  },
+  {
+    "title": "Deteksi Drift dengan Population Stability Index (PSI)",
+    "body": "- Metrik ringan berbasis divergensi Kullback-Leibler simetris.\n- Pengelompokan output model ke dalam kuantil referensi.\n- Aturan aksi industri: PSI < 0.10 (Stabil), >= 0.25 (Wajib Retrain).",
+    "notes": "Tunjukkan implementasi komputasi PSI yang hanya memerlukan memori beberapa puluh byte di SRAM."
+  },
+  {
+    "title": "Benchmarking Hardware & Closed-Loop MLOps",
+    "body": "- Pengukuran siklus eksekusi dengan DWT Cycle Counter.\n- Kalibrasi threshold dinamis berbasis Extreme Value Theory (EVT).\n- Pemberitahuan cloud otomatis untuk pemicuan retrain model terpusat.",
+    "notes": "Jelaskan alur pembaruan OTA firmware berbasis partisi dual A/B yang aman dari kegagalan transmisi."
+  }
+]

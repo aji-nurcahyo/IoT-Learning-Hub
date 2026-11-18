@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Multimodal Fusion pada Edge AI",
+    "body": "- Mengapa single-sensor rentan false alarm pada lingkungan industri berderau.\n- Kombinasi modalitas fisik: vibrasi kinematik, fluks termal, dan fluktuasi arus fasa.\n- Komplementaritas domain waktu dan frekuensi antar sensor.",
+    "notes": "Tekankan bahwa sensor vibrasi mendeteksi benturan, sedangkan thermal flux memverifikasi keausan kontinu."
+  },
+  {
+    "title": "Extended Kalman Filter (EKF) Non-Linear",
+    "body": "- Sistem fisik non-linear memerlukan linearisasi deret Taylor orde 1.\n- Matriks Jacobian F (transisi state) dan H (pemetaan sensor).\n- Propagasi kovariansi error P untuk mengukur tingkat ketidakpastian estimasi.",
+    "notes": "Jelaskan mengapa EKF mempertahankan kestabilan numerik jika sampling rate dan proses noise dimodelkan secara akurat."
+  },
+  {
+    "title": "Arsitektur Late Bayesian Fusion",
+    "body": "- Menghindari inversi matriks ukuran besar pada Cortex-M4/M7.\n- Penggabungan Log-Odds posterior antar sensor dengan laju sampling berbeda.\n- Ketahanan terhadap kegagalan total satu sensor (graceful degradation).",
+    "notes": "Perlihatkan persamaan log-odds dan bagaimana sensor yang rusak dapat di-masking secara otomatis."
+  }
+]

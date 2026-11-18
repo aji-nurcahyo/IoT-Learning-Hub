@@ -76,3 +76,4 @@ Evaluasi terhadap dokumen silabus dan spesifikasi kurikulum peminatan:
    - **Gelombang 2 (Wave 2)**: Implementasi **Track C (Smart Agriculture)** dan **Track A (Smart Home)**.
    - **Gelombang 3 (Wave 3)**: Implementasi **Track E (IoT for Telecommunications & Smart Cities)**.
 3. **Instruksi Batasan Sesi**: Sesuai arahan master prompt, **pekerjaan Phase 6A dihentikan di sini**. Tidak ada penambahan berkas modul materi fisik di direktori `public/content/` sebelum evaluasi dan persetujuan pengguna untuk melangkah ke Phase 6B.
+

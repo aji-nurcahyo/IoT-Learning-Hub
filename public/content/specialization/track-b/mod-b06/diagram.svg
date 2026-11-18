@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 350" width="100%" height="100%">
+  <rect width="700" height="350" fill="#0d1117"/>
+  <text x="350" y="30" text-anchor="middle" fill="#58a6ff" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">Arsitektur Terpadu Capstone Industrial Edge PdM (Track B)</text>
+  <rect x="40" y="70" width="180" height="70" rx="6" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+  <text x="130" y="95" text-anchor="middle" fill="#58a6ff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Level 0: Fisik &amp; Sensor</text>
+  <text x="130" y="115" text-anchor="middle" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="11">Akselerometer Piezo IEPE</text>
+  <text x="130" y="130" text-anchor="middle" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10">Stud mount (fn > 8 kHz)</text>
+  <line x1="220" y1="105" x2="270" y2="105" stroke="#58a6ff" stroke-width="2"/>
+  <rect x="270" y="70" width="220" height="70" rx="6" fill="#21262d" stroke="#d29922" stroke-width="2"/>
+  <text x="380" y="95" text-anchor="middle" fill="#e3b341" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Level 1: Edge Processor</text>
+  <text x="380" y="115" text-anchor="middle" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="11">10 kHz DMA Sampling Buffer</text>
+  <text x="380" y="130" text-anchor="middle" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10">Kurtosis, Hilbert, ISO 20816</text>
+  <line x1="490" y1="105" x2="540" y2="105" stroke="#e3b341" stroke-width="2"/>
+  <rect x="540" y="70" width="130" height="70" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+  <text x="605" y="95" text-anchor="middle" fill="#3fb950" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Proteksi</text>
+  <text x="605" y="115" text-anchor="middle" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="11">Safe State Trip</text>
+  <text x="605" y="130" text-anchor="middle" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10">Relay (T &lt; 50 ms)</text>
+  <line x1="380" y1="140" x2="380" y2="200" stroke="#d29922" stroke-width="2"/>
+  <rect x="220" y="200" width="320" height="110" rx="8" fill="#161b22" stroke="#8957e5" stroke-width="2"/>
+  <text x="380" y="225" text-anchor="middle" fill="#d2a8ff" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">Level 2/3: OPC UA &amp; IDMZ Conduit</text>
+  <text x="380" y="250" text-anchor="middle" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="11">Pohon Hierarki NodeSet OPC UA Terstandar</text>
+  <text x="380" y="270" text-anchor="middle" fill="#8b949e" font-family="system-ui, sans-serif" font-size="11">Replicated Historian di Industrial DMZ (IEC 62443)</text>
+  <text x="380" y="290" text-anchor="middle" fill="#3fb950" font-family="system-ui, sans-serif" font-size="11">Integrasi SCADA &amp; Cloud Historian Korporat</text>
+</svg>

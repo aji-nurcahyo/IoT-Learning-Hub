@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Tantangan Komputasi Sinyal Streaming di Edge",
+    "body": "Aliran data mentah 16 kHz membanjiri buffer SRAM mikrokontroler.\nEkstraksi fitur memadatkan 256 sampel audio menjadi 6 koefisien MFCC ringkas.",
+    "notes": "Jelaskan rasio reduksi data sebesar 97% yang dicapai oleh representasi MFCC."
+  },
+  {
+    "title": "Arsitektur Ekstraksi Fitur MFCC",
+    "body": "Windowing Hamming -> FFT Magnitude -> Mel Filterbank -> Log Energy -> DCT.\nMendekorelasikan informasi spektral menjadi representasi ortogonal.",
+    "notes": "Tunjukkan bentuk segitiga bank filter skala Mel yang semakin lebar pada frekuensi tinggi."
+  },
+  {
+    "title": "Aritmatika Integer Fixed-Point Q15",
+    "body": "Representasi fraksi pecahan di dalam register integer int16_t.\nEksekusi perkalian dot-product berkecepatan tinggi via bit-shift (>> 15).",
+    "notes": "Bahas cara mencegah overflow pada akumulasi fixed-point dengan register 32-bit."
+  },
+  {
+    "title": "Diferensiasi Spektral Suara Mesin Normal vs Anomali",
+    "body": "Perubahan profil koefisien MFCC saat timbul desis friksi frekuensi tinggi.\nVektor fitur siap diumpankan ke model klasifikasi TinyML INT8.",
+    "notes": "Kaitkan hasil simulasi fixed_point_mfcc_extractor_sim.py dengan input model klasifikasi."
+  }
+]

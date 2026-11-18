@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Fisika Transduser Piezoelektrik IEPE",
+    "body": "Konversi gaya inersia kristal piezoelektrik menjadi muatan listrik.\nRangkaian internal IEPE/ICP mengubah impedansi tinggi ke level tegangan rendah.",
+    "notes": "Jelaskan catu daya arus konstan (constant current diode 2-4 mA) yang dibutuhkan sensor IEPE."
+  },
+  {
+    "title": "Pengaruh Kekakuan Dudukan (Mounting Stiffness)",
+    "body": "Dudukan baut stud kaku menjamin bandwidth hingga 10+ kHz.\nDudukan magnet atau probe tangan memangkas respons frekuensi tinggi secara drastis.",
+    "notes": "Tekankan bahwa penggunaan probe genggam hanya valid untuk frekuensi rotasi rendah di bawah 1 kHz."
+  },
+  {
+    "title": "Emisi Akustik Ultrasonik (Acoustic Emission)",
+    "body": "Gelombang tegangan transien (20 kHz hingga 100+ kHz) akibat pelepasan energi mikro.\nMendeteksi gesekan kering dan inisiasi keretakan mikro jauh sebelum timbul getaran fisik.",
+    "notes": "Bandingkan deteksi dini AE dengan batas deteksi getaran mekanis standar."
+  },
+  {
+    "title": "Perancangan Filter Anti-Aliasing",
+    "body": "Kebutuhan filter analog low-pass sebelum konversi ADC diskrit.\nMencegah pelipatan komponen frekuensi tinggi ke dalam pita dasar pita analisis.",
+    "notes": "Uraikan trade-off ripple fasa pada filter Chebyshev vs linieritas filter Butterworth."
+  }
+]

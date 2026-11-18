@@ -5154,7 +5154,51 @@
         35,
         38
       ],
-      "status": "planned"
+      "status": "available",
+      "modules": [
+        {
+          "id": "b01",
+          "slug": "mod-b01",
+          "number": 1,
+          "title": "Industrial IoT Architecture, Purdue Model & Cyber-Physical Security (IEC 62443)",
+          "status": "available"
+        },
+        {
+          "id": "b02",
+          "slug": "mod-b02",
+          "number": 2,
+          "title": "Industrial Sensor Interfacing, Signal Conditioning & Vibration Dynamics",
+          "status": "available"
+        },
+        {
+          "id": "b03",
+          "slug": "mod-b03",
+          "number": 3,
+          "title": "Fieldbus Protocols, Modbus RTU/TCP & Deterministic Industrial Polling",
+          "status": "available"
+        },
+        {
+          "id": "b04",
+          "slug": "mod-b04",
+          "number": 4,
+          "title": "Time & Frequency Domain Feature Engineering for Rotating Machinery",
+          "status": "available"
+        },
+        {
+          "id": "b05",
+          "slug": "mod-b05",
+          "number": 5,
+          "title": "Predictive Maintenance Algorithms, SIL/Functional Safety & IEC 61508",
+          "status": "available"
+        },
+        {
+          "id": "b06",
+          "slug": "mod-b06",
+          "number": 6,
+          "title": "End-to-End Industrial Condition-Based Monitoring Platform (Capstone Project)",
+          "status": "available"
+        }
+      ]
     },
     {
       "id": "c",
@@ -5195,7 +5239,51 @@
         35,
         38
       ],
-      "status": "planned"
+      "status": "available",
+      "modules": [
+        {
+          "id": "d01",
+          "slug": "mod-d01",
+          "number": 1,
+          "title": "Embedded AI Architecture, Hardware Accelerators & Neural Processing Units",
+          "status": "available"
+        },
+        {
+          "id": "d02",
+          "slug": "mod-d02",
+          "number": 2,
+          "title": "Embedded Signal Processing & Feature Extraction for Audio/Vibration on Edge Nodes",
+          "status": "available"
+        },
+        {
+          "id": "d03",
+          "slug": "mod-d03",
+          "number": 3,
+          "title": "TinyML Neural Network Quantization, Pruning & Compression",
+          "status": "available"
+        },
+        {
+          "id": "d04",
+          "slug": "mod-d04",
+          "number": 4,
+          "title": "Multimodal Sensor Fusion, Bayesian Estimation & Extended Kalman Filters",
+          "status": "available"
+        },
+        {
+          "id": "d05",
+          "slug": "mod-d05",
+          "number": 5,
+          "title": "Edge AI Model Lifecycle, Deployment, Benchmarking & Anomaly Tracking",
+          "status": "available"
+        },
+        {
+          "id": "d06",
+          "slug": "mod-d06",
+          "number": 6,
+          "title": "Real-Time Multimodal Edge Vision & Acoustic Anomaly Detection System (Capstone Project)",
+          "status": "available"
+        }
+      ]
     },
     {
       "id": "e",

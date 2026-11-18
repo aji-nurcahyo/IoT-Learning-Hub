@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Arsitektur Otomasi Industri & Purdue Model",
+    "body": "Pemisahan hierarki piramida otomasi industri dari Level 0 Field hingga Level 4 Enterprise.\nKonvergensi OT/IT membutuhkan demarkasi batas keselamatan dan kedaulatan kendali lokal pabrik.",
+    "notes": "Jelaskan perbedaan mendasar karakteristik waktu antara OT (hard real-time deterministik) dan IT (transaksional throughput tinggi)."
+  },
+  {
+    "title": "Standar Keamanan Siber IEC 62443: Zones & Conduits",
+    "body": "Penghapusan arsitektur jaringan datar (flat network).\nPengelompokan aset berbasis Security Level (Zones) dan jalur komunikasi terawasi (Conduits).",
+    "notes": "Tekankan bahwa setiap paket yang melintasi conduit wajib diinspeksi oleh firewall industri stateful."
+  },
+  {
+    "title": "Peran Strategis Industrial DMZ (IDMZ)",
+    "body": "IDMZ (Level 3.5) mencegah lalu lintas jaringan IT langsung menyentuh PLC pabrik.\nReplicated Historian dan proksi data menjamin data dapat diakses tanpa risiko penetrasi balik.",
+    "notes": "Bahas mengapa dual-homed server di dalam zona kontrol merupakan celah keamanan yang sangat berbahaya."
+  },
+  {
+    "title": "Model Matematis Ketersediaan & Penetrasi Risiko",
+    "body": "Ketersediaan serial: A_total = produk dari A_i.\nReduksi risiko penetrasi siber bertingkat IDMZ memangkas peluang breach hingga 200 kali lipat.",
+    "notes": "Tunjukkan contoh perhitungan kuantitatif dari resistansi firewall internal dan eksternal."
+  },
+  {
+    "title": "Simulasi Penegakan Kebijakan Keamanan Gateway",
+    "body": "Verifikasi deterministik pemblokiran traversal ilegal Level 4 ke Level 1.\nPencegahan perintah tulis koil (write coil) dari jaringan eksternal.",
+    "notes": "Demonstrasikan eksekusi skrip purdue_security_sim.py dan kriteria kelulusan 100% SATC."
+  }
+]
+

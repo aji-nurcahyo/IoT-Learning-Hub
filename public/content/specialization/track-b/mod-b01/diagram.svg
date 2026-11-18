@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <rect width="800" height="500" fill="#0d1117"/>
+  <text x="400" y="35" text-anchor="middle" fill="#58a6ff" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Arsitektur Purdue Model &amp; Industrial DMZ (ISA-95 / IEC 62443)</text>
+  
+  <!-- Level 4 Enterprise -->
+  <rect x="50" y="60" width="700" height="60" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+  <text x="70" y="95" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">LEVEL 4: ENTERPRISE NETWORK (IT)</text>
+  <text x="70" y="112" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">ERP (SAP/Oracle), Corporate BI Analytics, Business WAN</text>
+  
+  <!-- Conduit IT to IDMZ -->
+  <line x1="400" y1="120" x2="400" y2="150" stroke="#f85149" stroke-width="3" stroke-dasharray="5,5"/>
+  <text x="415" y="140" fill="#f85149" font-family="system-ui, sans-serif" font-size="11" font-weight="bold">External Firewall (HTTPS Only)</text>
+  
+  <!-- Level 3.5 IDMZ -->
+  <rect x="50" y="150" width="700" height="75" rx="8" fill="#21262d" stroke="#d29922" stroke-width="2"/>
+  <text x="70" y="180" fill="#e3b341" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">LEVEL 3.5: INDUSTRIAL DMZ (IDMZ)</text>
+  <text x="70" y="200" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="12">Replicated Historian | Reverse Proxy | Remote Access Bastion | Antivirus Mirror</text>
+  <text x="70" y="218" fill="#8b949e" font-family="system-ui, sans-serif" font-size="11">Penyangga netral: Tidak ada lalu lintas langsung antara Level 4 dan Level 3!</text>
+
+  <!-- Conduit IDMZ to Operations -->
+  <line x1="400" y1="225" x2="400" y2="255" stroke="#3fb950" stroke-width="3"/>
+  <text x="415" y="245" fill="#3fb950" font-family="system-ui, sans-serif" font-size="11" font-weight="bold">Internal Firewall (OPC UA / SQL Push)</text>
+
+  <!-- Level 3 Operations -->
+  <rect x="50" y="255" width="700" height="65" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+  <text x="70" y="285" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">LEVEL 3: MANUFACTURING OPERATIONS &amp; CONTROL (OT)</text>
+  <text x="70" y="305" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">Manufacturing Execution System (MES), Primary Plant Historian, Engineering Stations</text>
+
+  <!-- Conduit Ops to Control -->
+  <line x1="400" y1="320" x2="400" y2="345" stroke="#58a6ff" stroke-width="3"/>
+
+  <!-- Level 1 & 2 Control -->
+  <rect x="50" y="345" width="700" height="65" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+  <text x="70" y="375" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="15" font-weight="bold">LEVEL 1 &amp; 2: SUPERVISORY &amp; BASIC CONTROL (OT)</text>
+  <text x="70" y="395" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">SCADA Servers, HMI Operator, Programmable Logic Controllers (PLC), RTU, Variable Speed Drives</text>
+
+  <!-- Conduit Control to Field -->
+  <line x1="400" y1="410" x2="400" y2="435" stroke="#bc8cff" stroke-width="3"/>
+
+  <!-- Level 0 Field -->
+  <rect x="50" y="435" width="700" height="50" rx="8" fill="#0d1117" stroke="#8957e5" stroke-width="2"/>
+  <text x="70" y="465" fill="#d2a8ff" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">LEVEL 0: PHYSICAL PROCESS</text>
+  <text x="290" y="465" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">Akselerometer Piezo Getaran, Sensor Suhu, Motor Induksi, Katup Hidrolik</text>
+</svg>
+

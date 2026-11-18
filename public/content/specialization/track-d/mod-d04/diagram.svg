@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" width="100%" height="100%">
+  <rect width="880" height="340" fill="#0f172a" rx="10"/>
+  <text x="440" y="32" fill="#38bdf8" font-size="18" font-weight="bold" text-anchor="middle" font-family="monospace">MULTIMODAL SENSOR FUSION &amp; EKF ARCHITECTURE</text>
+  
+  <rect x="40" y="70" width="180" height="70" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+  <text x="130" y="100" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sensor Vibrasi (16 kHz)</text>
+  <text x="130" y="122" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="sans-serif">Envelope Kinematik z1</text>
+
+  <rect x="40" y="160" width="180" height="70" rx="8" fill="#1e293b" stroke="#ec4899" stroke-width="2"/>
+  <text x="130" y="190" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sensor Fluks Termal (1 Hz)</text>
+  <text x="130" y="212" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="sans-serif">Temperatur Permukaan z2</text>
+
+  <rect x="40" y="250" width="180" height="70" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <text x="130" y="280" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Sensor Arus Motor (4 kHz)</text>
+  <text x="130" y="302" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="sans-serif">Harmonik Arus Stator z3</text>
+
+  <rect x="290" y="100" width="300" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
+  <text x="440" y="130" fill="#10b981" font-size="15" font-weight="bold" text-anchor="middle" font-family="sans-serif">Extended Kalman Filter (EKF)</text>
+  <text x="440" y="160" fill="#f8fafc" font-size="12" text-anchor="middle" font-family="sans-serif">Jacobian Non-Linear F(k) &amp; H(k)</text>
+  <text x="440" y="190" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Time Update: x-(k), P-(k)</text>
+  <text x="440" y="220" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Measurement Update: K(k), y(k)</text>
+  <text x="440" y="250" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="monospace">P = (I - K*H) * P-</text>
+
+  <rect x="660" y="145" width="180" height="100" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="750" y="180" fill="#a78bfa" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">Late Bayesian Fusion</text>
+  <text x="750" y="205" fill="#f8fafc" font-size="12" text-anchor="middle" font-family="sans-serif">Log-Odds Evaluator</text>
+  <text x="750" y="225" fill="#10b981" font-size="11" font-weight="bold" text-anchor="middle" font-family="monospace">Health Score &gt; 99%</text>
+
+  <line x1="220" y1="105" x2="290" y2="150" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="220" y1="195" x2="290" y2="195" stroke="#ec4899" stroke-width="2"/>
+  <line x1="220" y1="285" x2="290" y2="240" stroke="#f59e0b" stroke-width="2"/>
+  <line x1="590" y1="195" x2="660" y2="195" stroke="#10b981" stroke-width="3"/>
+</svg>

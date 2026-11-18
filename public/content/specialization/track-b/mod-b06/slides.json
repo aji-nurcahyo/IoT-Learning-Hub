@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Arsitektur Capstone Edge PdM Platform",
+    "body": "Integrasi end-to-end: Akuisisi getaran DMA -> Fitur statistik -> Demodulasi Hilbert -> OPC UA.\nMematuhi batasan segmentasi model Purdue dan standar keselamatan IEC 61508.",
+    "notes": "Gambarkan aliran data dari akselerometer fisik hingga dashboard operator SCADA."
+  },
+  {
+    "title": "Klasifikasi Keparahan Standar ISO 20816",
+    "body": "Pembagian 4 zona: Zona A (Baru), Zona B (Layak), Zona C (Peringatan), dan Zona D (Trip).\nEvaluasi True RMS kecepatan getaran (mm/s) pada mesin Kelas II industri.",
+    "notes": "Jelaskan perbedaan batas getaran pada pondasi kaku (rigid) vs pondasi fleksibel (flexible)."
+  },
+  {
+    "title": "Verifikasi Matriks SATC-B01 s/d SATC-B04",
+    "body": "Pengujian deterministik aliran data normal, deteksi impak bearing, dan respon trip Zona D.\nKelulusan 100% tanpa kegagalan assert pada runtime Python mandiri.",
+    "notes": "Tunjukkan hasil keluaran eksekusi platform dan bukti integritas outputs.md."
+  },
+  {
+    "title": "Peluang Ekstensi Riset & Skalabilitas",
+    "body": "Integrasi model Deep TinyML INT8 untuk klasifikasi otomatis multi-fault.\nImplementasi komunikasi Ethernet TSN untuk sinkronisasi sub-mikrodetik antar-mesin.",
+    "notes": "Arahkan mahasiswa pada potensi publikasi ilmiah di jurnal instrumentasi IEEE."
+  }
+]

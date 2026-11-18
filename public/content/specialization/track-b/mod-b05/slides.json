@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Konsep Keselamatan Fungsional IEC 61508",
+    "body": "Pemisahan ketat antara BPCS kontrol dasar dan SIS sistem keselamatan.\nKlasifikasi kuadran kegagalan: Safe vs Dangerous, Detected vs Undetected.",
+    "notes": "Tekankan bahwa lambda_du adalah musuh terbesar dalam perancangan keselamatan fungsional."
+  },
+  {
+    "title": "Safety Integrity Level (SIL 1 hingga SIL 4)",
+    "body": "Tingkat pengurangan risiko yang ditargetkan untuk fungsi keselamatan instrumen.\nRentang probabilitas PFD_avg: SIL 1 (10^-2 hingga 10^-1) sampai SIL 4 (< 10^-4).",
+    "notes": "Jelaskan bahwa SIL 4 sangat jarang di industri umum; biasanya hanya di PLTN atau kendali terbang."
+  },
+  {
+    "title": "Perbandingan Arsitektur Voting (1oo1, 1oo2, 2oo3)",
+    "body": "1oo2 memaksimalkan keselamatan namun rentan spurious trip.\n2oo3 memberikan toleransi kegagalan perangkat keras (HFT=1) tanpa menghentikan produksi.",
+    "notes": "Uraikan mengapa industri proses kontinu seperti migas sangat menyukai konfigurasi 2oo3."
+  },
+  {
+    "title": "Safe State Control & Mitigasi Common Cause Failure",
+    "body": "Transisi deterministik ke kondisi aman saat kegagalan terdeteksi.\nFaktor beta mengukur kerentanan sistem terhadap kegagalan penyebab bersama.",
+    "notes": "Tunjukkan bahwa redundansi tidak berguna jika kedua sensor rusak akibat penyebab lingkungan yang sama."
+  }
+]

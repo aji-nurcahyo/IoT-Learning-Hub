@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Capstone Project Track D: Arsitektur Sistem",
+    "body": "- Penggabungan modalitas akustik I2S dan visual grayscale mikro.\n- Mengapa integrasi multi-domain menghasilkan akurasi tak tertandingi di lingkungan pabrik.\n- Pemenuhan standar industri SATC-D01 hingga SATC-D04.",
+    "notes": "Tekankan bahwa proyek capstone ini mensimulasikan sistem monitoring bearing terintegrasi industri berstandar produksi."
+  },
+  {
+    "title": "Optimasi Eksekusi & Memory Budgeting",
+    "body": "- Alokasi statis tensor arena 96 KB pada SRAM internal mikrokontroler.\n- Benchmarking latensi per-layer dengan total eksekusi 27.1 ms (< ambang batas 50 ms).\n- Pemanfaatan instruksi SIMD DSP untuk ekstraksi fitur real-time.",
+    "notes": "Jelaskan bagaimana anggaran memori divalidasi dengan linker script map file."
+  },
+  {
+    "title": "Log-Odds Bayesian Late-Fusion & Aksi Edge",
+    "body": "- Inferensi terdistribusi lokal tanpa ketergantungan koneksi cloud.\n- Log-likelihood ratio menyatukan derajat anomali audio dan visual.\n- Pemicuan interupsi alarm fisik seketika dan payload telemetri terkompresi.",
+    "notes": "Tunjukkan hasil simulasi saat anomaly probability melonjak ke 0.75 dan memicu alarm seketika."
+  }
+]

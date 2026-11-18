@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 350" width="100%" height="100%">
+  <rect width="700" height="350" fill="#0d1117"/>
+  <text x="350" y="30" text-anchor="middle" fill="#58a6ff" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">Model Massa-Pegas Resonansi Dudukan Sensor Getaran</text>
+  <rect x="250" y="70" width="200" height="80" rx="6" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>
+  <text x="350" y="115" text-anchor="middle" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">Massa Sensor (m = 35 g)</text>
+  <path d="M 330 150 L 330 230 M 370 150 L 370 230" stroke="#d29922" stroke-width="3" stroke-dasharray="4,4"/>
+  <text x="410" y="195" fill="#e3b341" font-family="system-ui, sans-serif" font-size="13">Kekakuan Kontak (k)</text>
+  <rect x="150" y="230" width="400" height="40" fill="#30363d"/>
+  <text x="350" y="255" text-anchor="middle" fill="#f0f6fc" font-family="system-ui, sans-serif" font-size="13">Permukaan Bodi Mesin / Bantalan Logam</text>
+  <text x="350" y="310" text-anchor="middle" fill="#8b949e" font-family="system-ui, sans-serif" font-size="12">Frekuensi Resonansi Alami: fn = 1/(2*pi) * sqrt(k/m) | Bandwidth Linier: f &lt;= 0.2 * fn</text>
+</svg>

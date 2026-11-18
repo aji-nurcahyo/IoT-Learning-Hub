@@ -145,3 +145,4 @@ export function validateSpecializationTracks(data: ExtendedCatalog, root: string
 ```
 
 Adaptasi ini menjamin bahwa penambahan modul spesialisasi tidak akan pernah menurunkan standar integritas pembuktian pengujian (*proof-of-verification*) yang sudah kokoh pada bab-bab inti.
+

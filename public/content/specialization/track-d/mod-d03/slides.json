@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Mengapa PTQ Gagal pada Model Kompak?",
+    "body": "Galat pembulatan bilangan bulat terakumulasi pada layer-layer awal.\nQAT menyimulasikan noise kuantisasi sejak proses backpropagation.",
+    "notes": "Bahas perbedaan grafik konvergensi loss antara model tanpa QAT dan dengan QAT."
+  },
+  {
+    "title": "Prinsip Straight-Through Estimator (STE)",
+    "body": "Mengatasi paradoks turunan nol fungsi pembulatan tangga.\nMeneruskan gradien loss secara langsung di dalam batas saturasi clipping.",
+    "notes": "Gambarkan visualisasi fungsi kuantisasi diskrit vs gradien garis lurus STE."
+  },
+  {
+    "title": "Structured vs Unstructured Pruning",
+    "body": "Unstructured pruning menghasilkan matriks jarang yang sulit diakselerasi CPU embedded.\nStructured pruning memangkas seluruh filter/channel konvolusi secara tuntas.",
+    "notes": "Tekankan bahwa hanya structured pruning yang memberikan reduksi latensi riil pada prosesor SIMD."
+  },
+  {
+    "title": "Distilasi Pengetahuan (Knowledge Distillation)",
+    "body": "Mentransfer representasi model Teacher besar ke model Student mikro.\nParameter suhu T melembutkan logits untuk mengekspos kemiripan antar-kelas.",
+    "notes": "Uraikan hasil simulasi tinyml_qat_compression_sim.py yang memadukan QAT dan sparsity."
+  }
+]
