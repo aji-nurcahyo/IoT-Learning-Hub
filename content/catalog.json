@@ -5133,7 +5133,51 @@
         28,
         34
       ],
-      "status": "planned"
+      "status": "available",
+      "modules": [
+        {
+          "id": "a01",
+          "slug": "mod-a01",
+          "number": 1,
+          "title": "Smart Building Architecture, Zoning & Multi-Protocol Coexistence",
+          "status": "available"
+        },
+        {
+          "id": "a02",
+          "slug": "mod-a02",
+          "number": 2,
+          "title": "Occupancy Sensing, Environmental Conditioning & Indoor Air Quality (IAQ)",
+          "status": "available"
+        },
+        {
+          "id": "a03",
+          "slug": "mod-a03",
+          "number": 3,
+          "title": "Matter Core Protocol, Thread Mesh & Cross-Ecosystem Commissioning",
+          "status": "available"
+        },
+        {
+          "id": "a04",
+          "slug": "mod-a04",
+          "number": 4,
+          "title": "Building Energy Optimization, Peak-Shaving & Sub-Metering",
+          "status": "available"
+        },
+        {
+          "id": "a05",
+          "slug": "mod-a05",
+          "number": 5,
+          "title": "Life-Safety Integration, Fail-Safe Interlocks & Emergency Evacuation Routing",
+          "status": "available"
+        },
+        {
+          "id": "a06",
+          "slug": "mod-a06",
+          "number": 6,
+          "title": "Autonomous Micro-Climate & Demand-Response Building Controller (Capstone Project)",
+          "status": "available"
+        }
+      ]
     },
     {
       "id": "b",
@@ -5218,7 +5262,51 @@
         19,
         31
       ],
-      "status": "planned"
+      "status": "available",
+      "modules": [
+        {
+          "id": "c01",
+          "slug": "mod-c01",
+          "number": 1,
+          "title": "Agro-Ecological System Modeling & In-Situ Sensing Constraints",
+          "status": "available"
+        },
+        {
+          "id": "c02",
+          "slug": "mod-c02",
+          "number": 2,
+          "title": "Precision In-Situ Calibration, Temperature Drift & Sensor Aging Physics",
+          "status": "available"
+        },
+        {
+          "id": "c03",
+          "slug": "mod-c03",
+          "number": 3,
+          "title": "LoRaWAN Topography Planning, Fresnel Zone & Canopy Path Loss Modeling",
+          "status": "available"
+        },
+        {
+          "id": "c04",
+          "slug": "mod-c04",
+          "number": 4,
+          "title": "Energy Harvesting, Solar Irradiance Profiling & Supercapacitor Dimensioning",
+          "status": "available"
+        },
+        {
+          "id": "c05",
+          "slug": "mod-c05",
+          "number": 5,
+          "title": "Evapotranspiration Analytics, FAO-56 Penman-Monteith & Precision Irrigation",
+          "status": "available"
+        },
+        {
+          "id": "c06",
+          "slug": "mod-c06",
+          "number": 6,
+          "title": "Autonomous LoRaWAN Agricultural Microclimate Network (Capstone Project)",
+          "status": "available"
+        }
+      ]
     },
     {
       "id": "d",

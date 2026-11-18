@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Fisika Drift & Penuaan Sensor In-Situ",
+    "body": "- Zero drift (pergeseran titik nol) vs Span drift (pergeseran sensitivitas).\n- Drift termal reversibel vs penuaan elektrokimia ireversibel.\n- Kerentanan transduser lingkungan pada siklus suhu diurnal ekstrem.",
+    "notes": "Tekankan perbedaan fisik antara pengaruh suhu harian dan degradasi kimiawi elektroda setelah ratusan hari operasi."
+  },
+  {
+    "title": "Metrologi Ketidakpastian Standar GUM",
+    "body": "- Evaluasi Tipe A (statistik berulang) dan Tipe B (resolusi, sertifikasi pabrik).\n- Propagasi varians dan penjumlahan kuadrat galat independen.\n- Ketidakpastian diperluas U (k=2) untuk batas keyakinan 95%.",
+    "notes": "Tunjukkan bahwa menyatakan hasil pengukuran tanpa nilai ketidakpastian adalah pelanggaran kaidah metrologi ISO."
+  },
+  {
+    "title": "Strategi Kalibrasi Lapangan Otomatis",
+    "body": "- Algoritma Automatic Baseline Correction (ABC) berbasis background global.\n- Kalibrasi dua titik in-situ dengan kompensasi software.\n- Redundansi dual-probe untuk deteksi dini anomali degradasi sensor.",
+    "notes": "Jelaskan bagaimana kalibrasi ABC menghemat biaya pemeliharaan tahunan pada jaringan sensor pertanian jarak jauh."
+  }
+]

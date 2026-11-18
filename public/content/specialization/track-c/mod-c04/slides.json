@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Pemanenan Energi Surya Skala Mikro",
+    "body": "- Arsitektur catu daya mandiri: Modul fotovoltaik monokristalin dan sirkuit MPPT.\n- Karakteristik non-linear kurva I-V dan pelacakan titik daya maksimum.\n- Efisiensi konversi buck-boost mikro-power (> 90%).",
+    "notes": "Jelaskan mengapa MPPT sangat diperlukan saat intensitas radiasi matahari berfluktuasi tertutup awan."
+  },
+  {
+    "title": "Dimensi Superkapasitor Buffer Lonjakan",
+    "body": "- Mengatasi tarikan arus lonjakan transmisi LoRa (120 mA vs 8 uA sleep).\n- Perhitungan energi burst E_burst dan formulasi Farad berbasis delta tegangan kuadrat.\n- Pilihan kapasitor EDLC komersial 0.15 F / 5.5 V.",
+    "notes": "Tekankan bahwa baterai kimiawi tidak menyukai pelepasan arus lonjakan berulang yang memicu degradasi resistansi internal."
+  },
+  {
+    "title": "Otonomi 7 Hari & Proteksi Brownout",
+    "body": "- Keseimbangan energi harian: Pemanenan 15600 mWh vs Konsumsi 8.33 mWh.\n- Dimensi sel LiFePO4 untuk 7 hari cuaca mendung total (DoD 80%).\n- Mekanisme adaptive duty-cycling saat cadangan energi kritis.",
+    "notes": "Tunjukkan bahwa surplus energi harian pada hari cerah sangat melimpah untuk mengisi ulang baterai cadangan."
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Pemodelan Fisika Tanah & Retensi Air",
+    "body": "- Karakteristik media berpori heterogen: matriks mineral, larutan air, dan fasa gas.\n- Batasan agronomi: Kapasitas Lapang (Field Capacity) vs Titik Layu Permanen (PWP).\n- Kebutuhan pemantauan in-situ non-destruktif untuk efisiensi irigasi presisi.",
+    "notes": "Garisbawahi bahwa air yang berada di bawah titik layu permanen terikat sangat kuat oleh gaya kapiler sehingga tidak dapat diserap akar."
+  },
+  {
+    "title": "Teori Dielektrik & Persamaan Topp (1980)",
+    "body": "- Disparitas permitivitas: Udara (1), Mineral (3-5), Air Bebas (80.3).\n- Persamaan polinomial Topp memetakan permitivitas bulk ke kadar air volumetrik (VWC).\n- Sensitivitas pengukuran menurun pada permitivitas tinggi akibat pengaruh salinitas.",
+    "notes": "Jelaskan mengapa Persamaan Topp menjadi standar global pengukuran TDR/FDR selama lebih dari 4 dekade."
+  },
+  {
+    "title": "Mitigasi Polarisasi & Integritas Probe Lapangan",
+    "body": "- Polarisasi ionik pada eksitasi DC membentuk lapisan ganda Helmholtz dan korosi anodik.\n- Eksitasi AC frekuensi tinggi (> 50 kHz) dengan isolasi pelindung dielektrik.\n- Praktik instalasi mekanik tanpa celah udara (air-gap elimination).",
+    "notes": "Tekankan bahwa sensor resistif tembaga telanjang murah akan rusak dalam hitungan minggu di lahan pertanian terbuka."
+  }
+]

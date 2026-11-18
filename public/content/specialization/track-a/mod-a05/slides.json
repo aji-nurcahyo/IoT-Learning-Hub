@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Standar Keselamatan Jiwa Gedung (NFPA 72)",
+    "body": "- Arsitektur interlock satu arah FACP ke sistem otomasi gedung.\n- Batasan regulasi: IoT kenyamanan dilarang membypass alarm kebakaran.\n- Pemutusan sirkulasi kipas pendingin udara (AHU) pencegah sebaran asap.",
+    "notes": "Garisbawahi bahwa panel kebakaran memiliki prioritas interupsi mutlak atas seluruh sistem pendingin dan pintu."
+  },
+  {
+    "title": "Sirkuit Loop Pengawas Terawasi (EOL Resistor)",
+    "body": "- Deteksi 3 kondisi fisik: Supervised Normal, Alarm Short, dan Open Cable Fault.\n- Nilai resistor ujung saluran (EOL 4.7 kOhm) mendefinisikan pembagian tegangan.\n- Pembedaan alarm kebakaran nyata dari insiden kabel putus renovasi.",
+    "notes": "Jelaskan mengapa loop terawasi mencegah false alarm yang meresahkan penghuni gedung."
+  },
+  {
+    "title": "Fail-Safe Unlocking & Evakuasi Bebas Asap",
+    "body": "- Pintu akses magnetik wajib fail-safe terbuka saat kehilangan daya listrik.\n- Algoritma rute evakuasi dinamis menghindari koridor terkontaminasi asap.\n- Signage evakuasi adaptif memandu penghuni ke tangga darurat teraman.",
+    "notes": "Tunjukkan simulasi rute Dijkstra yang secara otomatis membelokkan arah evakuasi menjauhi titik api."
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Spektroskopi Optik NDIR CO2",
+    "body": "- Panjang gelombang serapan spesifik 4.26 um pada molekul CO2.\n- Hukum Beer-Lambert memetakan pelemahan intensitas ke konsentrasi ppm.\n- Standar kenyamanan dan kualitas udara dalam ruang ASHRAE 62.1.",
+    "notes": "Garisbawahi bahwa sensor elektrokimia CO2 murah rentan terhadap kontaminasi alkohol, sementara NDIR kebal terhadap silang gas."
+  },
+  {
+    "title": "Fusi Sensor Kehadiran: PIR vs mmWave",
+    "body": "- Keterbatasan PIR: False-negative saat penghuni duduk statis.\n- Radar mmWave 24 GHz mendeteksi mikro-motion pernapasan dada.\n- Fusi multi-modal: Kecepatan bangun PIR + Ketahanan presence mmWave.",
+    "notes": "Tekankan bahwa penggabungan PIR dan mmWave mengeliminasi keluhan lampu mati sendiri saat orang membaca."
+  },
+  {
+    "title": "Demand-Controlled Ventilation (DCV)",
+    "body": "- Kendali bukaan katup udara segar (0 - 100%) mengikuti beban CO2 aktual.\n- Penghematan energi pendingin udara (chiller) gedung hingga 30%.\n- Histeresis deadband dinamis mencegah keausan mekanik motor damper.",
+    "notes": "Tunjukkan bahwa sistem DCV menjaga konsentrasi CO2 tetap di bawah 800 ppm tanpa membuang energi berlebih."
+  }
+]

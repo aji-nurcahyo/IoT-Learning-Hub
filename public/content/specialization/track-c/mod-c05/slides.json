@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Evapotranspirasi Acuan Standar FAO-56",
+    "body": "- Konsep rumput acuan hipotetis standar internasional PBB FAO.\n- Formulasi Penman-Monteith mengintegrasikan radiasi netto dan aerodinamika angin.\n- Pengaruh defisit tekanan uap atmosfer (VPD) terhadap laju transpirasi.",
+    "notes": "Garisbawahi bahwa metode FAO-56 merupakan metode paling akurat di dunia yang diakui secara global."
+  },
+  {
+    "title": "Koefisien Tanaman & Neraca Air Perakaran",
+    "body": "- Dinamika kurva Kc melintasi 4 tahap pertumbuhan tanaman.\n- Total Available Water (TAW) dan batas aman penipisan terkelola (MAD = 50%).\n- Perhitungan defisit air harian untuk penjadwalan irigasi presisi.",
+    "notes": "Jelaskan bahwa menyiram tanaman sebelum batas MAD mencegah stres air tanpa membuang air percuma."
+  },
+  {
+    "title": "Otomasi Katup Irigasi & Efisiensi Konservasi",
+    "body": "- Konversi milimeter air hujan/ETc ke durasi menit bukaan katup solenoid.\n- Penghematan konsumsi air hingga 35% dibanding irigasi timer konvensional.\n- Proteksi perpipaan dari lonjakan hidrolik (water-hammer prevention).",
+    "notes": "Tunjukkan bagaimana sistem irigasi otomatis menunda penyiraman jika terdeteksi curah hujan yang cukup."
+  }
+]

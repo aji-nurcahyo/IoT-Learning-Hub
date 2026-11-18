@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Segitiga Daya & Kualitas Listrik Gedung",
+    "body": "- Daya aktif (kW), daya reaktif (kVAR), dan daya semu (kVA).\n- Dampak beban induktif motor HVAC terhadap penurunan Power Factor.\n- Denda kelebihan kVARh dari utilitas listrik (PLN).",
+    "notes": "Jelaskan mengapa trafo dan kabel harus didimensikan berdasarkan daya semu kVA, bukan daya aktif kW."
+  },
+  {
+    "title": "Kompensasi Bank Kapasitor Otomatis",
+    "body": "- Pemasangan kapasitor paralel untuk menaikkan Power Factor ke >= 0.95.\n- Perhitungan analitis kebutuhan daya reaktif kapasitif Q_cap.\n- Pengurangan rugi disipasi panas I^2*R pada kabel distribusi gedung.",
+    "notes": "Tunjukkan bahwa menaikkan PF dari 0.83 ke 0.95 menurunkan arus jaringan hingga 13% pada daya kW yang sama."
+  },
+  {
+    "title": "Algoritma Pemangkasan Beban (Peak-Shaving)",
+    "body": "- Kontrak daya maksimum dan mitigasi penalti lonjakan beban puncak.\n- Klasifikasi hierarki prioritas beban: Tier 1 (Kritis) hingga Tier 3 (Sheddable).\n- Otomasi pelepasan beban cerdas menjaga total daya < 90% kapasitas trafo.",
+    "notes": "Jelaskan bagaimana sistem mematikan chiller koridor selama 15 menit untuk memangkas lonjakan beban tanpa mengorbankan kenyamanan."
+  }
+]

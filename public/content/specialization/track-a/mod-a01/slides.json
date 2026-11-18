@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Arsitektur Otomasi Gedung & Standar BACnet",
+    "body": "- Zonasi hierarki: Ruang fisik -> Pengontrol Zona -> Manajemen Fasilitas.\n- Kedaulatan kendali lokal (Local Survivability) tanpa ketergantungan cloud.\n- Standar industri ANSI/ASHRAE Standard 135 (BACnet over IP).",
+    "notes": "Garisbawahi bahwa pendingin ruangan tidak boleh mati hanya karena koneksi internet gedung terputus."
+  },
+  {
+    "title": "Koeksistensi Spektrum 2.4 GHz",
+    "body": "- Wi-Fi berdaya tinggi (+20 dBm) vs Thread berdaya rendah (0 dBm).\n- Analisis Carrier-to-Interference Ratio (CIR) pada overlap spektral.\n- Rekomendasi pemilihan kanal bersih IEEE 802.15.4 (Kanal 25 & 26).",
+    "notes": "Jelaskan mengapa salah memilih kanal Thread dapat melumpuhkan jaringan otomasi saat lalu lintas Wi-Fi padat."
+  },
+  {
+    "title": "Segmentasi Jaringan VLAN 802.1Q",
+    "body": "- Isolasi lalu lintas kendali zona dari akses internet publik/tamu.\n- Kebijakan firewall Access Control List (ACL) antarmuka BACnet.\n- Keamanan siber gedung cerdas mengacu pada NIST SP 800-82.",
+    "notes": "Tunjukkan diagram topologi VLAN yang memisahkan segmen kontrol fasilitas dari jaringan kantor."
+  }
+]

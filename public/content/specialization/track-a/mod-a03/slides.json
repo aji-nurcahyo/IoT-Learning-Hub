@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Standar Terbuka Matter & Jaringan Thread",
+    "body": "- Mengakhiri perang ekosistem tertutup (interoperabilitas lintas vendor).\n- Thread mesh 802.15.4 IPv6 berdaya rendah, self-healing, dan deterministik.\n- Peran Thread Border Router sebagai jembatan jaringan transparan.",
+    "notes": "Tekankan bahwa Matter beroperasi murni secara lokal di dalam rumah tanpa wajib terhubung ke cloud server."
+  },
+  {
+    "title": "Kriptografi Commissioning: SPAKE2+ & DAC",
+    "body": "- PASE: Zero-Knowledge Proof pertukaran kunci rahasia dari passcode 8-digit.\n- Device Attestation Certificate (DAC) menjamin keaslian perangkat keras.\n- CASE: Komunikasi terenkripsi penuh harian via sertifikat operasional (NOC).",
+    "notes": "Jelaskan mengapa metode SPAKE2+ kebal terhadap serangan penyadapan kamus (dictionary attacks)."
+  },
+  {
+    "title": "Fitur Multi-Admin & Arsitektur Kluster",
+    "body": "- Satu perangkat dikendalikan simultan oleh beberapa platform (Apple + Google).\n- Abstraksi Data Model: Endpoint, Cluster (On/Off 0x0006), Attribute, Command.\n- Transmisi paket biner terkompresi ringkas via protokol UDP.",
+    "notes": "Tunjukkan bagaimana fitur Multi-Admin memberikan kebebasan penuh bagi konsumen memilih kontroler."
+  }
+]

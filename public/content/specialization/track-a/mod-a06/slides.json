@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Capstone Project Track A: Arsitektur Sistem",
+    "body": "- Integrasi kontrol iklim mikro, protokol Matter/Thread, dan keselamatan jiwa.\n- Kedaulatan operasional lokal (100% tahan terhadap pemutusan koneksi internet).\n- Pemenuhan kriteria penerimaan SATC-A01 hingga SATC-A04.",
+    "notes": "Tekankan bahwa capstone ini menguji integrasi holistik sistem otomasi gedung standar komersial."
+  },
+  {
+    "title": "Ketahanan Thread Mesh & IAQ Closed-Loop",
+    "body": "- Bukti latensi transmisi 24.5 ms dan PDR 100% pada jaringan mesh IPv6 lokal.\n- Respon ventilasi CO2 dalam 4.2 detik memulihkan udara segar ke 750 ppm.\n- Histeresis deadband mencegah keausan motor damper.",
+    "notes": "Tunjukkan bahwa jaringan Thread tetap stabil dan responsif saat kabel internet WAN dilepas."
+  },
+  {
+    "title": "Peak-Shaving Otomatis & Interlock Keselamatan",
+    "body": "- Pelepasan beban Tier 3 menurunkan daya dari 92 kW ke 80 kW dalam 1.8 detik.\n- Waktu tanggap relay pintu darurat fail-safe 45 ms (< ambang batas 80 ms).\n- Pemadaman kipas pendingin udara mencegah penyebaran asap kebakaran.",
+    "notes": "Garisbawahi bahwa keselamatan jiwa memiliki prioritas mutlak yang mematikan sistem ventilasi seketika."
+  }
+]

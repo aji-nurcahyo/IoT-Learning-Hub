@@ -12,10 +12,10 @@ export function hashEvidence(buffer: Buffer, filePath: string): string {
 }
 
 export interface SpecModuleSpec {
-  id: string; // e.g. "b01"
-  slug: string; // "mod-b01"
-  trackId: 'b' | 'd';
-  trackSlug: 'track-b' | 'track-d';
+  id: string; // e.g. "b01", "c01", "a01"
+  slug: string; // "mod-b01", "mod-c01", "mod-a01"
+  trackId: 'a' | 'b' | 'c' | 'd' | 'e';
+  trackSlug: 'track-a' | 'track-b' | 'track-c' | 'track-d' | 'track-e';
   number: number;
   title: string;
   description: string;

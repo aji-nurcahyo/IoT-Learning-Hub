@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Propagasi Radio Sub-GHz pada Agrikultur",
+    "body": "- Keunggulan frekuensi sub-GHz (920 MHz) melintasi rimbunnya vegetasi.\n- Mekanisme pelemahan: Free Space Loss, obstruksi Fresnel, dan serapan tajuk.\n- Batasan regulasi frekuensi lokal (EIRP 27 dBm, duty cycle 1%).",
+    "notes": "Garisbawahi bahwa gelombang 2.4 GHz mengalami pelemahan 10x lebih cepat saat menembus dedaunan basah dibanding 920 MHz."
+  },
+  {
+    "title": "Zona Fresnel & Model Kanopi Weissberger",
+    "body": "- Radius elipsoid Fresnel ke-1 dan kaidah klirens bebas minimum 60%.\n- Model empiris Weissberger untuk rugi lintasan penetrasi kanopi pohon.\n- Pengaruh kadar air daun basah pasca-hujan terhadap link margin.",
+    "notes": "Jelaskan bahwa jika puncak bukit memotong zona Fresnel lebih dari 40%, rugi lintasan tambahan dapat melonjak hingga 20 dB."
+  },
+  {
+    "title": "Link Budget & Spreading Factor Optimal",
+    "body": "- Komponen daya pancar, penguatan antena, dan sensitivitas receiver.\n- Evaluasi margin tautan (+36 dB pada 3.5 km SF10 menjamin PDR > 98%).\n- Optimasi ketinggian tiang gateway pada kontur tanah perbukitan.",
+    "notes": "Tunjukkan tabel trade-off antara Time-on-Air baterai pada SF7 vs ketahanan jarak jauh pada SF12."
+  }
+]

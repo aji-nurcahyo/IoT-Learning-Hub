@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Capstone Project Track C: Arsitektur Sistem",
+    "body": "- Integrasi stasiun mikroklimat mandiri energi dan analitik agronomi.\n- Pemenuhan standar industri SATC-C01 hingga SATC-C04.\n- Rantai operasional dari sensor in-situ hingga keputusan katup irigasi.",
+    "notes": "Tekankan bahwa proyek capstone ini menggabungkan seluruh konsep modul C01 hingga C05 ke dalam sistem terpadu berstandar produksi."
+  },
+  {
+    "title": "Verifikasi Otonomi Energi & Transmisi Kanopi",
+    "body": "- Bukti ketahanan suplai daya selama 168 jam (7 hari) mendung tanpa sinar matahari.\n- Link margin LoRaWAN +36.59 dB menjamin PDR 100% melintasi kanopi pohon 50 m.\n- Proteksi brownout dengan histeresis level tegangan baterai LiFePO4.",
+    "notes": "Jelaskan bagaimana perhitungan link budget terbukti melampaui ambang batas minimum PDR 95%."
+  },
+  {
+    "title": "Loop Tertutup Irigasi Presisi FAO-56",
+    "body": "- Penjadwalan irigasi defisit terkendali otomatis saat air tanah mencapai batas MAD.\n- Eliminasi pemborosan air perkolasi dalam (deep percolation = 0 mm).\n- Rekomendasi durasi bukaan katup solenoid presisi 78.3 menit.",
+    "notes": "Tunjukkan bahwa aktuasi irigasi cerdas berhasil memulihkan kelembaban tanah tepat pada kapasitas lapang optimal."
+  }
+]
