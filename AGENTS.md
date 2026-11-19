@@ -13,6 +13,8 @@ If the mode is unresolved, ask during/after and end the response; wait for the a
 To update antislop later: `npx antislop-ai --update`, or run `npx antislop-ai` and pick Overwrite them.
 
 ## IoT Learning Hub — Permanent Anti-Slop Policy
+At the beginning of every new AI Agent session, read README_PROJECT.md first to restore the complete project context, development history, architectural decisions, permanent rules, and current project status. Do not restart or rebuild the project from scratch.
+
 - Default mode: DURING (Permanent session & project rule).
 - Scope: Seluruh level (Level 1–4, Chapter 01–40), specialization tracks, UI, UX, slide deck, diagram, dokumentasi, dan source code.
 - Final audit: Mandatory setelah penyelesaian setiap level.
